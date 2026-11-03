@@ -4,7 +4,7 @@ description: >
   /sigma-to-tickets <spec-number> splits one SPEC into EPIC and TICKET
   issues after one confirm. A clear bug uses this command only when that
   spec already states the behavior. Filing goes through /sigma-create-ticket.
-  This skill does not run gh. /sigma-implement refuses an epic.
+  This skill does not run gh. /sigma-implement flags an epic.
 argument-hint: "<spec-number>"
 user-invocable: true
 disable-model-invocation: true
@@ -24,7 +24,7 @@ allowed-tools: [Read, AskUserQuestion]
 
 A clear bug belongs here only when an acceptance line on that spec already states the behavior. Copy that line. If the spec has no such line, stop and recommend `/sigma-to-spec`. Do not invent the line here.
 
-`/sigma-implement` refuses an epic. A filed ticket is what that command can build.
+`/sigma-implement` flags an epic and names this command. A filed ticket builds with no flag.
 
 Filing goes through `/sigma-create-ticket`. This skill does not run `gh`. `/sigma-create-ticket` is the vehicle. It does not choose the split.
 
@@ -43,7 +43,7 @@ The Mode label matches the Mode line: `hitl` is `agent:hitl`, `afk` is `agent:af
 
 ## Input
 
-`$ARGUMENTS` is the SPEC issue number. If it is missing, ask once for the number and wait. A review path is not a source. Recommend `/sigma-to-spec` or `/sigma-plan` and stop.
+`$ARGUMENTS` is the SPEC issue number. If it is missing, ask once for the number and wait. A review file path is not a ticket source. Ask once for the spec number and wait. This command accepts a spec number only.
 
 ## Steps
 
@@ -95,7 +95,7 @@ Done when each slice has an issue URL, or the return says why that slice was not
 
 ### Step 5 - Stop
 
-Report every title and URL. Say that `/sigma-implement` refuses an epic.
+Report every title and URL. Say that `/sigma-implement` flags an epic and names `/sigma-to-tickets`.
 
 When at least one ticket was filed, recommend `/sigma-implement <ticket-number>` for one of those tickets. Do not invoke it. When the run filed only epics, do not recommend `/sigma-implement`.
 
@@ -104,11 +104,11 @@ When at least one ticket was filed, recommend `/sigma-implement <ticket-number>`
 | Rule | Why / violation looks like |
 |---|---|
 | Load the SPEC through `/sigma-create-ticket` and continue only for label `spec`. A clear bug with no matching acceptance line stops at `/sigma-to-spec`. | A ticket with no spec line has nothing for `/sigma-implement` to match. |
-| A checkable acceptance line becomes a TICKET. A bundle becomes an EPIC, and that epic is the parent. | A bundle filed as `TICKET:` is work `/sigma-implement` cannot finish. `/sigma-implement` refuses `type:epic`. |
+| A checkable acceptance line becomes a TICKET. A bundle becomes an EPIC, and that epic is the parent. | A bundle filed as `TICKET:` is work `/sigma-implement` flags. `/sigma-implement` flags `type:epic` and names this command. |
 | Copy acceptance lines by id. Do not rewrite them. | A rewritten line lets the ticket pass a check the spec does not state. |
 | Ask one confirm of grain and blockers. Do not add a second question. | A second quiz asks the user to approve the same split again. |
 | File only after that yes, and only through `/sigma-create-ticket`. Do not run `gh`. | Filing on silence, or `gh issue create` here, skips the gateway. |
-| Stop and recommend `/sigma-implement` only for a filed ticket. Do not invoke it. | The recommendation on an epic sends the builder at an issue it refuses. |
+| Stop and recommend `/sigma-implement` only for a filed ticket. Do not invoke it. | The recommendation on an epic sends the builder at an issue it flags. |
 
 ## Verification
 
@@ -117,4 +117,4 @@ When at least one ticket was filed, recommend `/sigma-implement <ticket-number>`
 - [ ] Each ticket acceptance line matches the spec line for that id.
 - [ ] One confirm of grain and blockers got an explicit yes before filing. No second question was asked.
 - [ ] Epics are parents. Filing went through `/sigma-create-ticket`. This skill did not run `gh`.
-- [ ] The reply says `/sigma-implement` refuses an epic, recommends `/sigma-implement` only for a filed ticket number, and does not invoke it.
+- [ ] The reply says `/sigma-implement` flags an epic, recommends `/sigma-implement` only for a filed ticket number, and does not invoke it.

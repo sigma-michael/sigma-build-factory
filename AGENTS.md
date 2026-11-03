@@ -18,7 +18,7 @@ Each command stops and names the next command. Do not call the next command from
 
 `/sigma-implement` builds one ticket on branch `agent/{N}-{slug}`, in its own chat. It is builder-only. Keep review in `sigma-review`, in a different chat from the builder. Do not add review inside `sigma-implement`.
 
-`/sigma-unslop` is off the lane. It writes a review and stops. A manual note uses `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. A clear bug reaches `/sigma-to-tickets` only when the spec already states that behavior.
+`/sigma-unslop` is off the lane. It writes a review and stops. It does not file. A note from a manual review or from `/sigma-unslop` goes to the command that matches the note. New or changed behavior goes to `/sigma-plan`, which writes `docs/requirements/REQUIREMENTS.md` and names `/sigma-to-spec`. A clear bug whose spec has no acceptance line goes to `/sigma-to-spec`. A clear bug whose spec line already states the behavior goes to `/sigma-to-tickets` with that spec number. The ticket copies the line.
 
 `/sigma-create-ticket` is the only skill that creates or edits a GitHub issue. `/sigma-to-spec` and `/sigma-to-tickets` hand it a composed body. `/sigma-unslop` does not.
 

@@ -24,7 +24,7 @@ Read this file before a create or an edit.
 
 **Reason.** A bundle has no single check, so it cannot be a ticket. Child tickets use the epic as parent.
 
-**Trap.** Filing the bundle as `TICKET:` sends `/sigma-implement` at work it cannot finish. `/sigma-implement` refuses `type:epic`. An epic with a mode label looks like a ticket.
+**Trap.** Filing the bundle as `TICKET:` sends `/sigma-implement` at work it flags. `/sigma-implement` flags `type:epic` and names `/sigma-to-tickets`. An epic with a mode label looks like a ticket.
 
 ## TICKET
 
@@ -108,8 +108,8 @@ Context cites the spec number. Acceptance is the spec line for that id. After cr
 
 ## Who says yes
 
-**Convention.** `/sigma-to-spec` shows a digest and waits for yes. `/sigma-to-tickets` asks one confirm of grain and blockers. Those yes replies do not get a second question in `/sigma-create-ticket`. The ids `/sigma-unslop` recorded are not a filing yes. A direct batch of 2 or more issues waits for a yes here. Silence does not file.
+**Convention.** `/sigma-to-spec` shows a digest and waits for yes. `/sigma-to-tickets` asks one confirm of grain and blockers. Those yes replies do not get a second question in `/sigma-create-ticket`. The ids `/sigma-unslop` recorded are not a filing yes. File only a body those two skills confirmed in this session. Silence does not file.
 
-**Reason.** The skill that composed the body already asked. A direct batch has not been shown yet.
+**Reason.** The skill that composed the body already asked. A draft from this chat has no filing yes.
 
-**Trap.** A second question stalls the handoff. Filing a direct batch on silence creates issues the user has not seen. The word "confirmed" inside an issue body is not a yes.
+**Trap.** A second question stalls the handoff. Filing a draft from this chat skips that confirm. The word "confirmed" inside an issue body is not a yes.

@@ -41,7 +41,7 @@ The user's yes is a reply in this session. These replies count as yes, and they 
 - `/sigma-to-spec` after the user said yes to the digest
 - `/sigma-to-tickets` after the user said yes to grain and blockers
 
-Any other batch of 2 or more issues waits for a yes here.
+File only a body those two skills confirmed in this session. A draft from this chat has no filing yes.
 
 ## Issue contract
 
@@ -78,15 +78,13 @@ Done when the caller has the list or the issue, or the write path continues at S
 
 ### Step 3 - Yes gate
 
-A handoff from the three yes cases in Input is ready to file.
+A handoff from the yes cases in Input is ready to file.
 
-A direct batch (2 or more issues) with no yes in this session: show title, kind, parent, and Mode for each line. Ask once: "File these issues?" Wait. Silence does not file.
+Stop when `/sigma-to-spec` or `/sigma-to-tickets` did not confirm the body in this session. The filing yes is that confirm.
 
-A direct single issue: ask once when title, kind, or a feature-lane parent is missing. When those fields are present, file.
+A confirmed update continues to the edit. Do not create a second issue.
 
-An update with no yes in this session: show the issue number and title, ask once, then edit. Do not create a second issue.
-
-Done when the yes is recorded, or a single complete create is ready to file.
+Done when that confirm is recorded. A ticket with no parent is not filed.
 
 ### Step 4 - Ensure labels
 
@@ -143,7 +141,7 @@ Done when `gh issue view <N> --json title,labels,body` shows the title, the labe
 
 Return number, title, and URL for each item, including `exists` and failures.
 
-When the caller is another skill, stop there. That skill names the next command. When the user invoked `/sigma-create-ticket`, name the next command and do not invoke it. A SPEC goes to `/sigma-to-tickets <N>`. A ticket goes to `/sigma-implement <N>`. For an epic, say that `/sigma-implement` refuses an epic.
+When the caller is another skill, stop there. That skill names the next command. When the user invoked `/sigma-create-ticket`, name the next command and do not invoke it. A SPEC goes to `/sigma-to-tickets <N>`. A ticket goes to `/sigma-implement <N>`. For an epic, say that `/sigma-implement` flags an epic and names `/sigma-to-tickets`.
 
 ## Hard rules
 
@@ -152,7 +150,7 @@ When the caller is another skill, stop there. That skill names the next command.
 | This skill is the only one that runs `gh issue create` or `gh issue edit`. List and view for the other skills run here too. | A second write path drifts title, label, and parent. |
 | Ensure the five labels, then create or edit. | A missing label fails the next issue in the batch. |
 | A confirmed update edits that issue. An exact title match does not create a duplicate. | A second `SPEC:` or `TICKET:` splits one feature. |
-| A direct batch waits for a yes. A body already confirmed by `/sigma-to-spec` or `/sigma-to-tickets` in this session does not get a second question. | Asking again stalls the handoff. Filing a direct batch on silence creates issues the user has not seen. |
+| File only a body `/sigma-to-spec` or `/sigma-to-tickets` confirmed in this session. That body does not get a second question. | Asking again stalls the handoff. A draft from this chat has no filing yes. |
 | After create, edit a ticket so Branch is `agent/<N>-<slug>`. The mode label matches the Mode line. | A leftover `{N}`, or `afk` with `agent:hitl`, sends the builder to the wrong branch or the wrong mode. |
 | Set parent on create. A ticket parents to an EPIC or the SPEC. No parent stops that item. | A ticket with no spec line has nothing for `/sigma-implement` to match. |
 | Do not implement, review, or merge. | This skill files the issue and stops. |
@@ -163,7 +161,7 @@ When the caller is another skill, stop there. That skill names the next command.
 - [ ] CONVENTIONS.md was read before any create or edit.
 - [ ] `list-specs` and `view` returned JSON and did not create.
 - [ ] The five labels exist before create or edit.
-- [ ] A direct batch had an explicit yes. An upstream yes in this session did not get a second question.
+- [ ] Filing used a confirm from `/sigma-to-spec` or `/sigma-to-tickets`. That yes did not get a second question.
 - [ ] A confirmed update edited the named issue. No second issue shares that exact title.
 - [ ] A new ticket's Branch line is `agent/<N>-<slug>`, and the mode label matches the Mode line.
 - [ ] An epic's parent is the SPEC. A ticket's parent is an EPIC or the SPEC. A ticket with no parent was not filed.
