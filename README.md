@@ -37,9 +37,7 @@ The steps in each `SKILL.md` are the contract. Extra frontmatter such as `disabl
 
 ## When to run which command
 
-Start at `/sigma-init-docs` once, on a new work repo. The next feature starts at `/sigma-plan`. `/sigma-unslop` can run whenever the scripts or the requirements doc have drifted. It is not a step on the feature path.
-
-Solid arrows are commands you type. Dotted arrows are the agent filing a GitHub issue for you.
+Start at `/sigma-init-docs` once, on a new work repo. The next feature starts at `/sigma-plan`.
 
 ```mermaid
 flowchart TD
@@ -51,10 +49,18 @@ flowchart TD
   review --> pr["/sigma-pr"]
   pr --> merge["/sigma-merge"]
 
-  spec -.-> gate["/sigma-create-ticket"]
-  tickets -.-> gate
-  drift["/sigma-unslop<br/>scripts or requirements have drifted"] -.-> gate
+  drift["/sigma-unslop<br/>off this path"] -->|"approved script fix"| impl
+  drift -->|"product scope changed"| plan
 ```
+
+`/sigma-create-ticket` is not a step on this path. `/sigma-to-spec`, `/sigma-to-tickets`, and `/sigma-unslop` call it while they run. It files the issue and returns to that same command. It does not pick the next command, and it does not send unslop back to the spec.
+
+| You ran | `/sigma-create-ticket` files | You run next |
+|---|---|---|
+| `/sigma-to-spec` | One spec | `/sigma-to-tickets` |
+| `/sigma-to-tickets` | One issue for each epic or ticket | `/sigma-implement` for a ticket |
+| `/sigma-unslop` | One ticket for each script fix you approved | `/sigma-implement` for that ticket |
+| `/sigma-unslop`, and the finding changes the product | Nothing | `/sigma-plan` |
 
 `/sigma-implement` refuses an epic. Split it with `/sigma-to-tickets` first. A fix after review goes back to `/sigma-implement` on the same branch, still in the builder chat.
 
@@ -68,7 +74,7 @@ flowchart TD
 | `/sigma-plan` | You | You are deciding the solution, or a later feature changes it | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. |
 | `/sigma-to-spec` | You | The requirements for a feature are confirmed | Files one spec issue from that document, after you accept a short digest. |
 | `/sigma-to-tickets` | You | A spec is ready to split | Turns concrete acceptance into a ticket, and a bundle that is still too broad into an epic. |
-| `/sigma-create-ticket` | Agent | A spec, a ticket, or an unslop fix is ready to file | The only skill that creates or edits a GitHub issue. |
+| `/sigma-create-ticket` | Agent | Called by `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` | Files one GitHub issue and returns to the command that called it. |
 | `/sigma-implement` | You | A ticket has a number | Builds that ticket on branch `agent/{N}-{slug}`, in its own chat, and pushes. It does not review its own work. |
 | `/sigma-review` | You | The branch is pushed, and this is not the chat that built it | Reads the ticket, the spec, and the diff. Ready names `/sigma-pr`. Not ready sends you back to `/sigma-implement`. |
 | `/sigma-pr` | You | Review says ready | Opens one pull request: `Closes #N`, a short summary, and what to look at. |
