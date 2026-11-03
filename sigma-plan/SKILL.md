@@ -23,7 +23,7 @@ allowed-tools: [Read, Write, Edit, Glob, AskUserQuestion]
 
 ## When to Use
 
-- **Use when:** the user invokes `/sigma-plan` or asks to plan the solution in a Sigma work repo.
+- **Use when:** the user invokes `/sigma-plan`, asks to plan the solution, or pastes a note whose behavior is not in the requirements yet. A clear bug whose spec line already exists is `/sigma-to-tickets`. A clear bug that needs a new acceptance line is `/sigma-to-spec`.
 - **Missing file:** `docs/requirements/REQUIREMENTS.md` is absent. Tell the user to run `/sigma-init-docs` and stop.
 - **After the yes:** the five sections match the confirmed text. Recommend `/sigma-to-spec` and stop. Spec writing and implementation stay outside this skill.
 

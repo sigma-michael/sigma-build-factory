@@ -28,7 +28,7 @@ Read this file before a create or an edit.
 
 ## TICKET
 
-**Convention.** Title `TICKET: <name>`. Label `type:ticket` plus `agent:hitl` or `agent:afk`. From a spec, `/sigma-to-tickets` sets the parent to an EPIC or the SPEC. From a review, there is no spec parent unless that handoff names an epic.
+**Convention.** Title `TICKET: <name>`. Label `type:ticket` plus `agent:hitl` or `agent:afk`. Parent is an EPIC or the SPEC. A handoff with no parent is not filed.
 
 Body sections, in this order:
 
@@ -52,11 +52,11 @@ agent/{N}-<slug>
 hitl
 ```
 
-A ticket cut from a review cites the candidate id and the review path in Context, and may omit Branch. After create, this gateway writes Branch. It does not invent a spec number. `/sigma-to-tickets` is the caller. `/sigma-unslop` is not.
+Context cites the spec number. Acceptance is the spec line for that id. After create, this gateway writes Branch. It does not invent a spec number or an acceptance line.
 
 **Reason.** Context points at the spec. Acceptance is the check. Branch is the checkout name. Mode tells `/sigma-implement` whether to wait.
 
-**Trap.** A rewritten acceptance line lets the ticket pass a check the spec does not state. A feature-lane ticket with no parent has no spec to copy. Forcing an unslop ticket under a spec inherits acceptance that ticket does not implement.
+**Trap.** A rewritten acceptance line lets the ticket pass a check the spec does not state. A ticket with no parent has no spec line to copy. A bug whose behavior is not on the spec belongs in `/sigma-to-spec` first.
 
 ## Scripts in bounds
 

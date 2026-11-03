@@ -47,7 +47,7 @@ Any other batch of 2 or more issues waits for a yes here.
 
 - **SPEC:** title `SPEC: <name>`, label `spec`, no parent. Body: what this feature is, what it is not, acceptance ids, script globs under `scripts/`, out of scope. No open questions.
 - **EPIC:** title `EPIC: <name>`, label `type:epic`. Parent is the SPEC.
-- **TICKET:** title `TICKET: <name>`, label `type:ticket` plus `agent:hitl` or `agent:afk`. Parent is an EPIC or the SPEC when `/sigma-to-tickets` names one. A ticket cut from a review has no spec parent unless that handoff names an epic. Body sections: Context, Acceptance, Out of scope, Branch `agent/{N}-{slug}`, Mode `hitl` or `afk`.
+- **TICKET:** title `TICKET: <name>`, label `type:ticket` plus `agent:hitl` or `agent:afk`. Parent is an EPIC or the SPEC. A handoff with no parent stops. Body sections: Context, Acceptance, Out of scope, Branch `agent/{N}-{slug}`, Mode `hitl` or `afk`. Acceptance is copied from the spec.
 
 Labels this skill ensures: `spec`, `type:epic`, `type:ticket`, `agent:hitl`, `agent:afk`. The Mode label matches the Mode line.
 
@@ -154,7 +154,7 @@ When the caller is another skill, stop there. That skill names the next command.
 | A confirmed update edits that issue. An exact title match does not create a duplicate. | A second `SPEC:` or `TICKET:` splits one feature. |
 | A direct batch waits for a yes. A body already confirmed by `/sigma-to-spec` or `/sigma-to-tickets` in this session does not get a second question. | Asking again stalls the handoff. Filing a direct batch on silence creates issues the user has not seen. |
 | After create, edit a ticket so Branch is `agent/<N>-<slug>`. The mode label matches the Mode line. | A leftover `{N}`, or `afk` with `agent:hitl`, sends the builder to the wrong branch or the wrong mode. |
-| Set parent on create when the handoff names one. A ticket from a spec parents to an EPIC or the SPEC. A ticket from a review omits parent unless the handoff names an epic. | Inventing a spec parent copies acceptance the review ticket does not implement. |
+| Set parent on create. A ticket parents to an EPIC or the SPEC. No parent stops that item. | A ticket with no spec line has nothing for `/sigma-implement` to match. |
 | Do not implement, review, or merge. | This skill files the issue and stops. |
 
 ## Verification
@@ -166,5 +166,5 @@ When the caller is another skill, stop there. That skill names the next command.
 - [ ] A direct batch had an explicit yes. An upstream yes in this session did not get a second question.
 - [ ] A confirmed update edited the named issue. No second issue shares that exact title.
 - [ ] A new ticket's Branch line is `agent/<N>-<slug>`, and the mode label matches the Mode line.
-- [ ] An epic from a spec parents to that SPEC. A ticket from a spec parents to an EPIC or the SPEC. A ticket from a review has no spec parent unless the handoff named an epic.
+- [ ] An epic's parent is the SPEC. A ticket's parent is an EPIC or the SPEC. A ticket with no parent was not filed.
 - [ ] The return is number, title, and URL. This skill did not implement, review, or merge.

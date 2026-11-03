@@ -37,7 +37,7 @@ The steps in each `SKILL.md` are the contract. Extra frontmatter such as `disabl
 
 ## When to run which command
 
-Start at `/sigma-init-docs` once, on a new work repo. The next feature starts at `/sigma-plan`.
+Start at `/sigma-init-docs` once, on a new work repo. A new feature then follows one path. A note from a manual review joins that path at the first command that matches the note. It does not become a ticket on its own.
 
 ```mermaid
 flowchart TD
@@ -48,20 +48,29 @@ flowchart TD
   impl --> review["/sigma-review<br/>a different chat"]
   review --> pr["/sigma-pr"]
   pr --> merge["/sigma-merge"]
-
-  spec ~~~ unslop["/sigma-unslop<br/>when scripts have drifted"]
-  unslop -->|"suggests this work"| tickets
 ```
 
-`/sigma-create-ticket` is the filing vehicle. `/sigma-to-spec` uses it for the spec. `/sigma-to-tickets` uses it for each epic or ticket. Nothing else files an issue, and nothing reaches `/sigma-implement` without a ticket from `/sigma-to-tickets`.
+`/sigma-create-ticket` is the filing vehicle inside `/sigma-to-spec` and `/sigma-to-tickets`. Nothing else files an issue. Nothing reaches `/sigma-implement` without a ticket whose acceptance line was copied from a spec.
 
-| You ran | What gets filed | You run next |
-|---|---|---|
-| `/sigma-to-spec` | One spec, through `/sigma-create-ticket` | `/sigma-to-tickets` |
-| `/sigma-to-tickets` | One issue for each epic or ticket, through `/sigma-create-ticket` | `/sigma-implement` for a ticket |
-| `/sigma-unslop` | Nothing | `/sigma-to-tickets` for the findings you accept |
+### Where a note goes
 
-A finding that changes the product starts at `/sigma-plan`. That path still goes through `/sigma-to-spec` and `/sigma-to-tickets` before anyone builds.
+```mermaid
+flowchart TD
+  note["Manual note or bug"] --> kind{"What is it?"}
+  kind -->|"New or changed behavior"| planNote["/sigma-plan"]
+  kind -->|"Clear bug, spec has no line for it"| specNote["/sigma-to-spec"]
+  kind -->|"Clear bug, spec already states it"| ticketNote["/sigma-to-tickets"]
+  planNote --> specNote
+  specNote --> ticketNote
+  ticketNote --> implNote["/sigma-implement"]
+```
+
+- The product should do something the requirements do not say yet. Run `/sigma-plan`. It writes `docs/requirements/REQUIREMENTS.md` after you confirm, then names `/sigma-to-spec`. A new role, such as Centre Operations Manager, is this case.
+- The bug is clear, and the spec does not yet say the right behavior. Run `/sigma-to-spec`. It adds that acceptance line, then names `/sigma-to-tickets`. Losing the add-employee draft when the sidebar closes is this case when no spec line says the draft is kept. So is a false mandatory-field error when no spec line says a filled form must submit.
+- The bug is clear, and a spec line already states that behavior. Run `/sigma-to-tickets` on that spec number. The ticket copies the existing line. It does not rewrite it. Implement can then build the ticket, because the id is already on the spec.
+- The note is not clear enough to say which of those it is. Run `/sigma-plan` and sort it there.
+
+`/sigma-unslop` is not this path. Use it when scripts have drifted: a duplicated API call, a wrapper that hides the endpoint, or requirements text an agent cannot follow. It writes a review and stops. The same three doors above decide what you run next. It does not file a ticket.
 
 `/sigma-implement` refuses an epic. Split it with `/sigma-to-tickets` first. A fix after review goes back to `/sigma-implement` on the same branch, still in the builder chat.
 
@@ -72,15 +81,15 @@ A finding that changes the product starts at `/sigma-plan`. That path still goes
 | Skill | Started by | When | What it does |
 |---|---|---|---|
 | `/sigma-init-docs` | You | The work repo has no layout yet | Copies the requirements file, `scripts/`, and the agent notes. Does not fill in the product. |
-| `/sigma-plan` | You | You are deciding the solution, or a later feature changes it | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. |
-| `/sigma-to-spec` | You | The requirements for a feature are confirmed | Files one spec issue from that document, after you accept a short digest. |
-| `/sigma-to-tickets` | You | A spec is ready to split, or `/sigma-unslop` handed you a review | Turns that work into tickets or epics, and files them through `/sigma-create-ticket`. |
+| `/sigma-plan` | You | A new behavior, or a note that is not clear yet | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. |
+| `/sigma-to-spec` | You | Requirements are confirmed, or a clear bug needs a new acceptance line | Files or updates one spec, after you accept a short digest. |
+| `/sigma-to-tickets` | You | A spec is ready to split, or a clear bug already matches a spec line | Copies those lines onto tickets or epics and files them through `/sigma-create-ticket`. |
 | `/sigma-create-ticket` | Agent | Called by `/sigma-to-spec` or `/sigma-to-tickets` | Files the issue those commands already confirmed, then returns to them. |
 | `/sigma-implement` | You | A ticket has a number | Builds that ticket on branch `agent/{N}-{slug}`, in its own chat, and pushes. It does not review its own work. |
 | `/sigma-review` | You | The branch is pushed, and this is not the chat that built it | Reads the ticket, the spec, and the diff. Ready names `/sigma-pr`. Not ready sends you back to `/sigma-implement`. |
 | `/sigma-pr` | You | Review says ready | Opens one pull request: `Closes #N`, a short summary, and what to look at. |
 | `/sigma-merge` | You | You name the pull request numbers | Merges those pull requests, deletes the branch, and removes a clean worktree. |
-| `/sigma-unslop` | You | API calls are duplicated, a wrapper hides the endpoint, or the requirements text is hard for an agent to follow | Writes one review and names `/sigma-to-tickets` for the findings you accept. It does not file issues and it does not build. |
+| `/sigma-unslop` | You | API calls are duplicated, a wrapper hides the endpoint, or the requirements text is hard for an agent to follow | Writes one review and stops. It does not file issues and it does not build. |
 
 ## Where files go
 

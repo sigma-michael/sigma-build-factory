@@ -4,8 +4,9 @@ description: >
   /sigma-unslop reviews a Sigma work repo when scripts or
   docs/requirements/REQUIREMENTS.md have gone stale: duplicated API calls,
   wrappers that hide the endpoint, and requirements text an agent cannot
-  follow. It writes one review file and names /sigma-to-tickets for the
-  findings the user accepts. It does not file issues and it does not build.
+  follow. It writes one review file and stops. It does not file issues
+  and it does not build. The next command is /sigma-plan, /sigma-to-spec,
+  or /sigma-to-tickets by the same rule as a manual note.
 user-invocable: true
 disable-model-invocation: true
 allowed-tools: [Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion]
@@ -18,7 +19,7 @@ allowed-tools: [Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion]
 
 ## Overview
 
-This skill reviews stale scripts and `docs/requirements/REQUIREMENTS.md` in a Sigma work repo and writes one review file. For the findings the user accepts, it names `/sigma-to-tickets` on that file. It does not file issues. It does not name `/sigma-implement`. `/sigma-to-tickets` is where those findings become tickets, and that command uses `/sigma-create-ticket` to file them.
+This skill reviews stale scripts and `docs/requirements/REQUIREMENTS.md` in a Sigma work repo and writes one review file. It does not file issues. It does not name `/sigma-implement`. For each accepted finding, name the next command and stop. A behavior the requirements do not say yet is `/sigma-plan`. A clear bug with no spec line is `/sigma-to-spec`. A clear bug whose spec line already states the behavior is `/sigma-to-tickets` with that spec number.
 
 State each finding in plain sentences: what is wrong, which script, and what change would help.
 
@@ -26,7 +27,7 @@ State each finding in plain sentences: what is wrong, which script, and what cha
 
 - **Use when:** the user types `/sigma-unslop`, or scripts or the requirements doc have gone stale. Stale means a duplicated API call, a wrapper that hides the endpoint, or requirements text an agent cannot follow.
 - **Do NOT use when:** the change adds or removes product scope. Say so and recommend `/sigma-plan`.
-- **Do NOT use when:** the next action is to file tickets. Recommend `/sigma-to-tickets` on the review path and stop.
+- **Do NOT use when:** the user pasted a product note or a bug from a manual review. That note uses `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` as in the README. This skill is for drifted scripts.
 - **Do NOT use when:** the next action is to build a filed ticket. Recommend `/sigma-implement` and stop.
 
 ## Input
@@ -95,7 +96,7 @@ When the set is empty, write `## Approved` and `none`.
 
 Done when that block is in the review file. Do not run `gh`. Do not invoke `/sigma-create-ticket`. Do not name `/sigma-implement`.
 
-Recommend `/sigma-to-tickets <review-path>` when the approved set has at least one id. Recommend `/sigma-plan` again for each `product` id. When the approved set is `none` and there is no `product` id, say there is nothing to ticket.
+For each accepted `fix` id, name one next command. `/sigma-plan` when the requirements do not say that behavior. `/sigma-to-spec` when they do and the spec has no acceptance line. `/sigma-to-tickets <spec-number>` when a spec line already states it. Recommend `/sigma-plan` again for each `product` id. When the approved set is `none` and there is no `product` id, say there is nothing further.
 
 ## Hard rules
 
@@ -105,7 +106,7 @@ Recommend `/sigma-to-tickets <review-path>` when the approved set has at least o
 | Write one markdown file, `docs/reviews/<YYYY-MM-DD>-<topic>.md`. Create `docs/reviews/` when needed. | A second review file, a `docs/reviews/README.md`, or an HTML file in the same run splits the record. If the path exists, stop and show it. |
 | Record the path, the change, and the scripts in bounds on every candidate. | `/sigma-implement` may edit only scripts the ticket names. A candidate with no path cannot become a ticket. |
 | Show the candidates, end the turn, then ask which `fix` ids go to `/sigma-to-tickets`. | A question in the same turn hides the list. Choosing ids before the user answers sends work they did not accept. |
-| Record the accepted `fix` ids under `## Approved` and recommend `/sigma-to-tickets` on that review path. Do not file. | Filing here skips `/sigma-to-tickets`. A build from this chat skips the ticket. |
+| Record the accepted `fix` ids under `## Approved`. Name `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets <spec-number>`. Do not file. | Filing here, or naming a review path as the ticket source, skips the spec. |
 | Mark a requirements edit or a product-scope change as `product` and recommend `/sigma-plan`. | Sending that candidate to `/sigma-to-tickets` makes a requirements edit look like a script fix. |
 | Do not name `/sigma-implement`. | The ticket does not exist yet. `/sigma-to-tickets` is the next command. |
 
@@ -117,4 +118,4 @@ Recommend `/sigma-to-tickets <review-path>` when the approved set has at least o
 - [ ] The user named the accepted `fix` ids, and those ids are the `## Approved` block.
 - [ ] This run did not invoke `/sigma-create-ticket` and did not run `gh`.
 - [ ] Each `product` candidate recommends `/sigma-plan` and is absent from `## Approved`.
-- [ ] The reply names `/sigma-to-tickets` with the review path when `## Approved` lists an id, and it does not name `/sigma-implement`.
+- [ ] Each accepted `fix` id names `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` with a spec number. The reply does not name `/sigma-implement` and does not pass the review path as a ticket source.

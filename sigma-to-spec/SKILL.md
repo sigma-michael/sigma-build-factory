@@ -27,7 +27,7 @@ Create and edit go through `/sigma-create-ticket`. This skill does not run `gh`.
 
 ## When to Use
 
-- **Use when:** the user invokes `/sigma-to-spec`.
+- **Use when:** the user invokes `/sigma-to-spec`, or a clear bug needs an acceptance line the spec does not have yet.
 - **Do not use when:** Solution shape, Workflows, and Decisions are all empty. Recommend `/sigma-plan` and stop.
 - **Do not use when:** the spec is already filed and the next step is the split. Recommend `/sigma-to-tickets <spec-number>` and stop. Do not invoke it.
 
