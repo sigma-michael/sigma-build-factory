@@ -45,7 +45,7 @@ Document install as a symlink or copy of each skill folder into `~/.cursor/skill
 
 ## Publish
 
-Leave this repo local. The intended GitHub name is `sigma-michael/sigma-build-factory`. Publish waits until the `sigma-michael` login works.
+GitHub: https://github.com/sigma-michael/sigma-build-factory. The `sigma-michael` account is a separate `gh` config at `~/.config/gh-sigma-michael`. Push with `GH_CONFIG_DIR=~/.config/gh-sigma-michael` so the default `mskhmelik` login is not used.
 
 ## Done
 

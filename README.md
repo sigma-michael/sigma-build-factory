@@ -6,7 +6,7 @@ Skill folders, each with its own `SKILL.md`: `sigma-init-docs`, `sigma-plan`, `s
 
 `sigma-init-docs` scaffolds a separate work repo. That repo holds requirements and API-call scripts.
 
-Intended GitHub name: `sigma-michael/sigma-build-factory`. Publish waits until the `sigma-michael` login works.
+GitHub: https://github.com/sigma-michael/sigma-build-factory
 
 ## Lane
 
