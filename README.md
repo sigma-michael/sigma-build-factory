@@ -49,18 +49,19 @@ flowchart TD
   review --> pr["/sigma-pr"]
   pr --> merge["/sigma-merge"]
 
-  drift["/sigma-unslop<br/>off this path"] -->|"approved script fix"| impl
-  drift -->|"product scope changed"| plan
+  spec ~~~ unslop["/sigma-unslop<br/>when scripts have drifted"]
+  unslop -->|"suggests this work"| tickets
 ```
 
-`/sigma-create-ticket` is not a step on this path. `/sigma-to-spec`, `/sigma-to-tickets`, and `/sigma-unslop` call it while they run. It files the issue and returns to that same command. It does not pick the next command, and it does not send unslop back to the spec.
+`/sigma-create-ticket` is the filing vehicle. `/sigma-to-spec` uses it for the spec. `/sigma-to-tickets` uses it for each epic or ticket. Nothing else files an issue, and nothing reaches `/sigma-implement` without a ticket from `/sigma-to-tickets`.
 
-| You ran | `/sigma-create-ticket` files | You run next |
+| You ran | What gets filed | You run next |
 |---|---|---|
-| `/sigma-to-spec` | One spec | `/sigma-to-tickets` |
-| `/sigma-to-tickets` | One issue for each epic or ticket | `/sigma-implement` for a ticket |
-| `/sigma-unslop` | One ticket for each script fix you approved | `/sigma-implement` for that ticket |
-| `/sigma-unslop`, and the finding changes the product | Nothing | `/sigma-plan` |
+| `/sigma-to-spec` | One spec, through `/sigma-create-ticket` | `/sigma-to-tickets` |
+| `/sigma-to-tickets` | One issue for each epic or ticket, through `/sigma-create-ticket` | `/sigma-implement` for a ticket |
+| `/sigma-unslop` | Nothing | `/sigma-to-tickets` for the findings you accept |
+
+A finding that changes the product starts at `/sigma-plan`. That path still goes through `/sigma-to-spec` and `/sigma-to-tickets` before anyone builds.
 
 `/sigma-implement` refuses an epic. Split it with `/sigma-to-tickets` first. A fix after review goes back to `/sigma-implement` on the same branch, still in the builder chat.
 
@@ -73,13 +74,13 @@ flowchart TD
 | `/sigma-init-docs` | You | The work repo has no layout yet | Copies the requirements file, `scripts/`, and the agent notes. Does not fill in the product. |
 | `/sigma-plan` | You | You are deciding the solution, or a later feature changes it | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. |
 | `/sigma-to-spec` | You | The requirements for a feature are confirmed | Files one spec issue from that document, after you accept a short digest. |
-| `/sigma-to-tickets` | You | A spec is ready to split | Turns concrete acceptance into a ticket, and a bundle that is still too broad into an epic. |
-| `/sigma-create-ticket` | Agent | Called by `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` | Files one GitHub issue and returns to the command that called it. |
+| `/sigma-to-tickets` | You | A spec is ready to split, or `/sigma-unslop` handed you a review | Turns that work into tickets or epics, and files them through `/sigma-create-ticket`. |
+| `/sigma-create-ticket` | Agent | Called by `/sigma-to-spec` or `/sigma-to-tickets` | Files the issue those commands already confirmed, then returns to them. |
 | `/sigma-implement` | You | A ticket has a number | Builds that ticket on branch `agent/{N}-{slug}`, in its own chat, and pushes. It does not review its own work. |
 | `/sigma-review` | You | The branch is pushed, and this is not the chat that built it | Reads the ticket, the spec, and the diff. Ready names `/sigma-pr`. Not ready sends you back to `/sigma-implement`. |
 | `/sigma-pr` | You | Review says ready | Opens one pull request: `Closes #N`, a short summary, and what to look at. |
 | `/sigma-merge` | You | You name the pull request numbers | Merges those pull requests, deletes the branch, and removes a clean worktree. |
-| `/sigma-unslop` | You | API calls are duplicated, a wrapper hides the endpoint, or the requirements text is hard for an agent to follow | Writes one review note and files the fixes you approve. |
+| `/sigma-unslop` | You | API calls are duplicated, a wrapper hides the endpoint, or the requirements text is hard for an agent to follow | Writes one review and names `/sigma-to-tickets` for the findings you accept. It does not file issues and it does not build. |
 
 ## Where files go
 

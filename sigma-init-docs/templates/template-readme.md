@@ -8,7 +8,7 @@ Read this file before you add a file. The layout is closed.
 
 Each command stops and names the next command. None of them invoke the next.
 
-`/sigma-unslop` is off the lane. It writes `docs/reviews/<date>-<topic>.md` when the user runs it. Issues still go through `/sigma-create-ticket`.
+`/sigma-unslop` is off the lane. It writes `docs/reviews/<date>-<topic>.md` and names `/sigma-to-tickets`. That command files issues through `/sigma-create-ticket`. Unslop does not file and does not build.
 
 ## Code
 

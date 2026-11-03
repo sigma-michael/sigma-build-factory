@@ -18,9 +18,9 @@ Each command stops and names the next command. Do not call the next command from
 
 `/sigma-implement` builds one ticket on branch `agent/{N}-{slug}`, in its own chat. It is builder-only. Keep review in `sigma-review`, in a different chat from the builder. Do not add review inside `sigma-implement`.
 
-`/sigma-unslop` is off the lane. It files tickets through `/sigma-create-ticket` and stops.
+`/sigma-unslop` is off the lane. It writes a review and names `/sigma-to-tickets`. It does not file issues and it does not name `/sigma-implement`.
 
-`/sigma-create-ticket` is the only skill that creates or edits a GitHub issue. `/sigma-to-spec`, `/sigma-to-tickets`, and `/sigma-unslop` hand it a composed body.
+`/sigma-create-ticket` is the only skill that creates or edits a GitHub issue. `/sigma-to-spec` and `/sigma-to-tickets` hand it a composed body. `/sigma-unslop` does not.
 
 ## Work repo write-scope
 

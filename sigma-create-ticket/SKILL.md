@@ -2,8 +2,8 @@
 name: sigma-create-ticket
 description: >
   /sigma-create-ticket files or edits one SPEC, EPIC, or TICKET issue. It is
-  also the gateway for /sigma-to-spec, /sigma-to-tickets, and /sigma-unslop:
-  those skills hand it a body. This skill is the only one that runs gh issue
+  also the gateway for /sigma-to-spec and /sigma-to-tickets: those skills hand
+  it a body. /sigma-unslop does not. This skill is the only one that runs gh issue
   create or gh issue edit. Use when the user invokes /sigma-create-ticket or
   one of those skills hands a body.
 argument-hint: "[issue draft or handoff]"
@@ -20,7 +20,7 @@ allowed-tools: [Bash, Read, AskUserQuestion]
 
 ## Overview
 
-`/sigma-create-ticket` files and edits SPEC, EPIC, and TICKET issues. It is the gateway for `/sigma-to-spec`, `/sigma-to-tickets`, and `/sigma-unslop`.
+`/sigma-create-ticket` files and edits SPEC, EPIC, and TICKET issues. It is the gateway for `/sigma-to-spec` and `/sigma-to-tickets`. `/sigma-unslop` does not call it.
 
 This skill is the only one that runs `gh issue create` or `gh issue edit`. It does not implement, review, or merge.
 
@@ -28,7 +28,7 @@ Read [CONVENTIONS.md](CONVENTIONS.md) before a create or an edit. That file hold
 
 ## When to Use
 
-- **Use when:** the user invokes `/sigma-create-ticket`, or `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` hands a body in this session.
+- **Use when:** the user invokes `/sigma-create-ticket`, or `/sigma-to-spec` or `/sigma-to-tickets` hands a body in this session.
 - **List or view:** `/sigma-to-spec` asks for `list-specs`. `/sigma-to-tickets` asks for `view`. Run the read and return. Do not create.
 - **Do not use when:** the work is still a solution interview (`/sigma-plan`), a spec (`/sigma-to-spec`), or a split (`/sigma-to-tickets`). Do not implement, review, or merge.
 
@@ -40,7 +40,6 @@ The user's yes is a reply in this session. These replies count as yes, and they 
 
 - `/sigma-to-spec` after the user said yes to the digest
 - `/sigma-to-tickets` after the user said yes to grain and blockers
-- `/sigma-unslop` after the user named the approved fix ids
 
 Any other batch of 2 or more issues waits for a yes here.
 
@@ -48,7 +47,7 @@ Any other batch of 2 or more issues waits for a yes here.
 
 - **SPEC:** title `SPEC: <name>`, label `spec`, no parent. Body: what this feature is, what it is not, acceptance ids, script globs under `scripts/`, out of scope. No open questions.
 - **EPIC:** title `EPIC: <name>`, label `type:epic`. Parent is the SPEC.
-- **TICKET:** title `TICKET: <name>`, label `type:ticket` plus `agent:hitl` or `agent:afk`. Parent is an EPIC or the SPEC when the caller is `/sigma-to-tickets`. A ticket from `/sigma-unslop` has no parent unless the handoff names one. Body sections: Context, Acceptance, Out of scope, Branch `agent/{N}-{slug}`, Mode `hitl` or `afk`.
+- **TICKET:** title `TICKET: <name>`, label `type:ticket` plus `agent:hitl` or `agent:afk`. Parent is an EPIC or the SPEC when `/sigma-to-tickets` names one. A ticket cut from a review has no spec parent unless that handoff names an epic. Body sections: Context, Acceptance, Out of scope, Branch `agent/{N}-{slug}`, Mode `hitl` or `afk`.
 
 Labels this skill ensures: `spec`, `type:epic`, `type:ticket`, `agent:hitl`, `agent:afk`. The Mode label matches the Mode line.
 
@@ -153,9 +152,9 @@ When the caller is another skill, stop there. That skill names the next command.
 | This skill is the only one that runs `gh issue create` or `gh issue edit`. List and view for the other skills run here too. | A second write path drifts title, label, and parent. |
 | Ensure the five labels, then create or edit. | A missing label fails the next issue in the batch. |
 | A confirmed update edits that issue. An exact title match does not create a duplicate. | A second `SPEC:` or `TICKET:` splits one feature. |
-| A direct batch waits for a yes. A body already confirmed by `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` in this session does not get a second question. | Asking again stalls the handoff. Filing a direct batch on silence creates issues the user has not seen. |
+| A direct batch waits for a yes. A body already confirmed by `/sigma-to-spec` or `/sigma-to-tickets` in this session does not get a second question. | Asking again stalls the handoff. Filing a direct batch on silence creates issues the user has not seen. |
 | After create, edit a ticket so Branch is `agent/<N>-<slug>`. The mode label matches the Mode line. | A leftover `{N}`, or `afk` with `agent:hitl`, sends the builder to the wrong branch or the wrong mode. |
-| Set parent on create. A feature-lane ticket parent is an EPIC or the SPEC. | A ticket with no spec parent has no acceptance to copy. |
+| Set parent on create when the handoff names one. A ticket from a spec parents to an EPIC or the SPEC. A ticket from a review omits parent unless the handoff names an epic. | Inventing a spec parent copies acceptance the review ticket does not implement. |
 | Do not implement, review, or merge. | This skill files the issue and stops. |
 
 ## Verification
@@ -167,5 +166,5 @@ When the caller is another skill, stop there. That skill names the next command.
 - [ ] A direct batch had an explicit yes. An upstream yes in this session did not get a second question.
 - [ ] A confirmed update edited the named issue. No second issue shares that exact title.
 - [ ] A new ticket's Branch line is `agent/<N>-<slug>`, and the mode label matches the Mode line.
-- [ ] An epic's parent is the SPEC. A feature-lane ticket's parent is an EPIC or the SPEC.
+- [ ] An epic from a spec parents to that SPEC. A ticket from a spec parents to an EPIC or the SPEC. A ticket from a review has no spec parent unless the handoff named an epic.
 - [ ] The return is number, title, and URL. This skill did not implement, review, or merge.

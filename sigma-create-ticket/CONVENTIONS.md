@@ -1,6 +1,6 @@
 # Issue contract
 
-`/sigma-create-ticket` is the only skill that runs `gh issue create` or `gh issue edit`. `/sigma-to-spec`, `/sigma-to-tickets`, and `/sigma-unslop` compose a body and invoke that skill.
+`/sigma-create-ticket` is the only skill that runs `gh issue create` or `gh issue edit`. `/sigma-to-spec` and `/sigma-to-tickets` compose a body and invoke that skill. `/sigma-unslop` does not.
 
 Read this file before a create or an edit.
 
@@ -28,7 +28,7 @@ Read this file before a create or an edit.
 
 ## TICKET
 
-**Convention.** Title `TICKET: <name>`. Label `type:ticket` plus `agent:hitl` or `agent:afk`. From `/sigma-to-tickets`, the parent is an EPIC or the SPEC. From `/sigma-unslop`, there is no parent unless the handoff names one.
+**Convention.** Title `TICKET: <name>`. Label `type:ticket` plus `agent:hitl` or `agent:afk`. From a spec, `/sigma-to-tickets` sets the parent to an EPIC or the SPEC. From a review, there is no spec parent unless that handoff names an epic.
 
 Body sections, in this order:
 
@@ -52,7 +52,7 @@ agent/{N}-<slug>
 hitl
 ```
 
-`/sigma-unslop` may leave Context as the candidate id and the review path, and may omit Branch. After create, this gateway writes Branch. It does not invent a spec number.
+A ticket cut from a review cites the candidate id and the review path in Context, and may omit Branch. After create, this gateway writes Branch. It does not invent a spec number. `/sigma-to-tickets` is the caller. `/sigma-unslop` is not.
 
 **Reason.** Context points at the spec. Acceptance is the check. Branch is the checkout name. Mode tells `/sigma-implement` whether to wait.
 
@@ -108,7 +108,7 @@ hitl
 
 ## Who says yes
 
-**Convention.** `/sigma-to-spec` shows a digest and waits for yes. `/sigma-to-tickets` asks one confirm of grain and blockers. `/sigma-unslop` waits for the approved fix ids. Those yes replies do not get a second question in `/sigma-create-ticket`. A direct batch of 2 or more issues waits for a yes here. Silence does not file.
+**Convention.** `/sigma-to-spec` shows a digest and waits for yes. `/sigma-to-tickets` asks one confirm of grain and blockers. Those yes replies do not get a second question in `/sigma-create-ticket`. The ids `/sigma-unslop` recorded are not a filing yes. A direct batch of 2 or more issues waits for a yes here. Silence does not file.
 
 **Reason.** The skill that composed the body already asked. A direct batch has not been shown yet.
 
