@@ -21,7 +21,7 @@ allowed-tools: [Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion]
 
 This skill reviews stale scripts and `docs/requirements/REQUIREMENTS.md` in a Sigma work repo, writes one review file, and files approved script fixes through `/sigma-create-ticket`. The command sits off the feature lane. It stops after filing and names `/sigma-implement`.
 
-Read `/Users/michael.khmelik/.cursor/skills/unslop-language/SKILL.md` before the review sentences. The review states findings.
+State each finding in plain sentences: what is wrong, which script, and what change would help.
 
 ## When to Use
 

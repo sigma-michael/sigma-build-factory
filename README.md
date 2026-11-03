@@ -1,6 +1,6 @@
 # sigma-build-factory
 
-Cursor skills for building Sigma work from a requirements document through to a merged pull request.
+Agent skills for building Sigma work from a requirements document through to a merged pull request. Claude Code, Cursor, Codex, and any other agent that reads a `SKILL.md` folder can run them.
 
 You keep the product decisions in one requirements file. The agent writes API scripts only where a ticket says it may. Each command finishes, tells you the next command, and waits. Review runs in a different chat from the chat that wrote the scripts.
 
@@ -10,20 +10,30 @@ Free to use under the [MIT license](LICENSE).
 
 ## Install
 
-Clone the pack and link each skill into Cursor’s skills folder:
+Clone the pack once, then link it into the skills folder your agent reads. Run the loop once for each agent you use.
+
+| Agent | Set `SKILLS_DIR` to |
+|---|---|
+| Claude Code | `$HOME/.claude/skills` |
+| Cursor | `$HOME/.cursor/skills` |
+| Codex | `$HOME/.codex/skills` |
+| Another agent that follows the shared layout | `$HOME/.agents/skills` |
 
 ```bash
 git clone https://github.com/sigma-michael/sigma-build-factory.git "$HOME/sigma-build-factory"
-mkdir -p "$HOME/.cursor/skills"
+export SKILLS_DIR="$HOME/.claude/skills"   # change this row to match the table
+mkdir -p "$SKILLS_DIR"
 for dir in "$HOME/sigma-build-factory"/sigma-*; do
   [ -f "$dir/SKILL.md" ] || continue
-  ln -sfn "$dir" "$HOME/.cursor/skills/$(basename "$dir")"
+  ln -sfn "$dir" "$SKILLS_DIR/$(basename "$dir")"
 done
 ```
 
-Open a new Cursor chat. The commands in the table below are available there.
+Start a new session so the agent reloads skills. In Claude Code or Cursor, type the command, for example `/sigma-plan`. In an agent without slash commands, name the skill and ask it to follow that file.
 
-Cursor reads `~/.cursor/skills` when a chat starts. Leave `~/.cursor/skills-cursor/` unchanged. For Claude Code, run the same loop with `~/.claude/skills` as the destination.
+To share the pack with a project instead of your user account, point the same loop at `.claude/skills`, `.cursor/skills`, or `.agents/skills` inside that repo.
+
+The steps in each `SKILL.md` are the contract. Extra frontmatter such as `disable-model-invocation` and `allowed-tools` is a hint for agents that understand it. An agent that ignores those keys still follows the steps. If it cannot start another skill, and a step says to hand the body to `/sigma-create-ticket`, follow that skill’s file. Do not create the GitHub issue from the calling skill.
 
 ## When to run which command
 
@@ -50,7 +60,7 @@ flowchart TD
 
 ## Skills
 
-**You** means you type the command. The agent does not start it. **Agent** means another skill hands over a finished issue body, and the agent files it. You can still type `/sigma-create-ticket` yourself.
+**You** means you name the command. On agents that support it, the agent does not start that skill by itself. **Agent** means another skill hands over a finished issue body, and the agent files it. You can still run `/sigma-create-ticket` yourself.
 
 | Skill | Started by | When | What it does |
 |---|---|---|---|

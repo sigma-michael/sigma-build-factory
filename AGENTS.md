@@ -2,16 +2,13 @@
 
 Edit this pack when you change a skill folder in `sigma-build-factory`. The product is the skill folders. Each folder holds one `SKILL.md`.
 
-Before you write a sentence, read:
-
-- `/Users/michael.khmelik/.cursor/skills/writing-for-agents/SKILL.md` for document shape
-- `/Users/michael.khmelik/.cursor/skills/unslop-language/SKILL.md` for sentence voice
+Write the action, the stop, and the next command in the skill file. Do not add a path that exists only on one machine. The public README stays the install guide for every agent.
 
 ## Files you can add
 
 Write `README.md`, `AGENTS.md`, and each skill's `SKILL.md` or templates. Do not add a doc outside those paths. Ask when a file fits none of them.
 
-Skill folders: `sigma-init-docs`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sigma-create-ticket`, `sigma-implement`, `sigma-review`, `sigma-pr`, `sigma-merge`, `sigma-unslop`. Ask before you add a skill folder. Keep the `sigma-` prefix so these names do not collide with factory skills in `~/.cursor/skills`.
+Skill folders: `sigma-init-docs`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sigma-create-ticket`, `sigma-implement`, `sigma-review`, `sigma-pr`, `sigma-merge`, `sigma-unslop`. Ask before you add a skill folder. Keep the `sigma-` prefix so these names do not collide with other skills the user already has.
 
 ## Lane
 
@@ -41,7 +38,7 @@ A file that fits no row: ask. Do not invent a path.
 
 ## Install path
 
-Document install as a symlink or copy of each skill folder into `~/.cursor/skills/`. Do not document install into `~/.cursor/skills-cursor/`.
+Document install as a symlink or copy of each skill folder into the skills directory that agent reads. The README lists Claude Code, Cursor, Codex, and `$HOME/.agents/skills`. Do not document install into `~/.cursor/skills-cursor/`.
 
 ## Publish
 
