@@ -37,7 +37,7 @@ The steps in each `SKILL.md` are the contract. Extra frontmatter such as `disabl
 
 ## When to run which command
 
-Start at `/sigma-init-docs` once, on a new work repo. A new feature then follows one path. A note from a manual review joins that path at the first command that matches the note. It does not become a ticket on its own.
+Start at `/sigma-init-docs` once, on a new work repo. A new feature then follows one path. A note from a manual review or from `/sigma-unslop` joins that path at the first command that matches the note. It does not become a ticket on its own.
 
 ```mermaid
 flowchart TD
@@ -50,29 +50,32 @@ flowchart TD
   pr --> merge["/sigma-merge"]
 ```
 
-`/sigma-create-ticket` is the filing vehicle inside `/sigma-to-spec` and `/sigma-to-tickets`. Nothing else files an issue. Nothing reaches `/sigma-implement` without a ticket whose acceptance line was copied from a spec.
+`/sigma-create-ticket` is the filing vehicle inside `/sigma-to-spec` and `/sigma-to-tickets`. Nothing else files an issue. A normal build uses a ticket whose acceptance line was copied from a spec. Say overwrite and `/sigma-implement` still builds. Silence does not build.
 
 ### Where a note goes
 
 ```mermaid
 flowchart TD
-  note["Manual note or bug"] --> kind{"What is it?"}
+  manual["Manual review"] --> note["Note"]
+  unslop["/sigma-unslop"] --> note
+  note --> kind{"What is it?"}
   kind -->|"New or changed behavior"| planNote["/sigma-plan"]
-  kind -->|"Clear bug, spec has no line for it"| specNote["/sigma-to-spec"]
+  kind -->|"Clear bug, spec has no line"| specNote["/sigma-to-spec"]
   kind -->|"Clear bug, spec already states it"| ticketNote["/sigma-to-tickets"]
   planNote --> specNote
   specNote --> ticketNote
   ticketNote --> implNote["/sigma-implement"]
 ```
 
-- The product should do something the requirements do not say yet. Run `/sigma-plan`. It writes `docs/requirements/REQUIREMENTS.md` after you confirm, then names `/sigma-to-spec`. A new role, such as Centre Operations Manager, is this case.
-- The bug is clear, and the spec does not yet say the right behavior. Run `/sigma-to-spec`. It adds that acceptance line, then names `/sigma-to-tickets`. Losing the add-employee draft when the sidebar closes is this case when no spec line says the draft is kept. So is a false mandatory-field error when no spec line says a filled form must submit.
-- The bug is clear, and a spec line already states that behavior. Run `/sigma-to-tickets` on that spec number. The ticket copies the existing line. It does not rewrite it. Implement can then build the ticket, because the id is already on the spec.
-- The note is not clear enough to say which of those it is. Run `/sigma-plan` and sort it there.
+A manual review and `/sigma-unslop` both produce a note. The note goes to `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`.
 
-`/sigma-unslop` is not this path. Use it when scripts have drifted: a duplicated API call, a wrapper that hides the endpoint, or requirements text an agent cannot follow. It writes a review and stops. The same three doors above decide what you run next. It does not file a ticket.
+- `/sigma-unslop` writes `docs/reviews/<date>-<topic>.md` and stops. Each finding you accept is a note. It does not file an issue.
+- New or changed behavior, including a role the requirements do not mention, goes to `/sigma-plan`.
+- A clear bug whose spec has no line for that behavior goes to `/sigma-to-spec`.
+- A clear bug whose spec line already states that behavior goes to `/sigma-to-tickets` with that spec number. The ticket copies the line.
+- If you still want the build, say overwrite and `/sigma-implement` continues. Silence does not build.
 
-`/sigma-implement` refuses an epic. Split it with `/sigma-to-tickets` first. A fix after review goes back to `/sigma-implement` on the same branch, still in the builder chat.
+`/sigma-implement` flags an epic and names `/sigma-to-tickets`. Say overwrite and it asks once for the script paths. A fix after review goes back to `/sigma-implement` on the same branch, still in the builder chat.
 
 ## Skills
 
@@ -89,7 +92,7 @@ flowchart TD
 | `/sigma-review` | You | The branch is pushed, and this is not the chat that built it | Reads the ticket, the spec, and the diff. Ready names `/sigma-pr`. Not ready sends you back to `/sigma-implement`. |
 | `/sigma-pr` | You | Review says ready | Opens one pull request: `Closes #N`, a short summary, and what to look at. |
 | `/sigma-merge` | You | You name the pull request numbers | Merges those pull requests, deletes the branch, and removes a clean worktree. |
-| `/sigma-unslop` | You | API calls are duplicated, a wrapper hides the endpoint, or the requirements text is hard for an agent to follow | Writes one review and stops. It does not file issues and it does not build. |
+| `/sigma-unslop` | You | API calls are duplicated, a wrapper hides the endpoint, or the requirements text is hard for an agent to follow | Produces notes for `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. It does not file and it does not build. |
 
 ## Where files go
 

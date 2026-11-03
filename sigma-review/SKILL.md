@@ -55,7 +55,7 @@ Read the parent SPEC with `gh issue view`. The Context section has the spec numb
 
 Record the acceptance ids and the script paths the ticket names. Those paths are the scripts in bounds. When the ticket names none, use the parent SPEC scripts in bounds.
 
-Done: ticket number, spec number, acceptance ids, script paths, and branch name are recorded. A missing parent SPEC or a missing requirements doc stops the run. The reply names the missing piece.
+Done: ticket number, acceptance ids, script paths, and branch name are recorded. A missing parent SPEC or a missing requirements doc stays in the report. Name `/sigma-to-spec` or `/sigma-plan`, and why. Then judge the diff against the ticket's own acceptance lines.
 
 ### Step 3 - Read the branch diff
 
