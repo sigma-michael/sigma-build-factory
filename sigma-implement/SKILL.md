@@ -132,7 +132,7 @@ Done when the worker returns the head SHA, one report line per id, and an open p
 
 Start a fresh worker. That worker follows `/sg-review`. It did not write the scripts and it did not commit the branch. Pass the issue number, the branch, and the head SHA. This chat does not judge the diff.
 
-When the worker report has a browser-write line, print one warning per id above the decision. Do not ask a question. Do not wait. Start the fresh review in the same step. A ready verdict still names `/sigma-merge`.
+When the worker report has a browser-write line, print one warning per id above the decision. Do not ask a question. Do not wait. The review started above still runs. A ready verdict still names `/sigma-merge`.
 
 ```text
 Browser write: <id>. POST /v2/workbooks/{workbookId}/elements/{elementId}/rows returned 404. The ticket comment records the failed route.
