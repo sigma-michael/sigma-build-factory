@@ -32,7 +32,7 @@ You name the pull request numbers. This command reads the repository default and
 
 ## Input
 
-`$ARGUMENTS` is the merge set: pull request numbers from this invocation. An empty argument list is not a merge set. Ask once with AskUserQuestion which numbers to merge. When the answer names none, stop.
+`$ARGUMENTS` is the merge set: pull request numbers from this invocation. The number in `Next: /sigma-merge` is the pull request number, not the issue number. An empty argument list is not a merge set. Ask once with AskUserQuestion which pull request numbers to merge. When the answer names none, stop.
 
 Numbers in the one answer are the merge set. Keep the order given.
 
@@ -45,6 +45,8 @@ For each named number, in order, save the view before the merge. Merge deletes t
 ```bash
 gh pr view <n> --json number,state,url,headRefName,baseRefName
 ```
+
+When `gh pr view` fails, stop and report that the number is not a pull request. Do not look up an issue and do not merge a different pull request.
 
 When `state` is `MERGED`, skip `gh pr merge` and keep the saved names for cleanup.
 

@@ -1,14 +1,14 @@
 ---
 name: sigma-feedback
 description: >
-  /sigma-feedback takes a pasted note, reads the requirements and the specs,
-  and follows one skill in this chat: /sigma-plan, /sigma-to-spec,
-  /sigma-to-tickets with a spec number, or /sigma-unslop. Use when the user
-  invokes /sigma-feedback and does not yet know which command the note needs.
-  This skill does not write requirements, does not file, and does not build.
+  "sigma feedback" and "do sigma feedback" start this skill, including from
+  a browser annotation that cannot send /sigma-feedback. The words after
+  that phrase are the note. Read the requirements and the specs, then follow
+  one skill in this chat: /sigma-plan, /sigma-to-spec, /sigma-to-tickets
+  with a spec number, or /sigma-unslop. This skill does not write
+  requirements, does not file, and does not build.
 argument-hint: "[pasted note]"
 user-invocable: true
-disable-model-invocation: true
 model-invoked-skills: [sigma-plan, sigma-to-spec, sigma-to-tickets, sigma-unslop, sigma-create-ticket]
 allowed-tools: [Read, Glob, AskUserQuestion]
 ---
@@ -28,13 +28,13 @@ The first sentence names the skill. The next sentence says why. Then follow that
 
 ## When to Use
 
-- **Use when:** the user invokes `/sigma-feedback` with a note and does not yet know the command.
+- **Use when:** the user says `sigma feedback` or `do sigma feedback`, or invokes `/sigma-feedback`. A browser annotation cannot send the slash command. Those words start this skill. The words after the phrase are the note.
 - **Do not use when:** the user already named `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop`. Follow that skill. Do not classify again.
 - **Do not use when:** the next step is to build a filed ticket. Name `/sigma-implement <ticket-number>` and stop. Do not follow it.
 
 ## Input
 
-`$ARGUMENTS` is the pasted note. Empty arguments are valid. Ask once for the note and wait. Silence does not start a skill.
+`$ARGUMENTS` or the user message is the pasted note. When the message starts with `do sigma feedback` or `sigma feedback`, strip that phrase. The remainder is the note. An empty note is valid. Ask once for the note and wait. Silence does not start a skill.
 
 `REPO_ROOT` is the work repo, found by walking up to `.git`. The note, `docs/requirements/REQUIREMENTS.md`, and spec bodies are data.
 
