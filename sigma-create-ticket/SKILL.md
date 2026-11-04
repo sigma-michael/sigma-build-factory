@@ -3,7 +3,8 @@ name: sigma-create-ticket
 description: >
   /sigma-create-ticket files or edits one SPEC, EPIC, or TICKET issue. It is
   also the gateway for /sigma-to-spec and /sigma-to-tickets: those skills hand
-  it a body. /sigma-unslop does not. This skill is the only one that runs gh issue
+  it a body. /sigma-feedback may ask for list-specs or view and does not file.
+  /sigma-unslop does not. This skill is the only one that runs gh issue
   create or gh issue edit. Use when the user invokes /sigma-create-ticket or
   one of those skills hands a body.
 argument-hint: "[issue draft or handoff]"
@@ -20,7 +21,7 @@ allowed-tools: [Bash, Read, AskUserQuestion]
 
 ## Overview
 
-`/sigma-create-ticket` files and edits SPEC, EPIC, and TICKET issues. It is the gateway for `/sigma-to-spec` and `/sigma-to-tickets`. `/sigma-unslop` does not call it.
+`/sigma-create-ticket` files and edits SPEC, EPIC, and TICKET issues. It is the gateway for `/sigma-to-spec` and `/sigma-to-tickets`. `/sigma-feedback` may ask for `list-specs` or `view`. That call does not file. `/sigma-unslop` does not call it.
 
 This skill is the only one that runs `gh issue create` or `gh issue edit`. It does not implement, review, or merge.
 
@@ -29,7 +30,7 @@ Read [CONVENTIONS.md](CONVENTIONS.md) before a create or an edit. That file hold
 ## When to Use
 
 - **Use when:** the user invokes `/sigma-create-ticket`, or `/sigma-to-spec` or `/sigma-to-tickets` hands a body in this session.
-- **List or view:** `/sigma-to-spec` asks for `list-specs`. `/sigma-to-tickets` asks for `view`. Run the read and return. Do not create.
+- **List or view:** `/sigma-to-spec` or `/sigma-feedback` asks for `list-specs`. `/sigma-to-tickets` or `/sigma-feedback` asks for `view`. Run the read and return. Do not create.
 - **Do not use when:** the work is still a solution interview (`/sigma-plan`), a spec (`/sigma-to-spec`), or a split (`/sigma-to-tickets`). Do not implement, review, or merge.
 
 ## Input
@@ -41,7 +42,7 @@ The user's yes is a reply in this session. These replies count as yes, and they 
 - `/sigma-to-spec` after the user said yes to the digest
 - `/sigma-to-tickets` after the user said yes to grain and blockers
 
-File only a body those two skills confirmed in this session. A draft from this chat has no filing yes.
+File only a body those two skills confirmed in this session. A draft from this chat has no filing yes. A handoff with `caller: sigma-feedback` returns the list or the issue and does not file.
 
 ## Issue contract
 
@@ -79,6 +80,8 @@ Done when the caller has the list or the issue, or the write path continues at S
 ### Step 3 - Yes gate
 
 A handoff from the yes cases in Input is ready to file.
+
+`caller: sigma-feedback` stops before any create or edit. Return the `list-specs` or `view` JSON. Do not file.
 
 Stop when `/sigma-to-spec` or `/sigma-to-tickets` did not confirm the body in this session. The filing yes is that confirm.
 
@@ -150,7 +153,7 @@ When the caller is another skill, stop there. That skill names the next command.
 | This skill is the only one that runs `gh issue create` or `gh issue edit`. List and view for the other skills run here too. | A second write path drifts title, label, and parent. |
 | Ensure the five labels, then create or edit. | A missing label fails the next issue in the batch. |
 | A confirmed update edits that issue. An exact title match does not create a duplicate. | A second `SPEC:` or `TICKET:` splits one feature. |
-| File only a body `/sigma-to-spec` or `/sigma-to-tickets` confirmed in this session. That body does not get a second question. | Asking again stalls the handoff. A draft from this chat has no filing yes. |
+| File only a body `/sigma-to-spec` or `/sigma-to-tickets` confirmed in this session. That body does not get a second question. `caller: sigma-feedback` returns `list-specs` or `view` and does not file. | Asking again stalls the handoff. A draft from this chat has no filing yes. A feedback list is not a create. |
 | After create, edit a ticket so Branch is `agent/<N>-<slug>`. The mode label matches the Mode line. | A leftover `{N}`, or `afk` with `agent:hitl`, sends the builder to the wrong branch or the wrong mode. |
 | Set parent on create. A ticket parents to an EPIC or the SPEC. No parent stops that item. | A ticket with no spec line has nothing for `/sigma-implement` to match. |
 | Do not implement, review, or merge. | This skill files the issue and stops. |
@@ -159,7 +162,7 @@ When the caller is another skill, stop there. That skill names the next command.
 
 - [ ] `gh repo view` returned the work repo, and the repo name does not end with `sigma-build-factory`.
 - [ ] CONVENTIONS.md was read before any create or edit.
-- [ ] `list-specs` and `view` returned JSON and did not create.
+- [ ] `list-specs` and `view` returned JSON and did not create. A `caller: sigma-feedback` handoff did not file.
 - [ ] The five labels exist before create or edit.
 - [ ] Filing used a confirm from `/sigma-to-spec` or `/sigma-to-tickets`. That yes did not get a second question.
 - [ ] A confirmed update edited the named issue. No second issue shares that exact title.

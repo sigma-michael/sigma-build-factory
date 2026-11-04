@@ -2,12 +2,12 @@
 name: sigma-to-spec
 description: >
   /sigma-to-spec reads docs/requirements/REQUIREMENTS.md and files one SPEC
-  issue after the user says yes. Use when the user invokes /sigma-to-spec.
+  issue after the user says yes. Use when the user invokes /sigma-to-spec, or
+  when /sigma-feedback hands a clear bug whose spec has no acceptance line.
   Empty solution sections stop the run and recommend /sigma-plan. Create and
   edit go through /sigma-create-ticket. This skill does not run gh.
 argument-hint: "[feature name, optional]"
 user-invocable: true
-disable-model-invocation: true
 model-invoked-skills: [sigma-create-ticket]
 allowed-tools: [Read, Glob, AskUserQuestion]
 ---
@@ -27,7 +27,7 @@ Create and edit go through `/sigma-create-ticket`. This skill does not run `gh`.
 
 ## When to Use
 
-- **Use when:** the user invokes `/sigma-to-spec`, or a clear bug needs an acceptance line the spec does not have yet.
+- **Use when:** the user invokes `/sigma-to-spec`, or `/sigma-feedback` hands a clear bug that needs an acceptance line the spec does not have yet.
 - **Do not use when:** Solution shape, Workflows, and Decisions are all empty. Recommend `/sigma-plan` and stop.
 - **Do not use when:** the spec is already filed and the next step is the split. Recommend `/sigma-to-tickets <spec-number>` and stop. Do not invoke it.
 

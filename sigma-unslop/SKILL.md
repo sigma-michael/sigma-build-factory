@@ -2,14 +2,14 @@
 name: sigma-unslop
 description: >
   /sigma-unslop reviews stale scripts and
-  docs/requirements/REQUIREMENTS.md and writes one review file. Each
-  accepted finding is a note. The reply names one next command and why:
-  /sigma-plan, /sigma-to-spec, or /sigma-to-tickets with a spec number.
-  It does not file a ticket and it does not stop at a refusal. Overwrite
-  repeats that command. The build happens in /sigma-implement after they
-  say overwrite there.
+  docs/requirements/REQUIREMENTS.md and writes one review file. Use when the
+  user invokes /sigma-unslop, or when /sigma-feedback hands a note about
+  drifted scripts. Each accepted finding is a note. The reply names one next
+  command and why: /sigma-plan, /sigma-to-spec, or /sigma-to-tickets with a
+  spec number. It does not file a ticket and it does not stop at a refusal.
+  Overwrite repeats that command. The build happens in /sigma-implement after
+  they say overwrite there.
 user-invocable: true
-disable-model-invocation: true
 allowed-tools: [Bash, Read, Write, Edit, Glob, Grep, AskUserQuestion]
 ---
 
@@ -37,9 +37,9 @@ State each finding in plain sentences: what is wrong, which script, and what cha
 
 ## When to Use
 
-- **Use when:** the user types `/sigma-unslop`, or scripts or the requirements doc have gone stale. Stale means a duplicated API call, a wrapper that hides the endpoint, or requirements text an agent cannot follow.
+- **Use when:** the user types `/sigma-unslop`, `/sigma-feedback` hands a note about drifted scripts, or scripts or the requirements doc have gone stale. Stale means a duplicated API call, a wrapper that hides the endpoint, or requirements text an agent cannot follow.
 - **Do NOT use when:** the change adds or removes product scope and no review was asked. Say `Run /sigma-plan.` The requirements document is what later tickets match.
-- **Do NOT use when:** the user pasted a product note or a bug and did not ask for this review. Name one command and the why from the overview. Requirements that do not say the behavior yet use `/sigma-plan`. A clear bug with no acceptance line uses `/sigma-to-spec`. A clear bug whose spec line already states it uses `/sigma-to-tickets` with that spec number.
+- **Do NOT use when:** the user pasted a product note or a bug and did not ask for this review. Name `/sigma-feedback`. That skill picks the door.
 - **Overwrite:** the word overwrite does not file and does not build. Repeat the one next command and the why. Say the build happens in `/sigma-implement` after you say overwrite there.
 
 ## Input

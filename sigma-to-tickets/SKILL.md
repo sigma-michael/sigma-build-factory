@@ -3,11 +3,11 @@ name: sigma-to-tickets
 description: >
   /sigma-to-tickets <spec-number> splits one SPEC into EPIC and TICKET
   issues after one confirm. A clear bug uses this command only when that
-  spec already states the behavior. Filing goes through /sigma-create-ticket.
-  This skill does not run gh. /sigma-implement flags an epic.
+  spec already states the behavior. Use when the user invokes it, or when
+  /sigma-feedback hands that spec number. Filing goes through
+  /sigma-create-ticket. This skill does not run gh. /sigma-implement flags an epic.
 argument-hint: "<spec-number>"
 user-invocable: true
-disable-model-invocation: true
 model-invoked-skills: [sigma-create-ticket]
 allowed-tools: [Read, AskUserQuestion]
 ---
@@ -30,7 +30,7 @@ Filing goes through `/sigma-create-ticket`. This skill does not run `gh`. `/sigm
 
 ## When to Use
 
-- **Use when:** the user invokes `/sigma-to-tickets <spec-number>`, including a clear bug whose acceptance line is already on that spec.
+- **Use when:** the user invokes `/sigma-to-tickets <spec-number>`, or `/sigma-feedback` hands that spec number, including a clear bug whose acceptance line is already on that spec.
 - **Do not use when:** there is no SPEC, or the bug needs a new acceptance line. Recommend `/sigma-to-spec` and stop. A note that changes what the product should do is `/sigma-plan`.
 - **Do not use when:** a ticket is already filed and the next step is to build it. Recommend `/sigma-implement <ticket-number>` and stop. Do not invoke it. Do not recommend that command for an epic.
 
