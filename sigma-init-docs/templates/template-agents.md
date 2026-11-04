@@ -4,7 +4,7 @@ The lane, the code home, and the write-scope live in [`docs/README.md`](docs/REA
 
 ## Lane
 
-`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-implement` (one ticket, branch `agent/{N}-{slug}`; builds, opens the pull request, and a fresh review returns the decision) → `/sigma-merge`
+`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-implement` (one ticket, branch `agent/{N}-{slug}`; one worker follows `/sg-tdd` then `/sg-pr`, a second worker follows `/sg-review`) → `/sigma-merge`
 
 `/sigma-unslop` is off the lane. A pasted note starts at `/sigma-feedback`. That command follows one skill in the same chat.
 
@@ -15,7 +15,7 @@ The lane, the code home, and the write-scope live in [`docs/README.md`](docs/REA
 | `AGENTS.md`, `docs/README.md`, `.gitignore` | `/sigma-init-docs` |
 | `docs/requirements/REQUIREMENTS.md` | `/sigma-plan` |
 | `docs/reviews/<date>-<topic>.md` | `/sigma-unslop` (not created up front) |
-| `scripts/**` named in the ticket | `/sigma-implement` |
+| `scripts/**` named in the ticket | `/sg-tdd` |
 | GitHub issues | `/sigma-create-ticket` only |
 
 If nothing fits, ask. Do not invent a path. Do not create a loose file at `docs/` root, a new top-level doc folder, or a `-vN` filename.

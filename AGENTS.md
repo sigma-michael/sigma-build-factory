@@ -8,21 +8,21 @@ Write the action, the stop, and the next command in the skill file. Do not add a
 
 Write `README.md`, `AGENTS.md`, and each skill's `SKILL.md` or templates. Do not add a doc outside those paths. Ask when a file fits none of them.
 
-Skill folders: `sigma-init-docs`, `sigma-feedback`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sigma-create-ticket`, `sigma-implement`, `sigma-review`, `sigma-pr`, `sigma-merge`, `sigma-unslop`. Ask before you add a skill folder. Keep the `sigma-` prefix so these names do not collide with other skills the user already has.
+Skill folders: `sigma-init-docs`, `sigma-feedback`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sigma-create-ticket`, `sigma-implement`, `sg-tdd`, `sg-pr`, `sg-review`, `sigma-merge`, `sigma-unslop`. Ask before you add a skill folder. Commands the user types use the `sigma-` prefix. Skills only `/sigma-implement` starts use the `sg-` prefix.
 
 ## Lane
 
-Each command stops and names the next command. Do not call the next command from inside a skill. Two exceptions exist. `/sigma-feedback` follows exactly one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop`. `/sigma-implement` follows `/sigma-pr`, then a fresh worker follows `/sigma-review`. Those skills still stop at their own end.
+Each command stops and names the next command. Do not call the next command from inside a skill. Two exceptions exist. `/sigma-feedback` follows exactly one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop`. `/sigma-implement` starts one worker that follows `/sg-tdd`, then `/sg-pr`, and a second worker that follows `/sg-review`. Those skills still stop at their own end.
 
 `/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-implement` → `/sigma-merge`
 
-`/sigma-implement` builds one ticket on branch `agent/{N}-{slug}`, opens one pull request, and a fresh worker runs `/sigma-review`. That worker did not write the scripts. The builder chat does not judge the diff. `/sigma-merge` stays the command you type.
+`/sigma-implement` matches one ticket on branch `agent/{N}-{slug}` and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That worker did not write the scripts. The implement chat does not edit scripts and does not judge the diff. `/sigma-merge` stays the command you type.
 
 `/sigma-unslop` is off the lane. It writes a review and stops. It does not file. A pasted note starts at `/sigma-feedback`. New or changed behavior follows `/sigma-plan`, which writes `docs/requirements/REQUIREMENTS.md` and names `/sigma-to-spec`. A clear bug whose spec has no acceptance line follows `/sigma-to-spec`. A clear bug whose spec line already states the behavior follows `/sigma-to-tickets` with that spec number. The ticket copies the line. Drifted scripts follow `/sigma-unslop`.
 
 `/sigma-implement` flags a spec, an epic, or a requirements mismatch and names the command that fixes it. The word overwrite continues that build. Silence does not build. An empty script list still stops.
 
-`/sigma-create-ticket` is the only skill that creates or edits a GitHub issue. `/sigma-to-spec` and `/sigma-to-tickets` hand it a composed body. `/sigma-unslop` does not.
+`/sigma-create-ticket` is the only skill that creates or edits a GitHub issue. `/sigma-to-spec` and `/sigma-to-tickets` hand it a composed body. A browser write asks it for one comment, and `/sigma-implement` prints the warning. The comment does not change acceptance lines. Review still runs, and `/sigma-merge` still merges the numbers you name. `/sigma-unslop` does not.
 
 ## Work repo write-scope
 
@@ -33,7 +33,7 @@ Each command stops and names the next command. Do not call the next command from
 | `AGENTS.md`, `docs/README.md`, `.gitignore` | `sigma-init-docs` |
 | `docs/requirements/REQUIREMENTS.md` | `sigma-plan` |
 | `docs/reviews/<date>-<topic>.md` | `sigma-unslop` |
-| `scripts/**` named in the ticket | `sigma-implement` |
+| `scripts/**` named in the ticket | `sg-tdd` |
 | GitHub issues | `sigma-create-ticket` only |
 
 A file that fits no row: ask. Do not invent a path.
@@ -48,4 +48,4 @@ GitHub: https://github.com/sigma-michael/sigma-build-factory. The `sigma-michael
 
 ## Done
 
-A skill edit is done when its `SKILL.md` names the action, the stop, and the next command, and `sigma-implement` still has no review steps.
+A skill edit is done when its `SKILL.md` names the action, the stop, and the next command, and `sigma-implement` still has no red-then-green steps and no review steps.

@@ -67,7 +67,7 @@ Put each acceptance id on one slice.
 - A slice that is still a bundle is an EPIC. Parent is the SPEC. File a child ticket only for an id that can be copied onto that ticket. The epic parents those tickets. The epic lists only the ids that have no ticket yet.
 - A ticket that is not inside a bundle uses the SPEC as its parent.
 
-Each ticket line in the proposal has title, parent, blockers by slice title, the copied acceptance ids, and Mode `hitl` or `afk`. Each epic line has title, parent spec number, the ids it holds, and why it is still a bundle.
+Each ticket line in the proposal has title, parent, blockers by slice title, the copied acceptance ids, and Mode `hitl` or `afk`. The name after `TICKET: ` says what a person can see or do, names the screen and the result in present tense and plain words, stays one short name, and is not a copy of the acceptance line when that line is hard to say out loud. The example is in [CONVENTIONS.md](../sigma-create-ticket/CONVENTIONS.md). Each epic line has title, parent spec number, the ids it holds, and why it is still a bundle.
 
 Copy acceptance lines by id. Do not rewrite them. A blocker is another ticket in this split, never the epic and never the spec.
 

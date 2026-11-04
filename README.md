@@ -2,9 +2,9 @@
 
 Agent skills for building Sigma work from a requirements document through to a merged pull request. Claude Code, Cursor, Codex, and any other agent that reads a `SKILL.md` folder can run them.
 
-You keep the product decisions in one requirements file. The agent writes API scripts only where a ticket says it may. Each command finishes, tells you the next command, and waits. Review runs in a different chat from the chat that wrote the scripts.
+You keep the product decisions in one requirements file. The agent writes API scripts only where a ticket says it may. Each command finishes, tells you the next command, and waits. One worker writes the scripts and opens the pull request. A second worker reviews.
 
-The `sigma-` prefix keeps these commands distinct from other skill packs already installed on your machine.
+Commands you type use the `sigma-` prefix. `/sigma-implement` starts `/sg-tdd`, `/sg-pr`, and `/sg-review`. `/sigma-create-ticket` files issues for the commands that need one, and you can still run it yourself.
 
 Free to use under the [MIT license](LICENSE).
 
@@ -23,7 +23,7 @@ Clone the pack once, then link it into the skills folder your agent reads. Run t
 git clone https://github.com/sigma-michael/sigma-build-factory.git "$HOME/sigma-build-factory"
 export SKILLS_DIR="$HOME/.claude/skills"   # change this row to match the table
 mkdir -p "$SKILLS_DIR"
-for dir in "$HOME/sigma-build-factory"/sigma-*; do
+for dir in "$HOME/sigma-build-factory"/sigma-* "$HOME/sigma-build-factory"/sg-*; do
   [ -f "$dir/SKILL.md" ] || continue
   ln -sfn "$dir" "$SKILLS_DIR/$(basename "$dir")"
 done
@@ -41,27 +41,30 @@ Start at `/sigma-init-docs` once, on a new work repo. A new feature then follows
 
 ```mermaid
 flowchart TD
-  init["/sigma-init-docs<br/>new work repo"] --> plan["/sigma-plan<br/>confirm the requirements"]
-  plan --> spec["/sigma-to-spec<br/>lock one feature"]
-  spec --> tickets["/sigma-to-tickets<br/>epic or ticket"]
-  tickets --> impl["/sigma-implement<br/>build, pull request, decision"]
+  init["/sigma-init-docs"] --> plan["/sigma-plan"]
+  plan --> spec["/sigma-to-spec"]
+  spec --> tickets["/sigma-to-tickets"]
+  tickets --> impl["/sigma-implement"]
   impl --> merge["/sigma-merge"]
+  spec --> file["/sigma-create-ticket"]
+  tickets --> file
 ```
 
-`/sigma-create-ticket` is the filing vehicle inside `/sigma-to-spec` and `/sigma-to-tickets`. Nothing else files an issue. A normal build uses a ticket whose acceptance line was copied from a spec. Say overwrite and `/sigma-implement` still builds. Silence does not build.
+`/sigma-to-spec` and `/sigma-to-tickets` hand the body to `/sigma-create-ticket`. Nothing else files an issue. A normal build uses a ticket whose acceptance line was copied from a spec. Say overwrite and `/sigma-implement` still builds. Silence does not build.
 
 ### Where a note goes
 
 ```mermaid
 flowchart TD
-  manual["Manual review"] --> feedback["/sigma-feedback"]
-  feedback -->|"New behavior"| planNote["/sigma-plan"]
-  feedback -->|"No spec line"| specNote["/sigma-to-spec"]
-  feedback -->|"Spec states it"| ticketNote["/sigma-to-tickets"]
-  feedback -->|"Drifted scripts"| unslop["/sigma-unslop"]
-  planNote --> specNote
-  specNote --> ticketNote
-  ticketNote --> implNote["/sigma-implement"]
+  feedback["/sigma-feedback"] -->|New behavior| plan["/sigma-plan"]
+  feedback -->|No spec line| spec["/sigma-to-spec"]
+  feedback -->|States it| tickets["/sigma-to-tickets"]
+  feedback -->|Drifted scripts| unslop["/sigma-unslop"]
+  plan --> spec
+  spec --> tickets
+  tickets --> impl["/sigma-implement"]
+  spec --> file["/sigma-create-ticket"]
+  tickets --> file
 ```
 
 A pasted note starts at `/sigma-feedback`. That command reads the requirements and the specs, then follows one skill in the same chat.
@@ -72,25 +75,52 @@ A pasted note starts at `/sigma-feedback`. That command reads the requirements a
 - Drifted scripts follow `/sigma-unslop`. It writes `docs/reviews/<date>-<topic>.md` and stops. It does not file an issue.
 - If you still want the build, say overwrite and `/sigma-implement` continues. Silence does not build.
 
-`/sigma-implement` flags an epic and names `/sigma-to-tickets`. Say overwrite and it asks once for the script paths. A ready review prints implementation complete and names `/sigma-merge`. A not-ready review lists the lines. You name which lines to send back. Silence does not start a fix. The fix stays on the same branch.
+`/sigma-implement` flags an epic and names `/sigma-to-tickets`. Say overwrite and it asks once for the script paths.
+
+### How a build finishes
+
+```mermaid
+flowchart TD
+  impl["/sigma-implement"] --> tdd["/sg-tdd"]
+  tdd --> pr["/sg-pr"]
+  pr --> review["/sg-review"]
+  tdd -->|"Browser write"| file["/sigma-create-ticket"]
+  review --> verdict{Verdict}
+  verdict -->|Ready| done["Implementation complete"]
+  done --> merge["/sigma-merge"]
+  verdict -->|Not ready| lines["You name the lines"]
+  lines --> tdd
+```
+
+You type `/sigma-implement`. It matches the ticket and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. The implement chat does not edit scripts and does not judge the diff.
+
+- Ready prints implementation complete and names `/sigma-merge` with the pull request number.
+- Not ready lists each unmet line. You name the lines to send back. Silence does not start a fix. The same worker pattern runs again on the same branch, the pull request updates, and a new fresh review runs.
+
+A browser write adds a comment through `/sigma-create-ticket`, and `/sigma-implement` prints the warning. The comment does not change acceptance lines. Review still runs. A ready verdict still names `/sigma-merge`, and that merge still merges the numbers you name.
 
 ## Skills
 
-**You** means you name the command. **Agent** means another skill starts it. `/sigma-feedback` follows one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` in the same chat. `/sigma-implement` starts `/sigma-pr` and a fresh `/sigma-review`. You can still run `/sigma-create-ticket` yourself.
+The first column is the command you type. A row with `none` describes that command. The next rows name each skill that command starts, and describe that skill.
 
-| Skill | Started by | When | What it does |
-|---|---|---|---|
-| `/sigma-init-docs` | You | The work repo has no layout yet | Copies the requirements file, `scripts/`, and the agent notes. Does not fill in the product. |
-| `/sigma-feedback` | You | You have a note and do not yet know the command | Reads the requirements and the specs, then follows `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` in this chat. |
-| `/sigma-plan` | You | A new behavior, or a note that is not clear yet | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. |
-| `/sigma-to-spec` | You | Requirements are confirmed, or a clear bug needs a new acceptance line | Files or updates one spec, after you accept a short digest. |
-| `/sigma-to-tickets` | You | A spec is ready to split, or a clear bug already matches a spec line | Copies those lines onto tickets or epics and files them through `/sigma-create-ticket`. |
-| `/sigma-create-ticket` | Agent | Called by `/sigma-to-spec` or `/sigma-to-tickets` | Files the issue those commands already confirmed, then returns to them. |
-| `/sigma-implement` | You | A ticket has a number | Builds that ticket, opens one pull request, and a fresh review returns the decision. Ready prints implementation complete. Not ready lists the lines to send back. |
-| `/sigma-review` | Agent | `/sigma-implement` starts a fresh worker | Reads the ticket, the spec, and the diff. Returns ready or not ready. It does not name a next command. |
-| `/sigma-pr` | Agent | `/sigma-implement` has pushed the branch | Opens one pull request: `Closes #N`, a short summary, and what to look at. It does not wait for the review. |
-| `/sigma-merge` | You | You name the pull request numbers | Merges those pull requests, deletes the branch, and removes a clean worktree. |
-| `/sigma-unslop` | You | API calls are duplicated, a wrapper hides the endpoint, or the requirements text is hard for an agent to follow | Writes one review and stops. It does not file and it does not build. A pasted product note starts at `/sigma-feedback`. |
+| You type | System skill | What it does |
+|---|---|---|
+| `/sigma-init-docs` | none | Copies the requirements file, `scripts/`, and the agent notes. Does not fill in the product. |
+| `/sigma-feedback` | none | Reads the requirements and the specs, then follows one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` in this chat. |
+| `/sigma-feedback` | `/sigma-create-ticket` | Returns the spec list or one issue. Does not file. |
+| `/sigma-plan` | none | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. |
+| `/sigma-to-spec` | none | Writes one spec digest and waits for yes. |
+| `/sigma-to-spec` | `/sigma-create-ticket` | Files or updates that spec. |
+| `/sigma-to-tickets` | none | Copies the spec lines onto tickets or epics and waits for one confirm. |
+| `/sigma-to-tickets` | `/sigma-create-ticket` | Files those issues. |
+| `/sigma-create-ticket` | none | You can run it. It files a SPEC, EPIC, or TICKET whose body is already confirmed. |
+| `/sigma-unslop` | none | Writes one review and stops. It does not file and it does not build. A pasted product note starts at `/sigma-feedback`. |
+| `/sigma-implement` | none | Matches one ticket, opens the worktree, and prints the decision. It does not edit scripts and it does not judge the diff. |
+| `/sigma-implement` | `/sg-tdd` | Runs red, then green, commits, and pushes. A rows-route 404 writes in the browser and the run continues. |
+| `/sigma-implement` | `/sg-pr` | Opens one pull request on the pushed branch. Same worker as `/sg-tdd`. It does not wait for review. |
+| `/sigma-implement` | `/sg-review` | A second worker reads the ticket, the spec, and the diff. It returns ready or not ready. An API-failed comment is not an unmet line. |
+| `/sigma-implement` | `/sigma-create-ticket` | Posts one comment when the write used the browser. The comment does not replace the body. Review and merge still run. |
+| `/sigma-merge` | none | Merges the pull request numbers you name, deletes the branch, and removes a clean worktree. An API-failed comment does not drop a named number. |
 
 ## Where files go
 
@@ -101,7 +131,7 @@ The work repo is the project you are building. This pack does not hold that proj
 | `AGENTS.md`, `docs/README.md`, `.gitignore` | `/sigma-init-docs` |
 | `docs/requirements/REQUIREMENTS.md` | `/sigma-plan` |
 | `docs/reviews/<date>-<topic>.md` | `/sigma-unslop` |
-| `scripts/**` named in the ticket | `/sigma-implement` |
+| `scripts/**` named in the ticket | `/sg-tdd` |
 | GitHub issues | `/sigma-create-ticket` |
 
 If a file fits none of these, the agent asks. It does not invent a new document.
