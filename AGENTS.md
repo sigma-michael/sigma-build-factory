@@ -20,7 +20,7 @@ Each command stops and names the next command. Do not call the next command from
 
 `/sigma-unslop` is off the lane. It writes a review and stops. It does not file. A pasted note starts at `/sigma-feedback`. New or changed behavior follows `/sigma-plan`, which writes `docs/requirements/REQUIREMENTS.md` and names `/sigma-to-spec`. A clear bug whose spec has no acceptance line follows `/sigma-to-spec`. A clear bug whose spec line already states the behavior follows `/sigma-to-tickets` with that spec number. The ticket copies the line. Drifted scripts follow `/sigma-unslop`.
 
-`/sigma-implement` flags a spec, an epic, or a requirements mismatch and names the command that fixes it. The word overwrite continues that build. Silence does not build. An empty script list still stops.
+`/sigma-implement` flags a spec, an epic, or a requirements mismatch and names the command that fixes it. The word overwrite continues that build. Silence does not build. When the ticket names no script, `/sigma-implement` chooses the closest file or one new path under `scripts/`. `/sigma-unslop` records a wrong file and does not edit it.
 
 `/sigma-create-ticket` is the only skill that creates or edits a GitHub issue. `/sigma-to-spec` and `/sigma-to-tickets` hand it a composed body. A browser write asks it for one comment, and `/sigma-implement` prints the warning. The comment does not change acceptance lines. Review still runs, and `/sigma-merge` still merges the numbers you name. `/sigma-unslop` does not.
 

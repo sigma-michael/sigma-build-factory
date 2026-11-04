@@ -62,7 +62,7 @@ A `spec` or `type:epic` label sends one flag, then waits, including when `type:t
 Cut the ticket with /sigma-to-tickets. The ticket carries the spec line onto its own branch.
 Say overwrite and I will build this anyway.
 
-Wait for the word overwrite. Then apply the overwrite paragraph in Step 3. Step 3 is done. Continue at Step 4. Send no second flag. On `type:epic`, Step 5 asks once for the script paths, then the worker builds only those paths.
+Wait for the word overwrite. Then apply the overwrite paragraph in Step 3. Step 3 is done. Continue at Step 4. Send no second flag. On `type:epic`, Step 5 chooses the script path, then the worker builds only that path.
 
 A raw note has no `type:ticket` label. Continue to Step 3. The flag there matches the case.
 
@@ -112,11 +112,13 @@ The worker edits and commits only in that worktree. Do not commit on the user's 
 
 ### Step 5 - Lock permitted script paths
 
-On an epic overwrite, ask once which `scripts/**` paths to build. That answer is the write list. The worker builds only those paths.
+Copy every `scripts/**` path the issue names. That list is the write list.
 
-Otherwise copy every `scripts/**` path the issue names. When that list is empty, stop and ask which scripts are in bounds. Silence does not build.
+When the issue names none, read the files under `scripts/` in the worktree. Choose the one file whose API call is the closest match to the acceptance lines. When no file is close, the path is `scripts/<slug>.<ext>`. `<slug>` is the slug from the branch. `<ext>` is the extension already used under `scripts/`. When `scripts/` has no source file, use `.py`.
 
-Done when the list is non-empty and every path is under `scripts/`. Do not create a doc.
+Do not ask which script. Do not wait. A wrong file is a later `/sigma-unslop` finding. That skill records the better path and does not edit the script.
+
+Done when the list has one or more paths and every path is under `scripts/`. Do not create a doc.
 
 If the worktree is dirty, every dirty path must be on that list. Any other dirty path stops the run.
 
@@ -130,7 +132,9 @@ Done when the worker returns the head SHA, one report line per id, and an open p
 
 ### Step 7 - Fresh review and the decision
 
-Start a fresh worker. That worker follows `/sg-review`. It did not write the scripts and it did not commit the branch. Pass the issue number, the branch, and the head SHA. This chat does not judge the diff.
+Start a fresh worker. That worker follows `/sg-review`. It did not write the scripts and it did not commit the branch. Pass the issue number, the branch, the head SHA, and the locked script paths. This chat does not judge the diff.
+
+Print the locked path above the decision. When the issue named it, the line is `Script: <path>`. When this step chose it, the line is `Script: <path> chosen`. Do not ask. Do not wait.
 
 When the worker report has a browser-write line, print one warning per id above the decision. Do not ask a question. Do not wait. The review started above still runs. A ready verdict still names `/sigma-merge`.
 
@@ -162,10 +166,10 @@ The named lines use the branch and worktree from Step 4. Do not open a second br
 
 | Rule | Why / violation looks like |
 |---|---|
-| A `spec` or `type:epic` label sends the `/sigma-to-tickets` flag, then waits. Overwrite on an epic asks once for the script paths and the worker builds only those paths. | A spec or epic has no single script list. The flag names the split. The one answer is the write list. |
+| A `spec` or `type:epic` label sends the `/sigma-to-tickets` flag, then waits. Overwrite on an epic uses the Step 5 path and the worker builds only that path. | A spec or epic has no single script list. The flag names the split. The chosen path is the write list. |
 | A matched `type:ticket` builds with no flag when every acceptance id is in `docs/requirements/REQUIREMENTS.md` and the parent SPEC. Any other result sends one flag and waits. Overwrite builds from the issue body. The commit body contains overwrite. Both sources stay unedited. Silence does not build. | A hard stop hides the command that adds the missing line. An edit to either source removes the evidence. |
 | Use branch `agent/{N}-{slug}` from the ticket body and worktree `.worktrees/agent-{N}-{slug}`. Create the worktree only when that path is gitignored. The worker commits only in the worktree. | An invented slug disagrees with the ticket. A commit on the user's current branch mixes this ticket into other work. An unignored worktree lists its files in the user's checkout. |
-| Lock the permitted `scripts/**` paths and hand that list to the worker. A ticket uses the paths it names. An epic overwrite uses the one asked list. An empty list stops the run. This chat does not edit scripts. | A doc or any file outside that list is out of bounds. An edit in this chat puts the build and the review decision in one place. |
+| Lock the permitted `scripts/**` paths and hand that list to the worker. A ticket uses the paths it names. When it names none, choose the closest script, or one new path under `scripts/`. Do not ask. This chat does not edit scripts. | A question here stops on a choice the user cannot see. A doc or any file outside that list is out of bounds. |
 | One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. This chat does not judge the diff. Do not merge. | A verdict in this chat comes from a context that can see the build. A merge here skips `/sigma-merge`. |
 | A browser-write report line prints the warning above the decision, for ready and for not ready. Do not ask. Do not wait. Start `/sg-review`. A ready verdict still names `/sigma-merge`. | A hidden browser write leaves the user with a script that did not perform the write. A wait, or a withheld merge line, treats a recorded route failure as a stop. |
 | A named fix starts a new worker on the same branch and worktree. That worker follows `/sg-tdd`, then `/sg-pr`. Push updates the open pull request. A new fresh review runs. Silence does not start a fix. | A new branch splits one ticket across two histories. Silence would edit scripts the user did not name. |
@@ -173,7 +177,7 @@ The named lines use the branch and worktree from Step 4. Do not open a second br
 ## Verification
 
 - [ ] A matched `type:ticket` built with no flag. Every acceptance id appears in `docs/requirements/REQUIREMENTS.md` and the parent SPEC. Both files are unchanged.
-- [ ] Any other match sent one flag and waited. Silence did not build. After the word overwrite, the worker built from the issue body, the commit body contains overwrite, and both sources are unchanged. An epic overwrite asked once for the script paths and the worker wrote only those paths.
+- [ ] Any other match sent one flag and waited. Silence did not build. After the word overwrite, the worker built from the issue body, the commit body contains overwrite, and both sources are unchanged. An empty script list was chosen, not asked. The decision printed `Script: <path> chosen`.
 - [ ] `git -C .worktrees/agent-{N}-{slug} branch --show-current` prints `agent/{N}-{slug}`. The user's checkout branch is the one recorded in Step 1. This chat edited no script.
 - [ ] One worker returned the head SHA, one report line per id, and one open pull request URL.
 - [ ] A second worker returned the review. This chat did not judge the diff.

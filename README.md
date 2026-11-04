@@ -75,7 +75,7 @@ A pasted note starts at `/sigma-feedback`. That command reads the requirements a
 - Drifted scripts follow `/sigma-unslop`. It writes `docs/reviews/<date>-<topic>.md` and stops. It does not file an issue.
 - If you still want the build, say overwrite and `/sigma-implement` continues. Silence does not build.
 
-`/sigma-implement` flags an epic and names `/sigma-to-tickets`. Say overwrite and it asks once for the script paths.
+`/sigma-implement` flags an epic and names `/sigma-to-tickets`. Say overwrite and it chooses the script. When the ticket names no `scripts/` path, it picks the closest file, or one new file, and prints that path. A wrong file is a later `/sigma-unslop` review. That review does not edit the script.
 
 ### How a build finishes
 
@@ -115,12 +115,12 @@ The first column is the command you type. A row with `none` describes that comma
 | `/sigma-to-tickets` | `/sigma-create-ticket` | Files those issues. |
 | `/sigma-create-ticket` | none | You can run it. It files a SPEC, EPIC, or TICKET whose body is already confirmed. |
 | `/sigma-unslop` | none | Writes one review and stops. It does not file and it does not build. A pasted product note starts at `/sigma-feedback`. |
-| `/sigma-implement` | none | Matches one ticket, opens the worktree, and prints the decision. It does not edit scripts and it does not judge the diff. |
+| `/sigma-implement` | none | Matches one ticket, opens the worktree, and prints the decision. When the ticket names no script, it chooses the closest file or one new path. It does not edit scripts and it does not judge the diff. |
 | `/sigma-implement` | `/sg-tdd` | Runs red, then green, commits, and pushes. A rows-route 404 writes in the browser and the run continues. |
 | `/sigma-implement` | `/sg-pr` | Opens one pull request on the pushed branch. Same worker as `/sg-tdd`. It does not wait for review. |
 | `/sigma-implement` | `/sg-review` | A second worker reads the ticket, the spec, and the diff. It returns ready or not ready. An API-failed comment is not an unmet line. |
 | `/sigma-implement` | `/sigma-create-ticket` | Posts one comment when the write used the browser. The comment does not replace the body. Review and merge still run. |
-| `/sigma-merge` | none | Merges the pull request numbers you name, deletes the branch, and removes a clean worktree. An API-failed comment does not drop a named number. |
+| `/sigma-merge` | none | Merges the pull request numbers you name, using the repository default method. It deletes the branch and removes a clean worktree. An API-failed comment does not drop a named number. |
 
 ## Where files go
 
