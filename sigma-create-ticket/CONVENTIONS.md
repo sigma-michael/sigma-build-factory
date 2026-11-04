@@ -28,7 +28,7 @@ Read this file before a create or an edit.
 
 ## TICKET
 
-**Convention.** Title `TICKET: <name>`. Label `type:ticket` plus `agent:hitl` or `agent:afk`. Parent is an EPIC or the SPEC. A handoff with no parent is not filed.
+**Convention.** Title `TICKET: <name>`. The name after `TICKET: ` says what a person can see or do. It names the screen and the result. Present tense. Plain words. It does not name a formula, a control id, a field read, or a test date. One short name, not a sentence with a semicolon. The acceptance line in the body stays a copy of the spec. The title is not a copy of that line when the line is hard to say out loud. Bad name: Save reads the shown value. Good name: Block save when a required employee field looks empty. A title that names the mechanism hides the job. Label `type:ticket` plus `agent:hitl` or `agent:afk`. Parent is an EPIC or the SPEC. A handoff with no parent is not filed.
 
 Body sections, in this order:
 

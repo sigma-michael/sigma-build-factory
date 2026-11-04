@@ -5,7 +5,7 @@ description: >
   then fast-forwards the base branch and removes a clean .worktrees/ checkout
   and the leftover local agent/ branch. Use when the user invokes /sigma-merge
   and names those numbers. Ask when no number is named. Building is
-  /sigma-implement. Judging the diff is /sigma-review.
+  /sigma-implement. Judging the diff is /sg-review.
 argument-hint: "<pr-numbers>"
 user-invocable: true
 disable-model-invocation: true
@@ -27,7 +27,8 @@ The repo default merge method applies. The lane ends at this command.
 
 - **Use when:** the user invokes `/sigma-merge` and names one or more pull request numbers in that invocation.
 - **No numbers:** the invocation names none. Ask once which numbers. Do not choose from `gh pr list`.
-- **Do NOT use when:** the task is to build (`/sigma-implement`) or to judge a diff (`/sigma-review`).
+- **Do NOT use when:** the task is to build (`/sigma-implement`) or to judge a diff (`/sg-review`).
+- **Browser-write comment:** a ticket comment that says `API write failed` is not a reason to skip a named pull request. Merge the numbers in this invocation.
 
 ## Input
 
@@ -99,16 +100,16 @@ Done: the reply lists merged, removed, and retained.
 
 | Rule | Why / violation looks like |
 |---|---|
-| Merge only numbers named in this invocation. When none are named, ask once which numbers. | A number taken from `gh pr list` merges a pull request the user did not name. |
+| Merge only numbers named in this invocation. When none are named, ask once which numbers. A ticket comment that says `API write failed` does not remove a named number from the merge set. | A number taken from `gh pr list` merges a pull request the user did not name. Skipping a named number because the write used the browser blocks a merge the user already asked for. |
 | Save `gh pr view` JSON, then run `gh pr merge <n> --delete-branch`. Omit `--squash`, `--rebase`, `--merge`, and `--admin` unless this invocation names that flag. | The view holds `headRefName` after the remote head is gone. A method flag overrides the repo default. `--admin` merges past a failure the user did not accept. |
 | `git fetch --prune`, then `git merge --ff-only` on the main checkout. | A merge with no `--ff-only` adds a merge commit on the base. Force-push rewrites the base. |
 | `git worktree remove` a `.worktrees/` path only when `git status --porcelain` is empty. When it is dirty, stop and report. | `--force` drops uncommitted work. A path outside `.worktrees/` is the main checkout. |
 | Delete a leftover local branch with `git branch -d`. | `git branch -D` deletes a branch that is not merged. |
-| Print the cleanup record and stop. | A script edit or a verdict starts `/sigma-implement` or `/sigma-review` from the closer. |
+| Print the cleanup record and stop. | A script edit or a verdict starts `/sigma-implement` or `/sg-review` from the closer. |
 
 ## Verification
 
-- [ ] The merge set is the numbers in this invocation or in the one answer. This command chose none.
+- [ ] The merge set is the numbers in this invocation or in the one answer. This command chose none. An `API write failed` comment did not remove a named number.
 - [ ] Each named pull request had `gh pr view` first. `gh pr merge <n> --delete-branch` used no method flag unless the user named one. A merge error stopped the sequence, with no `--admin` added after the failure.
 - [ ] `git fetch --prune` ran from the main checkout. Each merged base matches `origin/<baseRefName>`, or the reply says `--ff-only` refused or the main checkout is dirty.
 - [ ] Each clean matching path under `.worktrees/` is gone from `git worktree list`. A dirty path is still present, and the reply lists its porcelain lines. No remove used `--force`.
