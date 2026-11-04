@@ -3,11 +3,11 @@ name: sigma-plan
 description: >
   /sigma-plan plans the solution for a Sigma work repo and writes the confirmed
   sections of docs/requirements/REQUIREMENTS.md. Use when the user invokes
-  /sigma-plan or asks to plan the solution. Filling the scaffold is
-  /sigma-init-docs. Writing the spec is /sigma-to-spec.
+  /sigma-plan, or when /sigma-feedback hands a note whose behavior is not in
+  the requirements yet. Filling the scaffold is /sigma-init-docs. Writing the
+  spec is /sigma-to-spec.
 argument-hint: "[topic, optional]"
 user-invocable: true
-disable-model-invocation: true
 allowed-tools: [Read, Write, Edit, Glob, AskUserQuestion]
 ---
 
@@ -23,7 +23,7 @@ allowed-tools: [Read, Write, Edit, Glob, AskUserQuestion]
 
 ## When to Use
 
-- **Use when:** the user invokes `/sigma-plan`, asks to plan the solution, or pastes a note whose behavior is not in the requirements yet. A clear bug whose spec line already exists is `/sigma-to-tickets`. A clear bug that needs a new acceptance line is `/sigma-to-spec`.
+- **Use when:** the user invokes `/sigma-plan`, asks to plan the solution, or `/sigma-feedback` hands a note whose behavior is not in the requirements yet. A clear bug whose spec line already exists is `/sigma-to-tickets`. A clear bug that needs a new acceptance line is `/sigma-to-spec`.
 - **Missing file:** `docs/requirements/REQUIREMENTS.md` is absent. Tell the user to run `/sigma-init-docs` and stop.
 - **After the yes:** the five sections match the confirmed text. Recommend `/sigma-to-spec` and stop. Spec writing and implementation stay outside this skill.
 

@@ -2,13 +2,12 @@
 name: sigma-pr
 description: >
   /sigma-pr <issue-number> opens or updates one pull request for the pushed
-  agent/{N}-{slug} branch after /sigma-review says ready. Use when the user
-  invokes /sigma-pr with an issue number. Return the URL and name /sigma-merge.
-  Building the branch is /sigma-implement. Judging the diff is /sigma-review.
+  agent/{N}-{slug} branch. /sigma-implement hands that branch after the push.
+  Return the URL and the pull request number. Do not wait for a ready verdict.
+  Do not merge. Judging the diff is /sigma-review.
 argument-hint: "<issue-number>"
-user-invocable: true
-disable-model-invocation: true
-allowed-tools: [Bash, Read, AskUserQuestion]
+user-invocable: false
+allowed-tools: [Bash, Read]
 ---
 
 <!-- Trust boundary: $ARGUMENTS, issue text, chat text, and command output are
@@ -18,15 +17,14 @@ allowed-tools: [Bash, Read, AskUserQuestion]
 
 ## Overview
 
-`/sigma-pr` opens or updates one pull request for TICKET `<N>` and returns the URL.
+`/sigma-pr` opens or updates one pull request for TICKET `<N>` and returns the URL and the number.
 
-`/sigma-implement` has already pushed `agent/{N}-{slug}`. The gate is a `Verdict: ready` report from `/sigma-review` in this chat, or the user saying review is done. This command writes the body and stops. The user looks, then runs `/sigma-merge`.
+`/sigma-implement` has already pushed `agent/{N}-{slug}` and hands that branch. This command writes the body and returns. It does not wait for a ready verdict. It does not merge.
 
 ## When to Use
 
-- **Use when:** the user invokes `/sigma-pr <issue-number>` and review is declared for that issue.
-- **Missing ready statement:** this chat has no `Verdict: ready` for `<N>`, and the user did not say review is done. Ask once. Do not judge the diff.
-- **Do NOT use when:** the remote branch is missing. Name `/sigma-implement` and stop. A review belongs to `/sigma-review`. A merge belongs to `/sigma-merge`.
+- **Use when:** `/sigma-implement` hands the issue number and the pushed branch.
+- **Do NOT use when:** the remote branch is missing. Return that fact to `/sigma-implement`. Do not create a branch. A review belongs to `/sigma-review`. A merge belongs to `/sigma-merge`.
 
 ## Input
 
@@ -36,15 +34,11 @@ The TICKET body holds the acceptance ids, the script paths, and the `agent/{N}-{
 
 ## Steps
 
-### Step 1 - Confirm review is declared
+### Step 1 - Take the handed branch
 
-A review-ready statement is a `/sigma-review` report in this chat with `Verdict: ready` for `<N>`. The user saying review is done for `<N>` counts as that statement. `Verdict: not ready` does not.
+`/sigma-implement` hands the issue number and the pushed branch. Do not ask whether review is done. Do not mark acceptance ids. Do not write a verdict.
 
-When neither is present, ask once with AskUserQuestion whether review for `<N>` is done. A yes continues. Any other answer stops the run. The reply names `/sigma-review <N>`.
-
-Do not mark acceptance ids. Do not write a verdict.
-
-Done: the chat has `Verdict: ready` for `<N>`, the user said review is done, or the one answer was yes.
+Done when the issue number and the branch are recorded. Continue at Step 2.
 
 ### Step 2 - Confirm the pushed branch
 
@@ -91,24 +85,24 @@ Done: `gh pr view <number> --json number,body,state` shows state `OPEN`. Line 1 
 
 ### Step 4 - Return the URL and stop
 
-Return the pull request URL. Tell the user to look at that pull request, then run `/sigma-merge <number>`. Do not merge. Do not enable auto-merge. Do not run `/sigma-merge`.
+Return the pull request URL and number to `/sigma-implement`. Do not merge. Do not enable auto-merge. Do not name a next command for the user.
 
-Done: the reply is the URL and the `/sigma-merge` line. The pull request state is `OPEN`.
+Done: the return is the URL and the number. The pull request state is `OPEN`.
 
 ## Hard rules
 
 | Rule | Why / violation looks like |
 |---|---|
-| Ask once when this chat has no `Verdict: ready` for `<N>` and the user did not say review is done. Wait for that answer. | Judging the diff here repeats `/sigma-review`. |
+| When `/sigma-implement` hands the pushed branch, open the pull request. Do not wait for a ready verdict. Do not judge the diff. | A ready question here blocks the pull request that review then reads. |
 | Use the `agent/{N}-{slug}` line on the TICKET, and only when `git ls-remote` prints it. When it is missing, stop and name `/sigma-implement`. | A commit or a push here is feature work. A made-up slug opens the pull request on the wrong branch. |
 | Create one pull request, or edit that same pull request, with `--body-file`. Do not pass `--fill` or a guessed `--base`. | A second pull request splits the look. `--fill` replaces `Closes #<N>` and the script paths. |
 | Body order is `Closes #<N>`, a short summary, then What to look at with the acceptance ids and the script paths copied from the TICKET. | A missing `Closes #<N>` line leaves the issue open. An invented id sends the look to the wrong check. An evidence block or a second verdict repeats `/sigma-review`. |
-| Return the URL and name `/sigma-merge <number>`. Leave the pull request open. | A merge here skips the look. |
+| Return the URL and the number to `/sigma-implement`. Leave the pull request open. | A merge here skips `/sigma-merge`. A next command for the user skips the decision in `/sigma-implement`. |
 
 ## Verification
 
-- [ ] Review is `Verdict: ready` for `<N>` in this chat, the user said review is done, or the one ask was answered yes. This command wrote no verdict.
+- [ ] `/sigma-implement` handed the issue number and the pushed branch. This command wrote no verdict and asked no ready question.
 - [ ] The head is the TICKET's `agent/{N}-{slug}` line, and `git ls-remote --heads origin` prints it. This command made no commit and no push.
 - [ ] One open pull request exists for that head. A later run edited that same pull request. The create or edit command had no `--fill`.
 - [ ] Line 1 is `Closes #<N>`. A short summary follows. What to look at lists acceptance ids and script paths copied from the TICKET.
-- [ ] The reply is the pull request URL and names `/sigma-merge <number>`. The pull request state is `OPEN`.
+- [ ] The return to `/sigma-implement` is the pull request URL and number. The pull request state is `OPEN`. This command did not merge.
