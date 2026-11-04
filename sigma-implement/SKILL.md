@@ -128,7 +128,7 @@ Start one worker. That worker follows `/sg-tdd` from Step 1, then follows `/sg-p
 
 This chat does not edit scripts. This chat does not commit. This chat does not judge the diff.
 
-Done when the worker returns the head SHA, one report line per id, and an open pull request URL. Continue at Step 7. Do not merge.
+Done when the worker returns the head SHA, one report line per id, and an open pull request URL and pull request number. The issue number is not that pull request number. Continue at Step 7. Do not merge.
 
 ### Step 7 - Fresh review and the decision
 
@@ -149,10 +149,10 @@ A ready verdict prints this decision and stops:
 ```text
 <promise>IMPLEMENTATION COMPLETE</promise>
 Pull request: <url>
-Next: /sigma-merge <number>
+Next: /sigma-merge <pull-request-number>
 ```
 
-Do not merge.
+`<pull-request-number>` is the number `/sg-pr` returned. It is not the issue number. Do not merge.
 
 A not-ready verdict lists each unmet id and its cite. A browser-write id with a passing read-back is not an unmet id. Ask which lines to send back. Silence does not start a fix. The browser-write warning is already printed. It does not change the verdict and it does not withhold `/sigma-merge` when the verdict is ready.
 
@@ -182,5 +182,5 @@ The named lines use the branch and worktree from Step 4. Do not open a second br
 - [ ] One worker returned the head SHA, one report line per id, and one open pull request URL.
 - [ ] A second worker returned the review. This chat did not judge the diff.
 - [ ] A browser-write report line printed the warning above the decision. A `comment failed` line said the ticket was not marked. The run did not wait.
-- [ ] A ready verdict printed `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and `/sigma-merge <number>`.
+- [ ] A ready verdict printed `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and `/sigma-merge` with the pull request number `/sg-pr` returned. That number is not the issue number.
 - [ ] A not-ready verdict listed each unmet id and its cite, then waited. Silence did not start a fix. Named lines stayed on `agent/{N}-{slug}`, the same worker pattern ran again, and a new fresh review ran.

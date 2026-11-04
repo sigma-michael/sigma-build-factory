@@ -94,7 +94,7 @@ flowchart TD
 
 You type `/sigma-implement`. It matches the ticket and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. The implement chat does not edit scripts and does not judge the diff.
 
-- Ready prints implementation complete and names `/sigma-merge` with the pull request number.
+- Ready prints implementation complete and names `/sigma-merge` with the pull request number from `/sg-pr`. That number is not the issue number.
 - Not ready lists each unmet line. You name the lines to send back. Silence does not start a fix. The same worker pattern runs again on the same branch, the pull request updates, and a new fresh review runs.
 
 A browser write adds a comment through `/sigma-create-ticket`, and `/sigma-implement` prints the warning. The comment does not change acceptance lines. Review still runs. A ready verdict still names `/sigma-merge`, and that merge still merges the numbers you name.
@@ -106,7 +106,7 @@ The first column is the command you type. A row with `none` describes that comma
 | You type | System skill | What it does |
 |---|---|---|
 | `/sigma-init-docs` | none | Copies the requirements file, `scripts/`, and the agent notes. Does not fill in the product. |
-| `/sigma-feedback` | none | Reads the requirements and the specs, then follows one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` in this chat. |
+| `/sigma-feedback` | none | Starts from `/sigma-feedback`, `sigma feedback`, or `do sigma feedback`, including a browser annotation. Reads the requirements and the specs, then follows one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` in this chat. |
 | `/sigma-feedback` | `/sigma-create-ticket` | Returns the spec list or one issue. Does not file. |
 | `/sigma-plan` | none | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. |
 | `/sigma-to-spec` | none | Writes one spec digest and waits for yes. |
