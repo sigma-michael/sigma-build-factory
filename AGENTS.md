@@ -8,13 +8,13 @@ Write the action, the stop, and the next command in the skill file. Do not add a
 
 Write `README.md`, `AGENTS.md`, and each skill's `SKILL.md` or templates. Do not add a doc outside those paths. Ask when a file fits none of them.
 
-Skill folders: `sigma-init-docs`, `sigma-feedback`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sigma-create-ticket`, `sigma-implement`, `sg-tdd`, `sg-pr`, `sg-review`, `sigma-merge`, `sigma-unslop`. Ask before you add a skill folder. Commands the user types use the `sigma-` prefix. Skills only `/sigma-implement` starts use the `sg-` prefix.
+Skill folders: `sigma-init-docs`, `sigma-feedback`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sigma-create-ticket`, `sigma-triage`, `sigma-implement`, `sg-tdd`, `sg-pr`, `sg-review`, `sigma-merge`, `sigma-unslop`. Ask before you add a skill folder. Commands the user types use the `sigma-` prefix. Skills only `/sigma-implement` starts use the `sg-` prefix.
 
 ## Lane
 
 Each command stops and names the next command. Do not call the next command from inside a skill. Two exceptions exist. `/sigma-feedback` follows exactly one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop`. `/sigma-implement` starts one worker that follows `/sg-tdd`, then `/sg-pr`, and a second worker that follows `/sg-review`. Those skills still stop at their own end.
 
-`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-implement` → `/sigma-merge`
+`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-triage` → `/sigma-implement` → `/sigma-merge`
 
 `/sigma-implement` matches one ticket on branch `agent/{N}-{slug}` and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That worker did not write the scripts. The implement chat does not edit scripts and does not judge the diff. `/sigma-merge` stays the command you type.
 
@@ -22,7 +22,7 @@ Each command stops and names the next command. Do not call the next command from
 
 `/sigma-implement` flags a spec, an epic, or a requirements mismatch and names the command that fixes it. The word overwrite continues that build. Silence does not build. When the ticket names no script, `/sigma-implement` chooses the closest file or one new path under `scripts/`. `/sigma-unslop` records a wrong file and does not edit it.
 
-`/sigma-create-ticket` is the only skill that creates or edits a GitHub issue. `/sigma-to-spec` and `/sigma-to-tickets` hand it a composed body. A browser write asks it for one comment, and `/sigma-implement` prints the warning. The comment does not change acceptance lines. Review still runs, and `/sigma-merge` still merges the numbers you name. `/sigma-unslop` does not.
+`/sigma-create-ticket` is the only skill that creates or edits a GitHub issue. `/sigma-to-spec` and `/sigma-to-tickets` hand it a composed body. `/sigma-triage` may ask it to close or edit a ticket after one yes. That yes does not create a ticket. A clash names `/sigma-plan`. A split names `/sigma-to-tickets`. The reply ends with `/sigma-implement` and one number. A browser write asks it for one comment, and `/sigma-implement` prints the warning. The comment does not change acceptance lines. Review still runs, and `/sigma-merge` still merges the numbers you name. `/sigma-unslop` does not.
 
 ## Work repo write-scope
 

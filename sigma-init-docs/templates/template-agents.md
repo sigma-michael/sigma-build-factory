@@ -4,7 +4,7 @@ The lane, the code home, and the write-scope live in [`docs/README.md`](docs/REA
 
 ## Lane
 
-`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-implement` (one ticket, branch `agent/{N}-{slug}`; one worker follows `/sg-tdd` then `/sg-pr`, a second worker follows `/sg-review`) → `/sigma-merge`
+`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-triage` → `/sigma-implement` (one ticket, branch `agent/{N}-{slug}`; one worker follows `/sg-tdd` then `/sg-pr`, a second worker follows `/sg-review`) → `/sigma-merge`
 
 `/sigma-unslop` is off the lane. A pasted note starts at `/sigma-feedback`. That command follows one skill in the same chat.
 
