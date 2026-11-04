@@ -47,7 +47,7 @@ Continue when the label is `type:ticket`. A label `spec` or `type:epic` stops th
 
 Read the parent SPEC with `gh issue view`. The Context section has the spec number. Read `docs/requirements/REQUIREMENTS.md`.
 
-Record the acceptance ids and the script paths the ticket names. Those paths are the scripts in bounds. When the ticket names none, use the parent SPEC scripts in bounds.
+Record the acceptance ids and the script paths the ticket names. Those paths are the scripts in bounds. When the ticket names none, use the parent SPEC scripts in bounds. When the ticket and the spec name none, use the locked paths `/sigma-implement` passed. Those paths are in bounds.
 
 Done: ticket number, acceptance ids, script paths, and branch name are recorded. A missing parent SPEC or a missing requirements doc stays in the report. Name `/sigma-to-spec` or `/sigma-plan`, and why. Then judge the diff against the ticket's own acceptance lines.
 

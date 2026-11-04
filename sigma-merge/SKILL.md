@@ -21,7 +21,7 @@ allowed-tools: [Bash, Read, AskUserQuestion]
 
 `/sigma-merge` merges the pull request numbers named in this invocation, fast-forwards each base branch, and removes the matching clean worktree and leftover local `agent/` branch.
 
-The repo default merge method applies. The lane ends at this command.
+You name the pull request numbers. This command reads the repository default and passes that method. The lane ends at this command.
 
 ## When to Use
 
@@ -48,17 +48,25 @@ gh pr view <n> --json number,state,url,headRefName,baseRefName
 
 When `state` is `MERGED`, skip `gh pr merge` and keep the saved names for cleanup.
 
-Otherwise:
+Otherwise read the repository default once. `gh repo view --json nameWithOwner --jq .nameWithOwner` prints `owner/name`. Use that owner and name in:
 
 ```bash
-gh pr merge <n> --delete-branch
+gh api graphql -f owner='<owner>' -f name='<name>' -f query='query($owner:String!,$name:String!){ repository(owner:$owner, name:$name) { viewerDefaultMergeMethod } }'
 ```
 
-Pass `--squash`, `--rebase`, `--merge`, or `--admin` only when this invocation names that flag. When it names none, omit all four so the repo default applies. When it names two methods, ask once which one, and pass that flag only.
+`SQUASH` passes `--squash`. `REBASE` passes `--rebase`. `MERGE` passes `--merge`.
+
+```bash
+gh pr merge <n> --delete-branch --squash
+```
+
+Replace `--squash` with the flag for the value above. When this invocation names one method, pass that flag instead. When it names two methods, ask once which one, and pass that flag only. Do not pass `--admin` unless this invocation names `--admin`.
+
+When the default query fails, stop and report that error. Do not ask the user to name `--squash`, `--rebase`, or `--merge`.
 
 When `gh pr merge` fails, stop the merge sequence and report the number and the error. Do not retry with `--admin` unless this invocation asked for `--admin`. Leave that pull request unmerged.
 
-Done: each named pull request is `MERGED`, or the sequence stopped on the first merge error. A method flag appears only when the user named it.
+Done: each named pull request is `MERGED`, or the sequence stopped on the first merge error. The method flag is the repository default, or the one method the user named.
 
 ### Step 2 - Fast-forward the base
 
@@ -101,7 +109,7 @@ Done: the reply lists merged, removed, and retained.
 | Rule | Why / violation looks like |
 |---|---|
 | Merge only numbers named in this invocation. When none are named, ask once which numbers. A ticket comment that says `API write failed` does not remove a named number from the merge set. | A number taken from `gh pr list` merges a pull request the user did not name. Skipping a named number because the write used the browser blocks a merge the user already asked for. |
-| Save `gh pr view` JSON, then run `gh pr merge <n> --delete-branch`. Omit `--squash`, `--rebase`, `--merge`, and `--admin` unless this invocation names that flag. | The view holds `headRefName` after the remote head is gone. A method flag overrides the repo default. `--admin` merges past a failure the user did not accept. |
+| Save `gh pr view` JSON, then run `gh pr merge <n> --delete-branch` with the repository default method. `SQUASH` is `--squash`, `REBASE` is `--rebase`, and `MERGE` is `--merge`. Pass a different method only when this invocation names one. Do not pass `--admin` unless this invocation names it. | A missing method flag stops a non-interactive merge. Asking the user to pick `--squash`, `--rebase`, or `--merge` leaves the pull request open. `--admin` merges past a failure the user did not accept. |
 | `git fetch --prune`, then `git merge --ff-only` on the main checkout. | A merge with no `--ff-only` adds a merge commit on the base. Force-push rewrites the base. |
 | `git worktree remove` a `.worktrees/` path only when `git status --porcelain` is empty. When it is dirty, stop and report. | `--force` drops uncommitted work. A path outside `.worktrees/` is the main checkout. |
 | Delete a leftover local branch with `git branch -d`. | `git branch -D` deletes a branch that is not merged. |
@@ -110,7 +118,7 @@ Done: the reply lists merged, removed, and retained.
 ## Verification
 
 - [ ] The merge set is the numbers in this invocation or in the one answer. This command chose none. An `API write failed` comment did not remove a named number.
-- [ ] Each named pull request had `gh pr view` first. `gh pr merge <n> --delete-branch` used no method flag unless the user named one. A merge error stopped the sequence, with no `--admin` added after the failure.
+- [ ] Each named pull request had `gh pr view` first. `gh pr merge` passed the repository default method, or the one method the user named. A failed default query stopped before the merge. A merge error stopped the sequence, with no `--admin` added after the failure.
 - [ ] `git fetch --prune` ran from the main checkout. Each merged base matches `origin/<baseRefName>`, or the reply says `--ff-only` refused or the main checkout is dirty.
 - [ ] Each clean matching path under `.worktrees/` is gone from `git worktree list`. A dirty path is still present, and the reply lists its porcelain lines. No remove used `--force`.
 - [ ] A leftover local `agent/` branch was removed with `git branch -d`, or the reply says `-d` refused. No `git branch -D` and no force-push.

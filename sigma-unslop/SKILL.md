@@ -37,7 +37,7 @@ State each finding in plain sentences: what is wrong, which script, and what cha
 
 ## When to Use
 
-- **Use when:** the user types `/sigma-unslop`, `/sigma-feedback` hands a note about drifted scripts, or scripts or the requirements doc have gone stale. Stale means a duplicated API call, a wrapper that hides the endpoint, or requirements text an agent cannot follow.
+- **Use when:** the user types `/sigma-unslop`, `/sigma-feedback` hands a note about drifted scripts, or scripts or the requirements doc have gone stale. Stale means a duplicated API call, a wrapper that hides the endpoint, requirements text an agent cannot follow, or a script `/sigma-implement` chose that does not perform the acceptance. Record the better path. Do not edit the script.
 - **Do NOT use when:** the change adds or removes product scope and no review was asked. Say `Run /sigma-plan.` The requirements document is what later tickets match.
 - **Do NOT use when:** the user pasted a product note or a bug and did not ask for this review. Name `/sigma-feedback`. That skill picks the door.
 - **Overwrite:** the word overwrite does not file and does not build. Repeat the one next command and the why. Say the build happens in `/sigma-implement` after you say overwrite there.
