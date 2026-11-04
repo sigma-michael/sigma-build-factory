@@ -69,6 +69,8 @@ If all three are empty, recommend `/sigma-plan` and stop. Do not ask a gap quest
 
 Read Open questions. Leave them in the file.
 
+Read the rest of the file, including acceptance lines. A clash is two lines that cannot both be true for the same behavior. Record each pair. A decision with no acceptance id is not a clash. Record it as not copied.
+
 Done when at least one solution section is filled and has been read, or the run has stopped.
 
 ### Step 3 - Load existing SPEC issues
@@ -101,6 +103,10 @@ Show only:
 - Script globs
 - Out of scope
 
+When a clash remains, name both lines above the digest, with the section or acceptance id of each. Those lines are absent from this spec. The other acceptance lines stay in the digest. Name `/sigma-plan` for that pair. Do not ask which line stands. Do not recommend skipping the publish because of the pair.
+
+A decision with no acceptance id is listed as not copied. It is not a reason to skip the publish question.
+
 Ask "Publish this spec?" An explicit yes after this digest publishes. A yes to a gap question does not publish. Silence does not publish.
 
 On a correction, show the digest again and ask the same question.
@@ -131,7 +137,7 @@ Done when that recommendation is the last action and no ticket or epic was filed
 | Ask at most 3 gap questions, one at a time, each with one recommended answer. | A fourth question reopens `/sigma-plan`. |
 | Leave open questions in `REQUIREMENTS.md`. Do not edit that file. The spec body has no open questions. | An open question copied into the spec becomes an acceptance line with no answer. |
 | Keep existing acceptance ids on an update. Globs stay under `scripts/`. | Renumbering `A1`, or a glob outside `scripts/`, breaks the tickets that copy the spec. |
-| Show the digest. Publish only after an explicit yes to that digest. | A yes to a gap question, or silence, files a spec the user has not accepted. |
+| Show the digest. Publish only after an explicit yes to that digest. A remaining clash is named and left out of the spec. The lines that do not clash stay in the digest. | A yes to a gap question, or silence, files a spec the user has not accepted. Parking the whole publish hides the lines that already agree. |
 | File only through `/sigma-create-ticket`. Do not run `gh`. | A second create path skips the label and title rules. |
 | Stop and recommend `/sigma-to-tickets <spec-number>`. Do not invoke it. | Invoking the split starts the next command inside this chat. |
 
@@ -142,6 +148,6 @@ Done when that recommendation is the last action and no ticket or epic was filed
 - [ ] Existing SPEC issues were loaded through `/sigma-create-ticket`, and the run is marked new or update `#N`.
 - [ ] At most 3 gap questions were asked, one at a time, each with one recommended answer.
 - [ ] `REQUIREMENTS.md` was not edited. The spec body has no open questions.
-- [ ] The digest was shown, and an explicit yes to that digest came before filing.
+- [ ] The digest was shown, and an explicit yes to that digest came before filing. A clash was named and left out. Lines that do not clash were still offered for publish.
 - [ ] Create or edit went through `/sigma-create-ticket`. This skill did not run `gh`.
 - [ ] The last action recommends `/sigma-to-tickets <spec-number>` and does not invoke it.

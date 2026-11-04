@@ -108,8 +108,8 @@ The first column is the command you type. A row with `none` describes that comma
 | `/sigma-init-docs` | none | Copies the requirements file, `scripts/`, and the agent notes. Does not fill in the product. |
 | `/sigma-feedback` | none | Starts from `/sigma-feedback`, `sigma feedback`, or `do sigma feedback`, including a browser annotation. Reads the requirements and the specs, then follows one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` in this chat. |
 | `/sigma-feedback` | `/sigma-create-ticket` | Returns the spec list or one issue. Does not file. |
-| `/sigma-plan` | none | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. |
-| `/sigma-to-spec` | none | Writes one spec digest and waits for yes. |
+| `/sigma-plan` | none | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. An edit pass shows each clash, suggests a change that still works, and asks what you want to do. |
+| `/sigma-to-spec` | none | Writes one spec digest and waits for yes. A remaining clash is named and left out. The other lines are still offered for publish. |
 | `/sigma-to-spec` | `/sigma-create-ticket` | Files or updates that spec. |
 | `/sigma-to-tickets` | none | Copies the spec lines onto tickets or epics and waits for one confirm. |
 | `/sigma-to-tickets` | `/sigma-create-ticket` | Files those issues. |
