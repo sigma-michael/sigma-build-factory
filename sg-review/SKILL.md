@@ -18,7 +18,7 @@ allowed-tools: [Bash, Read, Glob, Grep]
 
 `/sg-review` returns whether TICKET `<issue-number>` is ready. `/sigma-implement` starts this skill in a fresh worker.
 
-Ready means every acceptance id is met and the diff has no breakage. Not ready lists the unmet ids and their cites. The return has no next command.
+Ready means every acceptance id is met and the diff has no breakage. The report says what holds, what does not, and whether the ticket intent is met. A script outside the spec globs is a note. The return has no next command. The sentences are present tense. They name the workbook field and the value.
 
 ## When to Use
 
@@ -115,21 +115,26 @@ Return the report to `/sigma-implement`. Stop. Do not name a next command.
 
 Verdict: ready | not ready
 
-Acceptance
-- <id> - met | missing | contradicted - <script file | workbook fields | read-back lines and passing output | command and passing output>
+What holds
+- <id>. <what the workbook shows, in one sentence>. Read-back passed.
+- or: none
 
-Breakage
+What does not
 - none
-- or: <wrong API call | write-scope> - <path> - <one sentence>
+- or: <id>. <what the workbook shows, and what the ticket asks for>.
+- or: <wrong API call | write-scope>. <path>. <one sentence>.
+
+Ticket intent
+- met | not met. <one sentence naming the behavior the ticket asks a person to see>.
 
 Note
 - none
-- or: script outside the spec globs - <path> - workbook shows <id>
+- or: <path> sits outside <spec globs>. The workbook still shows <id>.
 ```
 
-Ready: every id is met, and breakage says none. A note does not change the verdict.
+Ticket intent is met when every acceptance id is met. A note does not change that line. Verdict ready matches ticket intent met and an empty "What does not" list.
 
-Not ready: the unmet ids and their cites are in the report.
+Write each sentence so a person can read it. Name the drawer, the header, or the row, and the value. Leave out "silence", "does not build", and "does not start a fix".
 
 ## Hard rules
 
