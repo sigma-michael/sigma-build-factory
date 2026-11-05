@@ -44,15 +44,17 @@ flowchart TD
   init["/sigma-init-docs"] --> plan["/sigma-plan"]
   plan --> spec["/sigma-to-spec"]
   spec --> tickets["/sigma-to-tickets"]
-  tickets --> triage["/sigma-triage"]
-  triage --> impl["/sigma-implement"]
+  tickets --> clean["/sigma-unslop-tickets"]
+  clean --> pick["/sigma-pick-tickets"]
+  pick --> impl["/sigma-implement"]
   impl --> merge["/sigma-merge"]
   spec --> file["/sigma-create-ticket"]
   tickets --> file
-  triage --> file
+  clean --> file
+  pick --> file
 ```
 
-`/sigma-to-spec` and `/sigma-to-tickets` hand the body to `/sigma-create-ticket`. Nothing else files an issue. `/sigma-triage` then reads the open tickets and names the first one to build. A normal build uses a ticket whose acceptance line was copied from a spec. Say overwrite and `/sigma-implement` still builds. Silence does not build.
+`/sigma-to-spec` and `/sigma-to-tickets` hand the body to `/sigma-create-ticket`. Nothing else files an issue. When a spec or a ticket still has an old sentence, `/sigma-plan` shows one assumption. A yes updates those ids in the same chat. `/sigma-unslop-tickets` then cleans the open tickets. `/sigma-pick-tickets` names the first one to build. A normal build uses a ticket whose acceptance line was copied from a spec. Say overwrite and `/sigma-implement` still builds. Silence does not build.
 
 ### Where a note goes
 
@@ -64,18 +66,20 @@ flowchart TD
   feedback -->|Drifted scripts| unslop["/sigma-unslop"]
   plan --> spec
   spec --> tickets
-  tickets --> triage["/sigma-triage"]
-  triage --> impl["/sigma-implement"]
+  tickets --> clean["/sigma-unslop-tickets"]
+  clean --> pick["/sigma-pick-tickets"]
+  pick --> impl["/sigma-implement"]
   spec --> file["/sigma-create-ticket"]
   tickets --> file
-  triage --> file
+  clean --> file
+  pick --> file
 ```
 
 A pasted note starts at `/sigma-feedback`. That command reads the requirements and the specs, then follows one skill in the same chat.
 
 - New behavior, including a role the requirements do not mention, follows `/sigma-plan`. Plan asks the questions.
 - A clear bug whose spec has no line follows `/sigma-to-spec`.
-- A clear bug whose spec line already states that behavior follows `/sigma-to-tickets` with that spec number. The ticket copies the line. `/sigma-triage` then reads the open tickets and names the first one to build.
+- A clear bug whose spec line already states that behavior follows `/sigma-to-tickets` with that spec number. The ticket copies the line. `/sigma-unslop-tickets` then cleans the open set. `/sigma-pick-tickets` names the first one to build. A topic argument keeps only the tickets that match those words.
 - Drifted scripts follow `/sigma-unslop`. It writes `docs/reviews/<date>-<topic>.md` and stops. It does not file an issue.
 - If you still want the build, say overwrite and `/sigma-implement` continues. Silence does not build.
 
@@ -112,13 +116,18 @@ The first column is the command you type. A row with `none` describes that comma
 | `/sigma-init-docs` | none | Copies the requirements file, `scripts/`, and the agent notes. Does not fill in the product. |
 | `/sigma-feedback` | none | Starts from `/sigma-feedback`, `sigma feedback`, or `do sigma feedback`, including a browser annotation. Reads the requirements and the specs, then follows one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` in this chat. |
 | `/sigma-feedback` | `/sigma-create-ticket` | Returns the spec list or one issue. Does not file. |
-| `/sigma-plan` | none | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. An edit pass shows each clash, suggests a change that still works, and asks what you want to do. |
+| `/sigma-plan` | none | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. An edit pass shows each clash, suggests a change that still works, and asks what you want to do. A stale spec or ticket line is one assumption. |
+| `/sigma-plan` | `/sigma-create-ticket` | Returns the spec list and the ticket list. It does not file. |
+| `/sigma-plan` | `/sigma-to-spec` | After yes to the assumption, updates the named acceptance ids. It does not ask a second digest. |
+| `/sigma-plan` | `/sigma-to-tickets` | After that same yes, updates tickets that already contain those ids. It does not ask grain and it does not create a ticket. |
 | `/sigma-to-spec` | none | Writes one spec digest and waits for yes. A remaining clash is named and left out. The other lines are still offered for publish. |
 | `/sigma-to-spec` | `/sigma-create-ticket` | Files or updates that spec. |
 | `/sigma-to-tickets` | none | Copies the spec lines onto tickets or epics and waits for one confirm. |
 | `/sigma-to-tickets` | `/sigma-create-ticket` | Files those issues. |
-| `/sigma-triage` | none | Reads the open tickets, asks once about stale, duplicate, and non-atomic items, then names the first ticket to build. |
-| `/sigma-triage` | `/sigma-create-ticket` | After yes, closes or edits a confirmed ticket. It does not create a spec or a ticket. |
+| `/sigma-unslop-tickets` | none | Reads the open tickets, asks once about stale, duplicate, split, and missing blockers, then names `/sigma-pick-tickets`. |
+| `/sigma-unslop-tickets` | `/sigma-create-ticket` | After yes, closes, edits, or links a confirmed ticket. It does not create a spec or a ticket. |
+| `/sigma-pick-tickets` | none | A topic keeps matching tickets. An empty argument lists the smallest closeable tickets first, then names one `/sigma-implement` number. |
+| `/sigma-pick-tickets` | `/sigma-create-ticket` | Returns the open ticket list. It does not close, edit, or create. |
 | `/sigma-create-ticket` | none | You can run it. It files a SPEC, EPIC, or TICKET whose body is already confirmed. |
 | `/sigma-unslop` | none | Writes one review and stops. It does not file and it does not build. A pasted product note starts at `/sigma-feedback`. |
 | `/sigma-implement` | none | Matches one ticket, opens the worktree, and prints the decision. When the ticket names no script, it chooses the closest file or one new path. It does not edit scripts and it does not judge the diff. |

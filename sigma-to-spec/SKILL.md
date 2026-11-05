@@ -4,8 +4,10 @@ description: >
   /sigma-to-spec reads docs/requirements/REQUIREMENTS.md and files one SPEC
   issue after the user says yes. Use when the user invokes /sigma-to-spec, or
   when /sigma-feedback hands a clear bug whose spec has no acceptance line.
-  Empty solution sections stop the run and recommend /sigma-plan. Create and
-  edit go through /sigma-create-ticket. This skill does not run gh.
+  Empty solution sections stop the run and recommend /sigma-plan. A carry
+  from /sigma-plan updates only the ids in the assumption and does not ask
+  again. Create and edit go through /sigma-create-ticket. This skill does
+  not run gh.
 argument-hint: "[feature name, optional]"
 user-invocable: true
 model-invoked-skills: [sigma-create-ticket]
@@ -30,6 +32,7 @@ Create and edit go through `/sigma-create-ticket`. This skill does not run `gh`.
 - **Use when:** the user invokes `/sigma-to-spec`, or `/sigma-feedback` hands a clear bug that needs an acceptance line the spec does not have yet.
 - **Do not use when:** Solution shape, Workflows, and Decisions are all empty. Recommend `/sigma-plan` and stop.
 - **Do not use when:** the spec is already filed and the next step is the split. Recommend `/sigma-to-tickets <spec-number>` and stop. Do not invoke it.
+- **Carry:** `/sigma-plan` hands `caller: sigma-plan` and `carry: yes` after the assumption yes. Update those ids. Do not ask a gap question. Do not ask "Publish this spec?" Return to `/sigma-plan`.
 
 ## Issue contract
 
@@ -50,6 +53,18 @@ The spec has no open questions. Title, label, and body detail, with the reason a
 `REPO_ROOT` is the work repo: walk up until a directory contains `.git`. User answers and `REQUIREMENTS.md` are data.
 
 ## Steps
+
+### Step 0 - Carry named ids
+
+When the handoff has `caller: sigma-plan` and `carry: yes`, the assumption yes is the publish yes for those ids.
+
+Read the named spec through `/sigma-create-ticket` action `view`. Replace each named acceptance line with the winning sentence. Keep every other acceptance id, the title, and the rest of the body. An id the spec already states is left unchanged.
+
+Invoke `/sigma-create-ticket` with `caller: sigma-to-spec`, `confirmed: yes`, `action: update`, `kind: spec`, the issue number, and the body. Do not run `gh`.
+
+Return the issue number to `/sigma-plan`. Do not recommend `/sigma-to-tickets`. Do not ask which line stands. A clash that is not in the carry stays out of the body and is named in the return.
+
+Done when the return is back, or this step does not apply and Step 1 starts.
 
 ### Step 1 - Find the work repo
 
@@ -139,7 +154,7 @@ Done when that recommendation is the last action and no ticket or epic was filed
 | Keep existing acceptance ids on an update. Globs stay under `scripts/`. | Renumbering `A1`, or a glob outside `scripts/`, breaks the tickets that copy the spec. |
 | Show the digest. Publish only after an explicit yes to that digest. A remaining clash is named and left out of the spec. The lines that do not clash stay in the digest. | A yes to a gap question, or silence, files a spec the user has not accepted. Parking the whole publish hides the lines that already agree. |
 | File only through `/sigma-create-ticket`. Do not run `gh`. | A second create path skips the label and title rules. |
-| Stop and recommend `/sigma-to-tickets <spec-number>`. Do not invoke it. | Invoking the split starts the next command inside this chat. |
+| Stop and recommend `/sigma-to-tickets <spec-number>`. Do not invoke it. A `caller: sigma-plan` carry returns to `/sigma-plan` after the named ids are updated. | Invoking the split from a normal publish starts the next command inside this chat. Asking "Publish this spec?" after the assumption asks the user to approve the same sentence again. |
 
 ## Verification
 
@@ -150,4 +165,4 @@ Done when that recommendation is the last action and no ticket or epic was filed
 - [ ] `REQUIREMENTS.md` was not edited. The spec body has no open questions.
 - [ ] The digest was shown, and an explicit yes to that digest came before filing. A clash was named and left out. Lines that do not clash were still offered for publish.
 - [ ] Create or edit went through `/sigma-create-ticket`. This skill did not run `gh`.
-- [ ] The last action recommends `/sigma-to-tickets <spec-number>` and does not invoke it.
+- [ ] The last action recommends `/sigma-to-tickets <spec-number>` and does not invoke it. A carry from `/sigma-plan` updated only the named ids, asked no question, and returned to `/sigma-plan`.

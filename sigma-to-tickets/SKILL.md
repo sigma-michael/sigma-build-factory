@@ -6,6 +6,9 @@ description: >
   spec already states the behavior. Use when the user invokes it, or when
   /sigma-feedback hands that spec number. Filing goes through
   /sigma-create-ticket. This skill does not run gh. /sigma-implement flags an epic.
+  A carry from /sigma-plan replaces the named acceptance lines on tickets
+  that already contain those ids. It does not ask grain and it does not
+  create a ticket.
 argument-hint: "<spec-number>"
 user-invocable: true
 model-invoked-skills: [sigma-create-ticket]
@@ -24,7 +27,7 @@ allowed-tools: [Read, AskUserQuestion]
 
 A clear bug belongs here only when an acceptance line on that spec already states the behavior. Copy that line. If the spec has no such line, stop and recommend `/sigma-to-spec`. Do not invent the line here.
 
-`/sigma-implement` flags an epic and names this command. A filed ticket builds with no flag. After filing, recommend `/sigma-triage`. That command names the first ticket to build.
+`/sigma-implement` flags an epic and names this command. A filed ticket builds with no flag. After filing, recommend `/sigma-unslop-tickets`. That command cleans the open set, then names `/sigma-pick-tickets`.
 
 Filing goes through `/sigma-create-ticket`. This skill does not run `gh`. `/sigma-create-ticket` is the vehicle. It does not choose the split.
 
@@ -32,7 +35,8 @@ Filing goes through `/sigma-create-ticket`. This skill does not run `gh`. `/sigm
 
 - **Use when:** the user invokes `/sigma-to-tickets <spec-number>`, or `/sigma-feedback` hands that spec number, including a clear bug whose acceptance line is already on that spec.
 - **Do not use when:** there is no SPEC, or the bug needs a new acceptance line. Recommend `/sigma-to-spec` and stop. A note that changes what the product should do is `/sigma-plan`.
-- **Do not use when:** tickets are already filed and the next step is to order them. Recommend `/sigma-triage` and stop. Do not invoke it. Do not recommend `/sigma-implement` for an epic.
+- **Do not use when:** tickets are already filed and the next step is to clean them. Recommend `/sigma-unslop-tickets` and stop. Do not invoke it. Do not recommend `/sigma-implement` for an epic.
+- **Carry:** `/sigma-plan` hands `caller: sigma-plan` and `carry: yes` after the assumption yes. Replace those acceptance lines on tickets that already contain the ids. Do not ask grain. Do not create a ticket. Return to `/sigma-plan`.
 
 ## Issue contract
 
@@ -46,6 +50,18 @@ The Mode label matches the Mode line: `hitl` is `agent:hitl`, `afk` is `agent:af
 `$ARGUMENTS` is the SPEC issue number. If it is missing, ask once for the number and wait. A review file path is not a ticket source. Ask once for the spec number and wait. This command accepts a spec number only.
 
 ## Steps
+
+### Step 0 - Carry named ids
+
+When the handoff has `caller: sigma-plan` and `carry: yes`, the assumption yes is the filing yes for those lines.
+
+Load the open tickets through `/sigma-create-ticket` action `list-tickets` with `caller: sigma-to-tickets`. Keep each open ticket whose acceptance section contains a named id. Replace that line with the winning sentence. Leave the title, the other acceptance lines, the branch, and the mode unchanged.
+
+Invoke `/sigma-create-ticket` with `caller: sigma-to-tickets`, `confirmed: yes`, `action: update`, and each changed body. Do not run `gh`. Do not create an issue.
+
+Return the updated ticket numbers to `/sigma-plan`. When no open ticket contains the id, return that fact. Do not recommend `/sigma-unslop-tickets`.
+
+Done when the return is back, or this step does not apply and Step 1 starts.
 
 ### Step 1 - Load the SPEC
 
@@ -97,7 +113,7 @@ Done when each slice has an issue URL, or the return says why that slice was not
 
 Report every title and URL. Say that `/sigma-implement` flags an epic and names `/sigma-to-tickets`.
 
-When at least one ticket or epic was filed, recommend `/sigma-triage`. Do not invoke it. Do not recommend `/sigma-implement` from this skill. `/sigma-triage` names the first ticket to build, and it names `/sigma-to-tickets` again for an epic.
+When at least one ticket or epic was filed, recommend `/sigma-unslop-tickets`. Do not invoke it. Do not recommend `/sigma-implement` from this skill. `/sigma-unslop-tickets` names `/sigma-pick-tickets`, and it names `/sigma-to-tickets` again for an epic.
 
 ## Hard rules
 
@@ -106,15 +122,15 @@ When at least one ticket or epic was filed, recommend `/sigma-triage`. Do not in
 | Load the SPEC through `/sigma-create-ticket` and continue only for label `spec`. A clear bug with no matching acceptance line stops at `/sigma-to-spec`. | A ticket with no spec line has nothing for `/sigma-implement` to match. |
 | A checkable acceptance line becomes a TICKET. A bundle becomes an EPIC, and that epic is the parent. | A bundle filed as `TICKET:` is work `/sigma-implement` flags. `/sigma-implement` flags `type:epic` and names this command. |
 | Copy acceptance lines by id. Do not rewrite them. | A rewritten line lets the ticket pass a check the spec does not state. |
-| Ask one confirm of grain and blockers. Do not add a second question. | A second quiz asks the user to approve the same split again. |
+| Ask one confirm of grain and blockers. Do not add a second question. A `caller: sigma-plan` carry skips that question and edits only the named lines. | A second quiz asks the user to approve the same split again. A carry that re-splits the spec files tickets the assumption did not name. |
 | File only after that yes, and only through `/sigma-create-ticket`. Do not run `gh`. | Filing on silence, or `gh issue create` here, skips the gateway. |
-| Stop and recommend `/sigma-triage`. Do not invoke it. Do not recommend `/sigma-implement` from this skill. | Naming a build here skips the open-set check, and naming it for an epic sends the builder at an issue it flags. |
+| Stop and recommend `/sigma-unslop-tickets`. Do not invoke it. Do not recommend `/sigma-implement` from this skill. | Naming a build here skips the open-set cleanup, and naming it for an epic sends the builder at an issue it flags. |
 
 ## Verification
 
 - [ ] The SPEC was loaded through `/sigma-create-ticket`. Label `spec` and title `SPEC: <name>` were confirmed. A bug with no matching line stopped at `/sigma-to-spec`.
 - [ ] Every acceptance id is on one ticket or inside one epic, and on no second slice.
 - [ ] Each ticket acceptance line matches the spec line for that id.
-- [ ] One confirm of grain and blockers got an explicit yes before filing. No second question was asked.
+- [ ] One confirm of grain and blockers got an explicit yes before filing. No second question was asked. A carry from `/sigma-plan` edited only the named lines on existing tickets and created none.
 - [ ] Epics are parents. Filing went through `/sigma-create-ticket`. This skill did not run `gh`.
-- [ ] The reply says `/sigma-implement` flags an epic, recommends `/sigma-triage`, and does not invoke it.
+- [ ] The reply says `/sigma-implement` flags an epic, recommends `/sigma-unslop-tickets`, and does not invoke it.

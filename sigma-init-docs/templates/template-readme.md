@@ -4,9 +4,9 @@ Read this file before you add a file. The layout is closed.
 
 ## Lane
 
-`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-triage` → `/sigma-implement` (one ticket, branch `agent/{N}-{slug}`; one worker follows `/sg-tdd` then `/sg-pr`, a second worker follows `/sg-review`) → `/sigma-merge`
+`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-unslop-tickets` → `/sigma-pick-tickets` → `/sigma-implement` (one ticket, branch `agent/{N}-{slug}`; one worker follows `/sg-tdd` then `/sg-pr`, a second worker follows `/sg-review`) → `/sigma-merge`
 
-Each command stops and names the next command. None of them invoke the next, except `/sigma-feedback`. A pasted note starts there. It follows one skill in the same chat.
+Each command stops and names the next command. None of them invoke the next, except `/sigma-feedback` and a `/sigma-plan` assumption. A pasted note starts at `/sigma-feedback`. It follows one skill in the same chat. A yes to the assumption carries the named ids onto the spec and the tickets that already cite them.
 
 `/sigma-unslop` is off the lane. It writes `docs/reviews/<date>-<topic>.md` and stops. A pasted note starts at `/sigma-feedback`. New behavior follows `/sigma-plan`. A clear bug with no spec line follows `/sigma-to-spec`. A clear bug whose spec line already states the behavior follows `/sigma-to-tickets`. Drifted scripts follow `/sigma-unslop`.
 
