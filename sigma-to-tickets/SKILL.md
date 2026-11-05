@@ -71,6 +71,8 @@ Continue only when the label list includes `spec` and the title is `SPEC: <name>
 
 Record the acceptance ids, the script globs, and the out of scope lines.
 
+Read `docs/requirements/REQUIREMENTS.md`. A numbered line has the id as its first token. Drop an id that is not a numbered line. Name `/sigma-plan` and that id. Do not put it on a ticket.
+
 Done when those three are recorded, or the run has stopped.
 
 For a clear bug, keep only the acceptance ids that already state the broken behavior. If none do, stop and recommend `/sigma-to-spec`. Do not add a line.

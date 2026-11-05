@@ -74,13 +74,15 @@ Read `docs/requirements/REQUIREMENTS.md` in the work repo when the file exists. 
 
 Copy the acceptance ids from the issue body in the order written. Do not add ids that appear only on the SPEC.
 
-A matched ticket builds with no flag. Done when Step 2 accepted a `type:ticket`, the id list is non-empty, the cited parent has label `spec`, and every id appears in `docs/requirements/REQUIREMENTS.md` and in that parent body.
+A numbered line in `docs/requirements/REQUIREMENTS.md` has the id as its first token, as in `- A118. <sentence>`. An id mentioned only in Decisions prose is absent.
+
+A matched ticket builds with no flag. Done when Step 2 accepted a `type:ticket`, the id list is non-empty, the cited parent has label `spec`, and every id is a numbered line in that file and appears in that parent body.
 
 Every other result sends one flag, then waits. Use the first case that matches. The first sentence is the action. The next sentence says why. End every flag with this line:
 
 Say overwrite and I will build this anyway.
 
-- Behavior missing from the requirements. The file is missing, the id list is empty, or an id is absent from `docs/requirements/REQUIREMENTS.md`.
+- Behavior missing from the requirements. The file is missing, the id list is empty, or an id is not a numbered line in `docs/requirements/REQUIREMENTS.md`.
 
   Add this to the requirements with /sigma-plan. Implement matches the ticket to that document, so a missing line has nothing to check.
 
@@ -169,7 +171,7 @@ The named lines use the branch and worktree from Step 4. Do not open a second br
 | Rule | Why / violation looks like |
 |---|---|
 | A `spec` or `type:epic` label sends the `/sigma-to-tickets` flag, then waits. Overwrite on an epic uses the Step 5 path and the worker builds only that path. | A spec or epic has no single script list. The flag names the split. The chosen path is the write list. |
-| A matched `type:ticket` builds with no flag when every acceptance id is in `docs/requirements/REQUIREMENTS.md` and the parent SPEC. Any other result sends one flag and waits. Overwrite builds from the issue body. The commit body contains overwrite. Both sources stay unedited. A reply that does not say overwrite leaves the build waiting. Do not print that wait rule. | A hard stop hides the command that adds the missing line. An edit to either source removes the evidence. |
+| A matched `type:ticket` builds with no flag when every acceptance id is a numbered line in `docs/requirements/REQUIREMENTS.md` and appears in the parent SPEC. Any other result sends one flag and waits. Overwrite builds from the issue body. The commit body contains overwrite. Both sources stay unedited. A reply that does not say overwrite leaves the build waiting. Do not print that wait rule. | A hard stop hides the command that adds the missing line. An edit to either source removes the evidence. |
 | Use branch `agent/{N}-{slug}` from the ticket body and worktree `.worktrees/agent-{N}-{slug}`. Create the worktree only when that path is gitignored. The worker commits only in the worktree. | An invented slug disagrees with the ticket. A commit on the user's current branch mixes this ticket into other work. An unignored worktree lists its files in the user's checkout. |
 | Lock the permitted `scripts/**` paths and hand that list to the worker. A ticket uses the paths it names. When it names none, choose the closest script, or one new path under `scripts/`. Do not ask. This chat does not edit scripts. | A question here stops on a choice the user cannot see. A doc or any file outside that list is out of bounds. |
 | One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. This chat does not judge the diff. Do not merge. | A verdict in this chat comes from a context that can see the build. A merge here skips `/sigma-merge`. |
@@ -178,7 +180,7 @@ The named lines use the branch and worktree from Step 4. Do not open a second br
 
 ## Verification
 
-- [ ] A matched `type:ticket` built with no flag. Every acceptance id appears in `docs/requirements/REQUIREMENTS.md` and the parent SPEC. Both files are unchanged.
+- [ ] A matched `type:ticket` built with no flag. Every acceptance id is a numbered line in `docs/requirements/REQUIREMENTS.md` and appears in the parent SPEC. Both files are unchanged.
 - [ ] Any other match sent one flag and waited. Silence did not build. After the word overwrite, the worker built from the issue body, the commit body contains overwrite, and both sources are unchanged. An empty script list was chosen, not asked. The decision printed `Script: <path> chosen`.
 - [ ] `git -C .worktrees/agent-{N}-{slug} branch --show-current` prints `agent/{N}-{slug}`. The user's checkout branch is the one recorded in Step 1. This chat edited no script.
 - [ ] One worker returned the head SHA, one report line per id, and one open pull request URL.
