@@ -100,7 +100,7 @@ flowchart TD
   lines --> tdd
 ```
 
-You type `/sigma-implement`. It matches the ticket and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. The implement chat does not edit scripts and does not judge the diff.
+You type `/sigma-implement`. It matches the ticket and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That review reads the workbook fields the acceptance names. A passing read-back stays met. A script outside the spec globs is a note. The implement chat does not edit scripts and does not judge the diff.
 
 - Ready prints implementation complete and names `/sigma-merge` with the pull request number from `/sg-pr`. That number is not the issue number.
 - Not ready lists each unmet line. You name the lines to send back. Silence does not start a fix. The same worker pattern runs again on the same branch, the pull request updates, and a new fresh review runs.
@@ -133,7 +133,7 @@ The first column is the command you type. A row with `none` describes that comma
 | `/sigma-implement` | none | Matches one ticket, opens the worktree, and prints the decision. When the ticket names no script, it chooses the closest file or one new path. It does not edit scripts and it does not judge the diff. |
 | `/sigma-implement` | `/sg-tdd` | Runs red, then green, commits, and pushes. A rows-route 404 writes in the browser and the run continues. |
 | `/sigma-implement` | `/sg-pr` | Opens one pull request on the pushed branch. Same worker as `/sg-tdd`. It does not wait for review. |
-| `/sigma-implement` | `/sg-review` | A second worker reads the ticket, the spec, and the diff. It returns ready or not ready. An API-failed comment is not an unmet line. |
+| `/sigma-implement` | `/sg-review` | A second worker reads the ticket, the spec, the diff, and the workbook fields the acceptance names. A passing read-back stays met. A script outside the spec globs is a note. An API-failed comment is not an unmet line. |
 | `/sigma-implement` | `/sigma-create-ticket` | Posts one comment when the write used the browser. The comment does not replace the body. Review and merge still run. |
 | `/sigma-merge` | none | Merges the pull request numbers you name, using the repository default method. It deletes the branch and removes a clean worktree. An API-failed comment does not drop a named number. |
 
