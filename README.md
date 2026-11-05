@@ -54,7 +54,7 @@ flowchart TD
   pick --> file
 ```
 
-`/sigma-to-spec` and `/sigma-to-tickets` hand the body to `/sigma-create-ticket`. Nothing else files an issue. When a spec or a ticket still has an old sentence, `/sigma-plan` shows one assumption. A yes updates those ids in the same chat. `/sigma-unslop-tickets` then cleans the open tickets. `/sigma-pick-tickets` names the first one to build. A normal build uses a ticket whose acceptance line was copied from a spec. Say overwrite and `/sigma-implement` still builds. Silence does not build.
+`/sigma-to-spec` and `/sigma-to-tickets` hand the body to `/sigma-create-ticket`. Nothing else files an issue. When a spec or a ticket still has an old sentence, `/sigma-plan` shows one assumption. A yes updates those ids in the same chat. `/sigma-unslop-tickets` then cleans the open tickets. `/sigma-pick-tickets` names the first one to build. A normal build uses a ticket whose acceptance line was copied from a spec. Say overwrite and `/sigma-implement` continues the build.
 
 ### Where a note goes
 
@@ -81,7 +81,7 @@ A pasted note starts at `/sigma-feedback`. That command reads the requirements a
 - A clear bug whose spec has no line follows `/sigma-to-spec`.
 - A clear bug whose spec line already states that behavior follows `/sigma-to-tickets` with that spec number. The ticket copies the line. `/sigma-unslop-tickets` then cleans the open set. `/sigma-pick-tickets` names the first one to build. A topic argument keeps only the tickets that match those words.
 - Drifted scripts follow `/sigma-unslop`. It writes `docs/reviews/<date>-<topic>.md` and stops. It does not file an issue.
-- If you still want the build, say overwrite and `/sigma-implement` continues. Silence does not build.
+- If you still want the build, say overwrite and `/sigma-implement` continues.
 
 `/sigma-implement` flags an epic and names `/sigma-to-tickets`. Say overwrite and it chooses the script. When the ticket names no `scripts/` path, it picks the closest file, or one new file, and prints that path. A wrong file is a later `/sigma-unslop` review. That review does not edit the script.
 
@@ -103,7 +103,7 @@ flowchart TD
 You type `/sigma-implement`. It matches the ticket and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That review reads the workbook fields the acceptance names. A passing read-back stays met. A script outside the spec globs is a note. The implement chat does not edit scripts and does not judge the diff.
 
 - Ready prints implementation complete and names `/sigma-merge` with the pull request number from `/sg-pr`. That number is not the issue number.
-- Not ready lists each unmet line. You name the lines to send back. Silence does not start a fix. The same worker pattern runs again on the same branch, the pull request updates, and a new fresh review runs.
+- The decision says what the workbook shows, what it does not, and whether the ticket intent is met. A met intent names `/sigma-merge` with the pull request number. A missing line asks you to name that line. A reply that names none leaves the branch as it is. The same worker pattern runs again on the same branch, the pull request updates, and a new fresh review runs.
 
 A browser write adds a comment through `/sigma-create-ticket`, and `/sigma-implement` prints the warning. The comment does not change acceptance lines. Review still runs. A ready verdict still names `/sigma-merge`, and that merge still merges the numbers you name.
 
