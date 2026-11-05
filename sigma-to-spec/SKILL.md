@@ -122,11 +122,13 @@ When a clash remains, name both lines above the digest, with the section or acce
 
 A decision with no acceptance id is listed as not copied. It is not a reason to skip the publish question.
 
+A numbered line in `REQUIREMENTS.md` has the id as its first token, as in `- A118. <sentence>`. The digest includes only those lines. An id that appears only in Decisions prose is absent from this spec. Name `/sigma-plan` and that id. Do not append a new id.
+
 Ask "Publish this spec?" An explicit yes after this digest publishes. A yes to a gap question does not publish. Silence does not publish.
 
 On a correction, show the digest again and ask the same question.
 
-An update keeps every existing acceptance id and appends the next id. Every glob starts with `scripts/`.
+An update keeps every existing acceptance id that is still a numbered line. It does not append an id the requirements file does not number. Every glob starts with `scripts/`.
 
 Done when the user says yes to the latest digest, or says no and the run stops with no issue write.
 
@@ -151,7 +153,7 @@ Done when that recommendation is the last action and no ticket or epic was filed
 | Stop and recommend `/sigma-plan` when Solution shape, Workflows, and Decisions are all empty. | A spec written from a scaffold line has no solution to file. |
 | Ask at most 3 gap questions, one at a time, each with one recommended answer. | A fourth question reopens `/sigma-plan`. |
 | Leave open questions in `REQUIREMENTS.md`. Do not edit that file. The spec body has no open questions. | An open question copied into the spec becomes an acceptance line with no answer. |
-| Keep existing acceptance ids on an update. Globs stay under `scripts/`. | Renumbering `A1`, or a glob outside `scripts/`, breaks the tickets that copy the spec. |
+| Keep existing acceptance ids that are still numbered lines. Do not append an id the requirements file does not number. Globs stay under `scripts/`. | Renumbering `A1`, or a glob outside `scripts/`, breaks the tickets that copy the spec. A new id born on the spec has nothing for `/sigma-implement` to match. |
 | Show the digest. Publish only after an explicit yes to that digest. A remaining clash is named and left out of the spec. The lines that do not clash stay in the digest. | A yes to a gap question, or silence, files a spec the user has not accepted. Parking the whole publish hides the lines that already agree. |
 | File only through `/sigma-create-ticket`. Do not run `gh`. | A second create path skips the label and title rules. |
 | Stop and recommend `/sigma-to-tickets <spec-number>`. Do not invoke it. A `caller: sigma-plan` carry returns to `/sigma-plan` after the named ids are updated. | Invoking the split from a normal publish starts the next command inside this chat. Asking "Publish this spec?" after the assumption asks the user to approve the same sentence again. |

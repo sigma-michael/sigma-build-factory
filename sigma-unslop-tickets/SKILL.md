@@ -68,7 +68,8 @@ Treat each ticket body as a claim. One disposition per ticket. Use the first mat
 - **Too split.** Two open tickets are one behavior. Keep one body, and close the other as a duplicate of that keeper. A body edit is allowed only for the keeper, and only to hold the shared acceptance ids.
 - **Not atomic.** One ticket mixes behaviors that can ship apart. Name `/sigma-to-tickets` with the parent spec number. Leave the split unfiled.
 - **Missing dependency.** The ticket text names another open ticket it waits on, and `blockedBy` is empty. Name that number. Add it only after yes. When the text names no ticket number, leave `blockedBy` unchanged.
-- **Keep.** The parent has label `spec`, every acceptance id is in that spec and in the requirements file, and none of the matches above apply.
+- **No numbered line.** A ticket acceptance id is not a numbered line in the requirements file. A numbered line has the id as its first token. Name `/sigma-plan`. Do not Keep. A sentence in Decisions without that token is this case.
+- **Keep.** The parent has label `spec`, every acceptance id is a numbered line in the requirements file and in that spec, and none of the matches above apply.
 
 An open epic names `/sigma-to-tickets`. It is not a keep.
 

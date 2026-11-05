@@ -58,7 +58,9 @@ Done when the requirements file, the spec list, and the ticket list are read. A 
 
 ### Step 3 - Choose the set
 
-When `$ARGUMENTS` has topic words, keep a ticket whose title, acceptance text, or parent spec title contains those words. A ticket that does not match is out. When no ticket matches, say so and stop. Do not print the small-ticket list.
+Read `docs/requirements/REQUIREMENTS.md`. A numbered line has the id as its first token. Drop a ticket when any acceptance id is not a numbered line. Name `/sigma-plan` and that id. Do not put the ticket in the set.
+
+When `$ARGUMENTS` has topic words, keep a ticket whose title, acceptance text, or parent spec title contains those words. A ticket that does not match is out. When no ticket matches, say so and stop. Do not print the small-ticket list. When the only matches lack a numbered line, say that and stop.
 
 When `$ARGUMENTS` is empty, drop three kinds of ticket. Drop a ticket whose lines cannot both be true. Drop a ticket that mixes behaviors that can ship apart. Drop a ticket whose `blockedBy` names an open issue. Keep a ticket with one acceptance id ahead of a ticket with more than one. An epic-sized ticket stays in the list after every one-id ticket.
 
