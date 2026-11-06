@@ -158,13 +158,15 @@ Next: /sigma-merge <pull-request-number>
 
 `<pull-request-number>` is the number `/sg-pr` returned. It is not the issue number. Do not merge. A note about a script path stays in the decision and still names `/sigma-merge`.
 
-When ticket intent is not met, print the pull request URL and ask which missing lines to fix. A browser-write id with a passing read-back is not a missing line. A reply that names no line leaves the branch as it is. The browser-write warning is already printed. It does not change the verdict and it does not withhold `/sigma-merge` when ticket intent is met.
+When ticket intent is not met on the first review, do not ask which lines to fix. The unmet ids are already named. Continue at Step 8 for those ids. A browser-write id whose screenshot shows the acceptance is not a missing line. The browser-write warning is already printed. It does not change the verdict and it does not withhold `/sigma-merge` when ticket intent is met.
 
-Done when the decision is printed, or the user has named the lines and Step 8 starts.
+When ticket intent is not met on the second review, stop. Print what the picture shows and what the ticket asks for. Do not print `<promise>IMPLEMENTATION COMPLETE</promise>`. Do not name `/sigma-merge`.
+
+Done when a met intent names `/sigma-merge`, the first miss has started Step 8, or the second miss has stopped.
 
 ### Step 8 - Fixes after review
 
-The named lines use the branch and worktree from Step 4. Do not open a second branch. Start a new worker. That worker follows `/sg-tdd`, then `/sg-pr`, for those acceptance ids only. The permitted paths stay the list from Step 5. `/sg-pr` returns the open pull request and does not open a second one. Return to Step 7. Do not judge the diff in this chat.
+The unmet ids from the first review use the branch and worktree from Step 4. Do not open a second branch. Start a new worker. That worker follows `/sg-tdd`, then `/sg-pr`, for those acceptance ids only. The permitted paths stay the list from Step 5. `/sg-pr` returns the open pull request and does not open a second one. Return to Step 7 once. Do not judge the diff in this chat. A factory run still calls `/sigma-implement` once per ticket. This loop stops a false done from advancing the next ticket.
 
 ## Hard rules
 
@@ -176,7 +178,7 @@ The named lines use the branch and worktree from Step 4. Do not open a second br
 | Lock the permitted `scripts/**` paths and hand that list to the worker. A ticket uses the paths it names. When it names none, choose the closest script, or one new path under `scripts/`. Do not ask. This chat does not edit scripts. | A question here stops on a choice the user cannot see. A doc or any file outside that list is out of bounds. |
 | One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. This chat does not judge the diff. Do not merge. | A verdict in this chat comes from a context that can see the build. A merge here skips `/sigma-merge`. |
 | A browser-write report line prints the warning above the decision, for ready and for not ready. Do not ask. Do not wait. Start `/sg-review`. A ready verdict still names `/sigma-merge`. | A hidden browser write leaves the user with a script that did not perform the write. A wait, or a withheld merge line, treats a recorded route failure as a stop. |
-| A named fix starts a new worker on the same branch and worktree. That worker follows `/sg-tdd`, then `/sg-pr`. Push updates the open pull request. A new fresh review runs. A reply that names no line leaves the branch as it is. The printed decision does not say "Silence does not start a fix". | A new branch splits one ticket across two histories. A reply with no line would edit scripts the user did not name. |
+| The first miss sends the named unmet ids back to the same branch once. The second miss stops and does not name `/sigma-merge`. | Asking which lines to send back stalls a factory run. A second miss that still names merge ships a page the picture already rejected. |
 
 ## Verification
 
@@ -187,4 +189,4 @@ The named lines use the branch and worktree from Step 4. Do not open a second br
 - [ ] A second worker returned the review. This chat did not judge the diff.
 - [ ] A browser-write report line printed the warning above the decision. A `comment failed` line said the ticket was not marked. The run did not wait.
 - [ ] A ready verdict printed `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and `/sigma-merge` with the pull request number `/sg-pr` returned. That number is not the issue number.
-- [ ] A decision with ticket intent not met printed what holds, what does not, and the pull request URL, then asked which missing lines to fix. A reply that named no line left the branch as it is. Named lines stayed on `agent/{N}-{slug}`, the same worker pattern ran again, and a new fresh review ran. The decision did not say "Silence does not start a fix".
+- [ ] The first miss sent the named unmet ids back on `agent/{N}-{slug}` once, updated the same pull request, and ran a new review. The second miss printed the picture and the ticket sentence, and did not name `/sigma-merge`.
