@@ -6,9 +6,22 @@ Read this file before you add a file. The layout is closed.
 
 `/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-unslop-tickets` → `/sigma-pick-tickets` → `/sigma-implement` (one ticket, branch `agent/{N}-{slug}`; one worker follows `/sg-tdd` then `/sg-pr`, a second worker follows `/sg-review`) → `/sigma-merge`
 
-Each command stops and names the next command. None of them invoke the next, except `/sigma-feedback` and a `/sigma-plan` assumption. A pasted note starts at `/sigma-feedback`. It follows one skill in the same chat. A yes to the assumption carries the named ids onto the spec and the tickets that already cite them.
+Each command stops and names the next command. Follow the next command in the same chat only for `/sigma-feedback` and for a `/sigma-plan` assumption the user accepted. A yes to that assumption carries the named ids onto the spec and the tickets that already cite them. A confirmed feature with no SPEC ends at `/sigma-to-spec`.
 
-`/sigma-unslop` is off the lane. It writes `docs/reviews/<date>-<topic>.md` and stops. A pasted note starts at `/sigma-feedback`. New behavior follows `/sigma-plan`. A clear bug with no spec line follows `/sigma-to-spec`. A clear bug whose spec line already states the behavior follows `/sigma-to-tickets`. Drifted scripts follow `/sigma-unslop`.
+A pasted note starts at `/sigma-feedback`. It follows one skill in the same chat.
+
+1. New behavior follows `/sigma-plan`.
+2. A clear bug with no spec line follows `/sigma-to-spec`.
+3. A clear bug whose spec line already states the behavior follows `/sigma-to-tickets`.
+4. Drifted scripts follow `/sigma-unslop`. It writes `docs/reviews/<date>-<topic>.md` and stops.
+
+## How a build finishes
+
+`/sigma-implement` matches one ticket. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`.
+
+1. The review screenshots the live page and compares it with the ticket. A script line that says pass is not evidence.
+2. A met intent names `/sigma-merge` with the pull request number from `/sg-pr`.
+3. The first miss sends those ids back on the same branch. The second miss stops and prints what the picture shows and what the ticket asks for.
 
 ## Code
 

@@ -2,7 +2,7 @@
 
 Agent skills for building Sigma work from a requirements document through to a merged pull request. Claude Code, Cursor, Codex, and any other agent that reads a `SKILL.md` folder can run them.
 
-You keep the product decisions in one requirements file. The agent writes API scripts only where a ticket says it may. Each command finishes, tells you the next command, and waits. One worker writes the scripts and opens the pull request. A second worker reviews.
+You keep the product decisions in one requirements file. The agent writes API scripts only where a ticket says it may. Each command finishes, tells you the next command, and waits. One worker writes the scripts and opens the pull request. A second worker screenshots the live page and compares it with the ticket.
 
 Commands you type use the `sigma-` prefix. `/sigma-implement` starts `/sg-tdd`, `/sg-pr`, and `/sg-review`. `/sigma-create-ticket` files issues for the commands that need one, and you can still run it yourself.
 
@@ -54,7 +54,7 @@ flowchart TD
   pick --> file
 ```
 
-`/sigma-to-spec` and `/sigma-to-tickets` hand the body to `/sigma-create-ticket`. Nothing else files an issue. When a spec or a ticket still has an old sentence, `/sigma-plan` shows one assumption. A yes updates those ids in the same chat. `/sigma-unslop-tickets` then cleans the open tickets. `/sigma-pick-tickets` names the first one to build. A normal build uses a ticket whose acceptance line was copied from a spec. Say overwrite and `/sigma-implement` continues the build.
+`/sigma-to-spec` and `/sigma-to-tickets` hand the body to `/sigma-create-ticket`. Nothing else files an issue. When a spec or a ticket still has an old sentence, `/sigma-plan` shows one assumption. A yes updates those ids in the same chat. A confirmed feature with no SPEC ends at `/sigma-to-spec`. `/sigma-unslop-tickets` cleans the open tickets. `/sigma-pick-tickets` names the first filed ticket to build. Say overwrite and `/sigma-implement` continues a flagged build.
 
 ### Where a note goes
 
@@ -77,11 +77,11 @@ flowchart TD
 
 A pasted note starts at `/sigma-feedback`. That command reads the requirements and the specs, then follows one skill in the same chat.
 
-- New behavior, including a role the requirements do not mention, follows `/sigma-plan`. Plan asks the questions.
-- A clear bug whose spec has no line follows `/sigma-to-spec`.
-- A clear bug whose spec line already states that behavior follows `/sigma-to-tickets` with that spec number. The ticket copies the line. `/sigma-unslop-tickets` then cleans the open set. `/sigma-pick-tickets` names the first one to build. A topic argument keeps only the tickets that match those words.
-- Drifted scripts follow `/sigma-unslop`. It writes `docs/reviews/<date>-<topic>.md` and stops. It does not file an issue.
-- If you still want the build, say overwrite and `/sigma-implement` continues.
+1. New behavior, including a role the requirements do not mention, follows `/sigma-plan`. Plan asks the questions.
+2. A clear bug whose spec has no line follows `/sigma-to-spec`.
+3. A clear bug whose spec line already states that behavior follows `/sigma-to-tickets` with that spec number. The ticket copies the line. `/sigma-unslop-tickets` then cleans the open set. `/sigma-pick-tickets` names the first filed ticket to build. A topic argument keeps only the tickets that match those words.
+4. Drifted scripts follow `/sigma-unslop`. It writes `docs/reviews/<date>-<topic>.md` and stops. It does not file an issue.
+5. Say overwrite and `/sigma-implement` continues a flagged build.
 
 `/sigma-implement` flags an epic and names `/sigma-to-tickets`. Say overwrite and it chooses the script. When the ticket names no `scripts/` path, it picks the closest file, or one new file, and prints that path. A wrong file is a later `/sigma-unslop` review. That review does not edit the script.
 
@@ -96,14 +96,14 @@ flowchart TD
   review --> verdict{Verdict}
   verdict -->|Ready| done["Implementation complete"]
   done --> merge["/sigma-merge"]
-  verdict -->|Not ready| lines["You name the lines"]
-  lines --> tdd
+  verdict -->|First miss| tdd
+  verdict -->|Second miss| stop["Stop"]
 ```
 
-You type `/sigma-implement`. It matches the ticket and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That review screenshots the live page, and a script pass line is not enough. A script outside the spec globs is a note. The implement chat does not edit scripts and does not judge the diff.
+You type `/sigma-implement`. It matches the ticket and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That review screenshots the live page. A script line that says pass is not evidence. A script outside the spec globs is a note. The implement chat does not edit scripts and does not judge the diff.
 
-- Ready prints implementation complete and names `/sigma-merge` with the pull request number from `/sg-pr`. That number is not the issue number.
-- The decision says what the picture shows, what it does not, and whether the ticket intent is met. A met intent names `/sigma-merge` with the pull request number. A first miss sends those lines back on the same branch. A second miss stops and does not name `/sigma-merge`.
+1. Ready prints implementation complete and names `/sigma-merge` with the pull request number from `/sg-pr`.
+2. The decision says what the picture shows, what it does not, and whether the ticket intent is met. A met intent names `/sigma-merge` with that pull request number. The first miss sends those lines back on the same branch. The second miss stops. It prints what the picture shows and what the ticket asks for.
 
 A browser write adds a comment through `/sigma-create-ticket`, and `/sigma-implement` prints the warning. The comment does not change acceptance lines. Review still runs. A ready verdict still names `/sigma-merge`, and that merge still merges the numbers you name.
 
@@ -116,7 +116,7 @@ The first column is the command you type. A row with `none` describes that comma
 | `/sigma-init-docs` | none | Copies the requirements file, `scripts/`, and the agent notes. Does not fill in the product. |
 | `/sigma-feedback` | none | Starts from `/sigma-feedback`, `sigma feedback`, or `do sigma feedback`, including a browser annotation. Reads the requirements and the specs, then follows one of `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-unslop` in this chat. |
 | `/sigma-feedback` | `/sigma-create-ticket` | Returns the spec list or one issue. Does not file. |
-| `/sigma-plan` | none | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. A confirmed acceptance is a numbered line. An edit pass shows each clash, suggests a change that still works, and asks what you want to do. A stale spec or ticket line is one assumption. |
+| `/sigma-plan` | none | Asks one question at a time and writes `docs/requirements/REQUIREMENTS.md` after you say yes. A confirmed acceptance is a numbered line. An edit pass shows each clash, suggests a change that still works, and asks what you want to do. A stale spec or ticket line is one assumption. A confirmed feature with no SPEC ends at `/sigma-to-spec`. |
 | `/sigma-plan` | `/sigma-create-ticket` | Returns the spec list and the ticket list. It does not file. |
 | `/sigma-plan` | `/sigma-to-spec` | After yes to the assumption, updates the named acceptance ids. It does not ask a second digest. |
 | `/sigma-plan` | `/sigma-to-tickets` | After that same yes, updates tickets that already contain those ids. It does not ask grain and it does not create a ticket. |
@@ -133,7 +133,7 @@ The first column is the command you type. A row with `none` describes that comma
 | `/sigma-implement` | none | Matches one ticket, opens the worktree, and prints the decision. When the ticket names no script, it chooses the closest file or one new path. It does not edit scripts and it does not judge the diff. |
 | `/sigma-implement` | `/sg-tdd` | Runs red, then green, commits, and pushes. A rows-route 404 writes in the browser and the run continues. |
 | `/sigma-implement` | `/sg-pr` | Opens one pull request on the pushed branch. Same worker as `/sg-tdd`. It does not wait for review. |
-| `/sigma-implement` | `/sg-review` | A second worker screenshots the live page and compares it with the ticket. A script pass line is not enough. A script outside the spec globs is a note. An API-failed comment is not an unmet line. |
+| `/sigma-implement` | `/sg-review` | A second worker screenshots the live page and compares it with the ticket. A script line that says pass is not evidence. A script outside the spec globs is a note. An API-failed comment stays a note. The screenshot decides the line. |
 | `/sigma-implement` | `/sigma-create-ticket` | Posts one comment when the write used the browser. The comment does not replace the body. Review and merge still run. |
 | `/sigma-merge` | none | Merges the pull request numbers you name, using the repository default method. It deletes the branch and removes a clean worktree. An API-failed comment does not drop a named number. |
 
