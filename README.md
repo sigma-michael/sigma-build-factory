@@ -100,10 +100,10 @@ flowchart TD
   lines --> tdd
 ```
 
-You type `/sigma-implement`. It matches the ticket and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That review reads the workbook fields the acceptance names. A passing read-back stays met. A script outside the spec globs is a note. The implement chat does not edit scripts and does not judge the diff.
+You type `/sigma-implement`. It matches the ticket and opens the worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That review screenshots the live page, and a script pass line is not enough. A script outside the spec globs is a note. The implement chat does not edit scripts and does not judge the diff.
 
 - Ready prints implementation complete and names `/sigma-merge` with the pull request number from `/sg-pr`. That number is not the issue number.
-- The decision says what the workbook shows, what it does not, and whether the ticket intent is met. A met intent names `/sigma-merge` with the pull request number. A missing line asks you to name that line. A reply that names none leaves the branch as it is. The same worker pattern runs again on the same branch, the pull request updates, and a new fresh review runs.
+- The decision says what the picture shows, what it does not, and whether the ticket intent is met. A met intent names `/sigma-merge` with the pull request number. A first miss sends those lines back on the same branch. A second miss stops and does not name `/sigma-merge`.
 
 A browser write adds a comment through `/sigma-create-ticket`, and `/sigma-implement` prints the warning. The comment does not change acceptance lines. Review still runs. A ready verdict still names `/sigma-merge`, and that merge still merges the numbers you name.
 
@@ -133,7 +133,7 @@ The first column is the command you type. A row with `none` describes that comma
 | `/sigma-implement` | none | Matches one ticket, opens the worktree, and prints the decision. When the ticket names no script, it chooses the closest file or one new path. It does not edit scripts and it does not judge the diff. |
 | `/sigma-implement` | `/sg-tdd` | Runs red, then green, commits, and pushes. A rows-route 404 writes in the browser and the run continues. |
 | `/sigma-implement` | `/sg-pr` | Opens one pull request on the pushed branch. Same worker as `/sg-tdd`. It does not wait for review. |
-| `/sigma-implement` | `/sg-review` | A second worker reads the ticket, the spec, the diff, and the workbook fields the acceptance names. A passing read-back stays met. A script outside the spec globs is a note. An API-failed comment is not an unmet line. |
+| `/sigma-implement` | `/sg-review` | A second worker screenshots the live page and compares it with the ticket. A script pass line is not enough. A script outside the spec globs is a note. An API-failed comment is not an unmet line. |
 | `/sigma-implement` | `/sigma-create-ticket` | Posts one comment when the write used the browser. The comment does not replace the body. Review and merge still run. |
 | `/sigma-merge` | none | Merges the pull request numbers you name, using the repository default method. It deletes the branch and removes a clean worktree. An API-failed comment does not drop a named number. |
 
