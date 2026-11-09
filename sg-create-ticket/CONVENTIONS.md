@@ -1,6 +1,6 @@
 # Issue contract
 
-`/sigma-create-ticket` is the only skill that runs `gh issue create` or `gh issue edit`. `/sigma-to-spec` and `/sigma-to-tickets` compose a body and invoke that skill. `/sigma-unslop` does not.
+`/sg-create-ticket` is the only skill that runs `gh issue create` or `gh issue edit`. `/sigma-to-spec` and `/sigma-to-tickets` compose a body and invoke that skill. `/sigma-unslop` does not.
 
 Read this file before a create or an edit.
 
@@ -28,7 +28,7 @@ Read this file before a create or an edit.
 
 ## TICKET
 
-**Convention.** Title `TICKET: <name>`. The name after `TICKET: ` says what a person can see or do. It names the screen and the result. Present tense. Plain words. It does not name a formula, a control id, a field read, or a test date. One short name, not a sentence with a semicolon. The acceptance line in the body stays a copy of the spec. The title is not a copy of that line when the line is hard to say out loud. Bad name: Save reads the shown value. Good name: Block save when a required employee field looks empty. A title that names the mechanism hides the job. Label `type:ticket` plus `agent:hitl` or `agent:afk`. Parent is an EPIC or the SPEC. A handoff with no parent is not filed.
+**Convention.** Title `TICKET: <name>`. The name after `TICKET: ` says what a person can see or do. It names the screen and the result. Present tense. Plain words. It does not name a formula, a control id, a field read, or a test date. One short name, not a sentence with a semicolon. The acceptance line in the body stays a copy of the spec. The body shows `Topic: <the user's words>` next to the sections below. The title is not a copy of that line when the line is hard to say out loud. Bad name: Save reads the shown value. Good name: Block save when a required employee field looks empty. A title that names the mechanism hides the job. Label `type:ticket` plus `agent:hitl` or `agent:afk`. Parent is an EPIC or the SPEC. A handoff with no parent is not filed.
 
 Body sections, in this order:
 
@@ -36,6 +36,8 @@ Body sections, in this order:
 ## Context
 
 Spec #<N>
+
+Topic: <the user's words>
 
 ## Acceptance
 
@@ -52,11 +54,11 @@ agent/{N}-<slug>
 hitl
 ```
 
-Context cites the spec number. Acceptance is the spec line for that id. After create, this gateway writes Branch. It does not invent a spec number or an acceptance line.
+Context cites the spec number. `Topic: <the user's words>` sits next to these sections. Acceptance is the spec line for that id. After create, this gateway writes Branch. It does not invent a spec number, an acceptance line, or the user's words. The handoff supplies `Topic: <the user's words>`.
 
-**Reason.** Context points at the spec. Acceptance is the check. Branch is the checkout name. Mode tells `/sigma-implement` whether to wait.
+**Reason.** Context points at the spec. Acceptance is the check. `Topic: <the user's words>` stores the words the user used. Branch is the checkout name. Mode tells `/sigma-implement` whether to wait.
 
-**Trap.** A rewritten acceptance line lets the ticket pass a check the spec does not state. A ticket with no parent has no spec line to copy. A bug whose behavior is not on the spec belongs in `/sigma-to-spec` first.
+**Trap.** A rewritten acceptance line lets the ticket pass a check the spec does not state. A missing `Topic: <the user's words>` line leaves the user's words off the ticket. `/sigma-pick-tickets` then has no Topic line to match. A ticket with no parent has no spec line to copy. A bug whose behavior is not on the spec belongs in `/sigma-to-spec` first.
 
 ## Scripts in bounds
 
@@ -108,7 +110,7 @@ Context cites the spec number. Acceptance is the spec line for that id. After cr
 
 ## Who says yes
 
-**Convention.** `/sigma-to-spec` shows a digest and waits for yes. `/sigma-to-tickets` asks one confirm of grain and blockers. Those yes replies do not get a second question in `/sigma-create-ticket`. The ids `/sigma-unslop` recorded are not a filing yes. File only a body those two skills confirmed in this session. Silence does not file.
+**Convention.** `/sigma-to-spec` shows a digest and waits for yes. `/sigma-to-tickets` asks one confirm of grain and blockers. Those yes replies do not get a second question in `/sg-create-ticket`. The ids `/sigma-unslop` recorded are not a filing yes. File only a body those two skills confirmed in this session. Silence does not file.
 
 **Reason.** The skill that composed the body already asked. A draft from this chat has no filing yes.
 
