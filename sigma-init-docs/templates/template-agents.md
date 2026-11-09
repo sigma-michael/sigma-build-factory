@@ -2,11 +2,19 @@
 
 The lane, the code home, and the write-scope live in [`docs/README.md`](docs/README.md). Requirements live in [`docs/requirements/REQUIREMENTS.md`](docs/requirements/REQUIREMENTS.md). `/sigma-plan` fills that file. Read it before you add a script.
 
+A question is asked in the chat and is not a question card: before the question, the reply says what this step does, then `We have:` and `We will write:` when a line changes, the question is the last line, and an id does not stand in for the sentence.
+
 ## Lane
 
-`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sigma-unslop-tickets` → `/sigma-pick-tickets` → `/sigma-implement` (one ticket, branch `agent/{N}-{slug}`; one worker follows `/sg-tdd` then `/sg-pr`, a second worker follows `/sg-review`) → `/sigma-merge`
+`/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sg-create-ticket` → GitHub → `/sigma-pick-tickets` → `/sigma-implement` → `/sigma-merge`
 
-`/sigma-unslop` is off the lane. A pasted note starts at `/sigma-feedback`. That command follows one skill in the same chat.
+`/sigma-unslop-tickets` also points at `/sg-create-ticket`. It is optional. It is not a required hop between `/sigma-to-tickets` and `/sigma-pick-tickets`.
+
+Three entrances are parallel.
+
+1. `/sigma-feedback` follows exactly one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. It does not follow `/sigma-unslop`.
+2. The user types `/sigma-unslop-tickets` to repair open tickets. A yes writes through `/sg-create-ticket`. The reply names `/sigma-pick-tickets`.
+3. The user types `/sigma-unslop`. That command writes one review and stops.
 
 ## Write scope
 
@@ -16,7 +24,7 @@ The lane, the code home, and the write-scope live in [`docs/README.md`](docs/REA
 | `docs/requirements/REQUIREMENTS.md` | `/sigma-plan` |
 | `docs/reviews/<date>-<topic>.md` | `/sigma-unslop` (not created up front) |
 | `scripts/**` named in the ticket | `/sg-tdd` |
-| GitHub issues | `/sigma-create-ticket` only |
+| GitHub issues | `/sg-create-ticket` only |
 
 If nothing fits, ask. Do not invent a path. Do not create a loose file at `docs/` root, a new top-level doc folder, or a `-vN` filename.
 

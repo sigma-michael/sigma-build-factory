@@ -91,7 +91,7 @@ Write-scope for the work repo:
 | `docs/requirements/REQUIREMENTS.md` | `/sigma-plan` |
 | `docs/reviews/<date>-<topic>.md` | `/sigma-unslop` |
 | `scripts/**` named in the ticket | `/sg-tdd` |
-| GitHub issues | `/sigma-create-ticket` |
+| GitHub issues | `/sg-create-ticket` |
 
 Report a hit. Leave the file as it is.
 
