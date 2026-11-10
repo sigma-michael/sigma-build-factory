@@ -100,7 +100,9 @@ Done when the list is back, including an empty list, and the run is marked new o
 
 A gap changes acceptance, the script globs, or which spec is updated. Ask one question at a time in this chat, after the sentences. At most 3. Each question states one recommended answer.
 
-What this step does: one sentence. Print the sentences this question decides. When a line changes, print `We have: <full current sentence>` then `We will write: <full new sentence>`. A new line has only `We will write`. An id does not stand in for the sentence. The question is the last line. One question. Wait for the reply in this chat. Do not offer A, B, or C. Do not call AskUserQuestion. Do not use a question card. A card hides the text.
+What this step does: one sentence. Print the sentences this question decides. When a line changes, `We have` and `We will write` are a table when there are two or more lines. A new line has only `We will write`. An id does not stand in for the sentence. The question is the last line. One question. Wait for the reply in this chat. Do not offer A, B, or C. Do not call AskUserQuestion. Do not use a question card. A card hides the text.
+
+A reply to the user is paragraphs. A blank line separates paragraphs. A sequence is a numbered list. A comparison of two or more lines is a table. Do not join `We have` and `We will write` onto the same line as the question. Do not use bullet points. A list of acceptance lines is a numbered list or a table.
 
 The publish question in Step 5 does not count toward the 3.
 
@@ -110,22 +112,22 @@ Done when each blocking gap is answered, or 3 questions have been asked. Unanswe
 
 ### Step 5 - Show the digest and wait for yes
 
-Print the digest in this chat. What this step does: one sentence. When a line changes, print `We have: <full current sentence>` then `We will write: <full new sentence>`. A new line has only `We will write`. An id does not stand in for the sentence. The spec title may follow the sentence. An issue number stays in the command the user will type.
+Print the digest in this chat. What this step does: one sentence. When a line changes, `We have` and `We will write` are a table when there are two or more lines. A new line has only `We will write`. An id does not stand in for the sentence. The spec title may follow the sentence. An issue number stays in the command the user will type.
 
-Show only:
+Show only these parts, in this order:
 
-- New spec, or an update of the spec titled `SPEC: <name>`
-- What this feature is, in one sentence
-- What this feature is not
-- Each acceptance sentence. The id may follow the sentence.
-- Script globs
-- Out of scope
+1. New spec, or an update of the spec titled `SPEC: <name>`.
+2. What this feature is, in one sentence.
+3. What this feature is not.
+4. The acceptance sentences, as a numbered list or a table. The id may follow the sentence.
+5. Script globs.
+6. Out of scope.
 
 A sentence the user states in this run is the line in the digest for that behavior. Do not park that sentence as a clash and do not send the user back to `/sigma-plan` for that sentence.
 
-A clash the user does not state in this run stays above the digest as the two sentences, and stays absent from the spec. The other acceptance lines stay in the digest. Do not ask which line stands. Do not recommend skipping the publish because of the pair.
+A clash the user does not state in this run stays above the digest as a table of the two sentences, and stays absent from the spec. The other acceptance lines stay in the digest. Do not ask which line stands. Do not recommend skipping the publish because of the pair.
 
-A decision with no acceptance id is listed as not copied. It is not a reason to skip the publish question.
+A decision with no acceptance id is a paragraph marked not copied. It is not a reason to skip the publish question.
 
 A numbered line in `REQUIREMENTS.md` has the id as its first token, as in `- A118. <sentence>`. The digest includes those lines. A sentence the user states for a numbered id is that line. An id that appears only in Decisions prose is absent from this spec. Name `/sigma-plan` for the missing id. Do not append a new id.
 
@@ -148,6 +150,12 @@ Done when the return has the issue number, title, and URL.
 ### Step 7 - Stop
 
 Recommend `/sigma-to-tickets <spec-number>`. Do not invoke `/sigma-to-tickets`.
+
+Every command the user runs next is a fenced markdown code block. The fence contains only the command. One command per block. Do not put `Next:` inside the fence. Do not leave that command only in a paragraph. Use that fence for `/sigma-plan` and `/sigma-init-docs`.
+
+```
+/sigma-to-tickets <spec-number>
+```
 
 Done when that recommendation is the last action and no ticket or epic was filed.
 

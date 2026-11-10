@@ -54,7 +54,7 @@ The Mode label matches the Mode line: `hitl` is `agent:hitl`, `afk` is `agent:af
 
 ## Input
 
-`$ARGUMENTS` is the SPEC issue number. A review file path is not a ticket source. When the number is missing, print each open spec by its title and quote one acceptance sentence from it. That list is the background. What this step does: one sentence. An id does not stand in for the sentence. The last line in this chat asks which sentence this split covers. One question. Wait for the reply in this chat. The answer picks the spec. Do not ask for a spec number. Do not offer A, B, or C. Do not call AskUserQuestion. Do not use a question card. A card hides the text.
+`$ARGUMENTS` is the SPEC issue number. A review file path is not a ticket source. When the number is missing, print each open spec by its title and quote one acceptance sentence from it. That list is a numbered list or a table. That list is the background. What this step does: one sentence. An id does not stand in for the sentence. The last line in this chat asks which sentence this split covers. One question. Wait for the reply in this chat. The answer picks the spec. Do not ask for a spec number. Do not offer A, B, or C. Do not call AskUserQuestion. Do not use a question card. A card hides the text.
 
 ## Steps
 
@@ -106,9 +106,11 @@ Done when every acceptance id sits on one ticket or inside one epic, and no id s
 
 ### Step 3 - One confirm of grain and blockers
 
-Print the proposal in this chat. What this step does: one sentence. Each acceptance sentence is in the proposal. When a line changes, print `We have: <full current sentence>` then `We will write: <full new sentence>`. A new line has only `We will write`. An id does not stand in for the sentence. An issue number stays in the command the user will type.
+Print the proposal in this chat. What this step does: one sentence. Each acceptance sentence is in the proposal as a numbered list or a table. When a line changes, `We have` and `We will write` are a table when there are two or more lines. A new line has only `We will write`. An id does not stand in for the sentence. An issue number stays in the command the user will type.
 
 The question is the last line. One question. It covers grain and blockers and states one recommendation. Wait for the reply in this chat. Do not offer A, B, or C. Do not call AskUserQuestion. Do not use a question card. A card hides the text.
+
+A reply to the user is paragraphs. A blank line separates paragraphs. A sequence is a numbered list. A comparison of two or more lines is a table. Do not join `We have` and `We will write` onto the same line as the question. Do not use bullet points. A list of acceptance lines is a numbered list or a table.
 
 Mode is visible on the proposal. Do not ask a second question about mode, labels, or wording.
 
@@ -133,6 +135,12 @@ Done when each slice has an issue URL, or the return says why that slice was not
 Report every title and URL. Say that `/sigma-implement` flags an epic and names `/sigma-to-tickets`.
 
 The write through `/sg-create-ticket` lands the issues on GitHub. When at least one ticket or epic was filed, name `/sigma-pick-tickets`. Do not invoke it. Do not recommend `/sigma-unslop-tickets`. Do not recommend `/sigma-implement` from this skill.
+
+Every command the user runs next is a fenced markdown code block. The fence contains only the command. One command per block. Do not put `Next:` inside the fence. Do not leave that command only in a paragraph. Use that fence for `/sigma-to-spec` and `/sigma-plan`.
+
+```
+/sigma-pick-tickets
+```
 
 ## Hard rules
 

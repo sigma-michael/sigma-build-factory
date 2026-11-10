@@ -41,7 +41,7 @@ The first sentence names the skill. The next sentence says why. Then follow that
 - **Use when:** the user says `sigma feedback` or `do sigma feedback`, or invokes `/sigma-feedback`. A browser annotation cannot send the slash command. Those words start this skill. The words after the phrase are the note.
 - **Do not use when:** the user already named `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. Follow that skill. Do not classify again.
 - **Do not use when:** the user typed `/sigma-unslop`. That command is the entrance. Do not classify it here. Do not follow it from this skill.
-- **Do not use when:** the next step is to build a filed ticket. Name `/sigma-implement <ticket-number>` and stop. Do not follow it.
+- **Do not use when:** the next step is to build a filed ticket. Name `/sigma-implement <ticket-number>` and stop. Print that command in a fenced code block that contains only the command. Do not follow it.
 
 ## Input
 
@@ -55,7 +55,7 @@ The first sentence names the skill. The next sentence says why. Then follow that
 
 Start at the current directory. Walk up parent directories until one contains `.git`. That directory is `REPO_ROOT`.
 
-Done when `REPO_ROOT` contains `.git` and `docs/requirements/REQUIREMENTS.md` exists. A missing requirements file names `/sigma-init-docs` and stops. Do not follow a skill.
+Done when `REPO_ROOT` contains `.git` and `docs/requirements/REQUIREMENTS.md` exists. A missing requirements file names `/sigma-init-docs` in a fenced code block that contains only that command, and stops. Do not follow a skill.
 
 ### Step 2 - Read the requirements and the specs
 
@@ -113,7 +113,7 @@ Done when that skill's steps are the next actions in this chat, or when `action:
 
 ## Verification
 
-- [ ] `REPO_ROOT` contains `.git`, and `docs/requirements/REQUIREMENTS.md` was read, or the run stopped at `/sigma-init-docs`.
+- [ ] `REPO_ROOT` contains `.git`, and `docs/requirements/REQUIREMENTS.md` was read, or the run stopped at `/sigma-init-docs` in a fenced code block that contains only that command.
 - [ ] Specs were loaded through `/sg-create-ticket` `list-specs` and `view`. A named ticket number was loaded through `view`. This run did not ask for `list-tickets` and did not run `gh`.
 - [ ] One door was chosen by the first match: `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` with that spec number, or `action: reopen` was handed for the closed ticket. One question was asked only when the note names two specs, or when the note does not say what the product should do. That question was the last line in this chat after the quoted acceptance sentences. This run did not call AskUserQuestion, did not use a question card, and did not offer A, B, or C. The run did not ask about the old line and did not ask which source wins. Silence did not start a skill.
 - [ ] The reply names that skill, says why, and follows its file from Step 1. `Topic: <the user's words>` is passed through `/sigma-plan` and `/sigma-to-tickets` onto every ticket that note files or updates. `/sigma-to-tickets` receives the spec number. `/sigma-to-spec` receives the note.

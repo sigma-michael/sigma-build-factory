@@ -26,13 +26,13 @@ You name the pull request numbers. This command reads the repository default and
 ## When to Use
 
 - **Use when:** the user invokes `/sigma-merge` and names one or more pull request numbers in that invocation.
-- **No numbers:** the invocation names none. Print each open pull request as its title, its URL, and `/sigma-merge <number>`. The last line asks which of these to merge. Ask in this chat. When the answer names none, stop. Do not take numbers from `gh pr list` as permission. The user must name them in the reply.
+- **No numbers:** the invocation names none. Print each open pull request as its title and its URL. Under that text, a fenced code block contains only `/sigma-merge <number>`. One command per block. The last line asks which of these to merge. Ask in this chat. When the answer names none, stop. Do not take numbers from `gh pr list` as permission. The user must name them in the reply.
 - **Do NOT use when:** the task is to build (`/sigma-implement`) or to judge a diff (`/sg-review`).
 - **Browser-write comment:** a ticket comment that says `API write failed` is not a reason to skip a named pull request. Merge the numbers in this invocation.
 
 ## Input
 
-`$ARGUMENTS` is the merge set: pull request numbers from this invocation. The number in `Next: /sigma-merge` is the pull request number, not the issue number. An empty argument list is not a merge set.
+`$ARGUMENTS` is the merge set: pull request numbers from this invocation. The number in `/sigma-merge` is the pull request number, not the issue number. An empty argument list is not a merge set.
 
 When the invocation names no pull request numbers, run:
 
@@ -40,7 +40,7 @@ When the invocation names no pull request numbers, run:
 gh pr list --state open --json number,title,url
 ```
 
-When that command prints no pull request, stop. Otherwise print in this chat, in this order. What this step does: this step lists the open pull requests and waits for the merge set. Print each candidate as its title, its URL, and `/sigma-merge <number>`. The last line asks which of these to merge. One question. Wait for the reply in this chat. Do not offer A, B, or C. When the answer names none, stop. Do not take numbers from `gh pr list` as permission. The user must name them in the reply.
+When that command prints no pull request, stop. Otherwise print in this chat, in this order. What this step does: this step lists the open pull requests and waits for the merge set. Print each candidate as its title and its URL. Under that text, a fenced code block contains only `/sigma-merge <number>`. One command per block. The last line asks which of these to merge. One question. Wait for the reply in this chat. Do not offer A, B, or C. When the answer names none, stop. Do not take numbers from `gh pr list` as permission. The user must name them in the reply.
 
 Numbers in that reply are the merge set. Keep the order given.
 
@@ -118,7 +118,7 @@ Done: the reply lists merged, removed, and retained.
 
 | Rule | Why / violation looks like |
 |---|---|
-| Merge only numbers named in this invocation or in the reply in this chat. When the invocation names none, print each candidate as its title, its URL, and `/sigma-merge <number>`, then ask which of these to merge. When the answer names none, stop. A ticket comment that says `API write failed` does not remove a named number from the merge set. | A number from `gh pr list` is not permission. The user must name the numbers in the reply. Skipping a named number because the write used the browser blocks a merge the user already asked for. |
+| Merge only numbers named in this invocation or in the reply in this chat. When the invocation names none, print each candidate as its title and its URL, then a fenced code block that contains only `/sigma-merge <number>`. One command per block. Then ask which of these to merge. When the answer names none, stop. A ticket comment that says `API write failed` does not remove a named number from the merge set. | A number from `gh pr list` is not permission. The user must name the numbers in the reply. Skipping a named number because the write used the browser blocks a merge the user already asked for. |
 | Save `gh pr view` JSON, then run `gh pr merge <n> --delete-branch` with the repository default method. `SQUASH` is `--squash`, `REBASE` is `--rebase`, and `MERGE` is `--merge`. Pass a different method only when this invocation names one. Do not pass `--admin` unless this invocation names it. | A missing method flag stops a non-interactive merge. Asking the user to pick `--squash`, `--rebase`, or `--merge` leaves the pull request open. `--admin` merges past a failure the user did not accept. |
 | `git fetch --prune`, then `git merge --ff-only` on the main checkout. | A merge with no `--ff-only` adds a merge commit on the base. Force-push rewrites the base. |
 | `git worktree remove` a `.worktrees/` path only when `git status --porcelain` is empty. When it is dirty, stop and report. | `--force` drops uncommitted work. A path outside `.worktrees/` is the main checkout. |
