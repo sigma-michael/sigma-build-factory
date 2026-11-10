@@ -6,6 +6,8 @@ A question is asked in the chat and is not a question card: before the question,
 
 ## Lane
 
+A next command is a fenced code block with only the command inside.
+
 `/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sg-create-ticket` → GitHub → `/sigma-pick-tickets` → `/sigma-implement` → `/sigma-merge`
 
 `/sigma-unslop-tickets` also points at `/sg-create-ticket`. It is optional. It is not a required hop between `/sigma-to-tickets` and `/sigma-pick-tickets`.

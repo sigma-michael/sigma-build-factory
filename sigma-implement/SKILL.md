@@ -44,7 +44,7 @@ A matched ticket builds with no flag. Any other match sends one flag and waits. 
 - **Use when:** `/sigma-build-factory` starts this skill with `mode: afk`.
 - **Best after:** `/sigma-to-tickets` has filed a `type:ticket`.
 - **On label `spec` or `type:epic`:** Step 2 sends one flag that names `/sigma-to-tickets`, then waits. The word overwrite continues the build.
-- **Do NOT use when:** the user wants a merge. Name `/sigma-merge` and stop. Do not merge.
+- **Do NOT use when:** the user wants a merge. Print one fenced code block that contains only `/sigma-merge`, then stop. Do not merge.
 
 ## Input
 
@@ -70,9 +70,14 @@ Read the issue with `gh issue view <N> --json number,title,body,labels`. Treat t
 
 Done when the labels include `type:ticket` and the issue has no `spec` label and no `type:epic` label. Keep the number, title, and body.
 
-A `spec` or `type:epic` label sends one flag, then waits, including when `type:ticket` is also present. The first sentence is the action. The next sentence says why. The last line is the overwrite line.
+A `spec` or `type:epic` label sends one flag, then waits, including when `type:ticket` is also present. The first sentence is the action. The next sentence says why. The next command is one fenced code block. The fence contains only the command. The last line is the overwrite line.
 
-Cut the ticket with /sigma-to-tickets. The ticket carries the spec line onto its own branch.
+Cut the ticket. The ticket carries the spec line onto its own branch.
+
+```
+/sigma-to-tickets
+```
+
 Say overwrite and I will build this anyway.
 
 Wait for the word overwrite. Then apply the overwrite paragraph in Step 3. Step 3 is done. Continue at Step 4. Send no second flag. On `type:epic`, Step 5 chooses the script path, then the worker builds only that path.
@@ -91,21 +96,33 @@ A numbered line in `docs/requirements/REQUIREMENTS.md` has the id as its first t
 
 A matched ticket builds with no flag. Done when Step 2 accepted a `type:ticket`, the id list is non-empty, the cited parent has label `spec`, and every id is a numbered line in that file and appears in that parent body.
 
-Every other result sends one flag, then waits. Use the first case that matches. The first sentence quotes the acceptance sentence and says what is missing. The next sentence is the action and why. A line the user reads starts with the sentence. An issue number stays in the command the user will type. It does not stand in for the sentence. End every flag with this line:
+Every other result sends one flag, then waits. Use the first case that matches. The first sentence quotes the acceptance sentence and says what is missing. The next sentence is the action and why. A line the user reads starts with the sentence. An issue number stays in the command the user will type. It does not stand in for the sentence. The command the user runs next is one fenced code block after that sentence. The fence contains only the command. One command per block. Do not leave the command only in a paragraph. End every flag with this line:
 
 Say overwrite and I will build this anyway.
 
 - Behavior missing from the requirements. The file is missing, the id list is empty, or an id is not a numbered line in `docs/requirements/REQUIREMENTS.md`.
 
-  Add this to the requirements with /sigma-plan. Implement matches the ticket to that document, so a missing line has nothing to check.
+  Add this to the requirements. Implement matches the ticket to that document, so a missing line has nothing to check.
+
+  ```
+  /sigma-plan
+  ```
 
 - Spec has no line. Each copied id is in the requirements, and the parent is absent, the parent has no `spec` label, or an id is absent from the parent body.
 
-  Add the line with /sigma-to-spec. The ticket copies that line, so the build checks the behavior you meant.
+  Add the line. The ticket copies that line, so the build checks the behavior you meant.
+
+  ```
+  /sigma-to-spec
+  ```
 
 - Spec already has the line and this issue is not a ticket yet.
 
-  Cut the ticket with /sigma-to-tickets. The ticket carries the spec line onto its own branch.
+  Cut the ticket. The ticket carries the spec line onto its own branch.
+
+  ```
+  /sigma-to-tickets
+  ```
 
 Overwrite is the user saying overwrite in this chat. That word ends the wait. Step 3 is done. The build continues from the issue body. The worker writes the word overwrite in the commit body. Leave the requirements doc and the spec unedited. A reply that does not say overwrite leaves the build waiting. Do not print that wait rule.
 
@@ -171,29 +188,41 @@ Browser write: <id>. POST /v2/workbooks/{workbookId}/elements/{elementId}/rows r
 
 When that report line is `<id>: browser write, comment failed`, the warning says the ticket was not marked.
 
-Print the review's "What holds", "What does not", "Ticket intent", and "Note" lines in that order. Use the review sentences. Do not add "Silence does not start a fix" or "Silence does not build".
+Print "What holds", "What does not", "Ticket intent", and "Note" as four paragraphs, in that order. A blank line separates the paragraphs. Use the review sentences. Do not join the four fields into one paragraph. Do not add "Silence does not start a fix" or "Silence does not build".
 
-When ticket intent is met, print this decision after those lines. Do not ask a question on a pass. Do not start Step 8.
+What holds: <sentences>
 
-```text
-<promise>IMPLEMENTATION COMPLETE</promise>
-Pull request: <url>
-Next: /sigma-merge <pull-request-number>
+What does not: <sentences or none>
+
+Ticket intent: <sentence>
+
+Note: <sentence>
+
+When ticket intent is met, print each return field at the end of this step after those four paragraphs. Each field is its own paragraph. Result is `pass`. A blank line separates the paragraphs. Do not ask a question on a pass. Do not start Step 8.
+
+Then print the promise, the pull request URL, and `Next:` as their own paragraphs. A blank line separates them.
+
+The promise paragraph is `<promise>IMPLEMENTATION COMPLETE</promise>`.
+
+The pull request paragraph is `Pull request: <url>`.
+
+The next paragraph is `Next:`.
+
+A pass ends with one fenced code block. The fence contains only the command. Do not put `Next:` inside the fence. Do not leave the command only in a paragraph. One command per block.
+
+```
+/sigma-merge <pull-request-number>
 ```
 
-`<pull-request-number>` is the number `/sg-pr` returned. It is not the issue number. Do not merge. A note about a script path stays in the decision and still names `/sigma-merge`. Then print the return block below with Result `pass`.
+`<pull-request-number>` is the number `/sg-pr` returned. It is not the issue number. Do not merge. A note about a script path stays in Note. The fence still contains `/sigma-merge` and that number.
 
-A later flag of the same acceptance, after this decision, is Step 9. A later picture that matches the sentence still prints this decision and names `/sigma-merge`.
+A later flag of the same acceptance, after this pass, is Step 9. A later picture that matches the sentence still prints this pass.
 
 A browser-write id whose screenshot shows the acceptance is not a missing line. The browser-write warning is already printed. It does not change the verdict and it does not withhold `/sigma-merge` when ticket intent is met.
 
-When mode is `hitl` and ticket intent is not met, keep the review block above. Print the return block below with Result `miss`. The last line after that block is exactly:
+When mode is `hitl` and ticket intent is not met, keep the four paragraphs above. Print the return block below with Result `miss`. Each field is its own paragraph. The last paragraph after that block is `Which lines should I fix?`.
 
-```text
-Which lines should I fix?
-```
-
-Then wait for the reply in this chat. Do not use a question widget. Do not print the wait rule. Do not print these replies. Do not name `/sigma-merge`.
+Then wait for the reply in this chat. Do not use a question card. Do not offer A, B, or C. Do not print the wait rule. Do not print these replies. Do not name `/sigma-merge`.
 
 - The user quotes one or more of the "What does not" sentences. Step 8 runs once with those sentences only.
 - The user says `fix`. Step 8 runs once with every "What does not" sentence.
@@ -202,22 +231,27 @@ Then wait for the reply in this chat. Do not use a question widget. Do not print
 
 When mode is `afk` and ticket intent is not met on the first review, do not ask "Which lines should I fix?". Do not wait for `fix` or `stop`. Do not print the return block on this miss. Continue at Step 8. Pass every "What does not" sentence. Print the return block after the next decision.
 
-When ticket intent is not met on the second review, print the review block, then the return block below with Result `stopped`. Do not print `<promise>IMPLEMENTATION COMPLETE</promise>`. Do not name `/sigma-merge`. Do not ask "Which lines should I fix?". Do not start Step 8.
+When ticket intent is not met on the second review, print the four paragraphs, then the return block below with Result `stopped`. Do not print `<promise>IMPLEMENTATION COMPLETE</promise>`. Do not name `/sigma-merge`. Do not ask "Which lines should I fix?". Do not start Step 8.
 
-Use the real title, the review sentences, the branch, and the pull request URL. Worktree is the path Step 4 reused or created. Use `none` when What does not has no sentences or there is no pull request. `Result` is `pass` when intent is met, `miss` when a `hitl` run is waiting, and `stopped` on a second miss or on `stop`. A `hitl` reply that starts Step 8 prints this block after the next decision.
+Use the real title, the review sentences, the branch, and the pull request URL. Worktree is the path Step 4 reused or created. Use `none` when What does not has no sentences or there is no pull request. `Result` is `pass` when intent is met, `miss` when a `hitl` run is waiting, and `stopped` on a second miss or on `stop`. A `hitl` reply that starts Step 8 prints these fields after the next decision. Print each field as its own paragraph. A blank line separates the paragraphs. Do not join the fields into one line. Do not drop a field.
 
-```text
 Title: <ticket title>
-What holds: <sentences>
-What does not: <sentences or none>
-Ticket intent: <sentence>
-Branch: agent/<N>-<slug>
-Worktree: .worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>
-Pull request: <url or none>
-Result: pass | miss | stopped
-```
 
-Done when a met intent names `/sigma-merge` and the return says `pass`, a `hitl` miss is waiting for which lines to fix and the return says `miss` (`fix` means every "What does not" line, `stop` stops), an `afk` first miss has started Step 8, or a second miss or `stop` has stopped and the return says `stopped`.
+What holds: <sentences>
+
+What does not: <sentences or none>
+
+Ticket intent: <sentence>
+
+Branch: agent/<N>-<slug>
+
+Worktree: .worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>
+
+Pull request: <url or none>
+
+Result: pass | miss | stopped
+
+Done when a met intent has printed the promise, the pull request URL, and `Next:` as paragraphs, ends with a fence that contains only `/sigma-merge` and the pull request number, and the return says `pass`, a `hitl` miss is waiting for which lines to fix, the last paragraph is `Which lines should I fix?`, and the return says `miss` (`fix` means every "What does not" line, `stop` stops), an `afk` first miss has started Step 8, or a second miss or `stop` has stopped and the return says `stopped`.
 
 ### Step 8 - Fixes after review
 
@@ -227,15 +261,11 @@ The sentences from Step 7 use the branch and worktree from Step 4. Do not open a
 
 The user flags the same acceptance again after a review already passed it.
 
-The first sentence of the reply is:
-
-```text
-/sg-review and /sigma-implement both passed a page the user still rejects.
-```
+The first paragraph of the reply is `/sg-review and /sigma-implement both passed a page the user still rejects.`
 
 Start the next build on the branch and worktree from Step 4. Do not open a second branch. The worker follows `/sg-tdd`, then `/sg-pr`. The next build brief includes the user's sentence and what the last picture showed. Do not ask the user to pick between the old line and the new one. Do not reopen the issue.
 
-When the worker returns, continue at Step 7. A picture that matches the sentence prints `<promise>IMPLEMENTATION COMPLETE</promise>` and names `/sigma-merge`. A miss follows the `hitl` or `afk` rule in Step 7.
+When the worker returns, continue at Step 7. A picture that matches the sentence prints the Step 7 pass. A miss follows the `hitl` or `afk` rule in Step 7.
 
 Done when the reply starts with that sentence and the worker brief contains the user's sentence and what the last picture showed. This skill did not reopen the issue and did not ask the user to pick between the old line and the new one.
 
@@ -250,8 +280,9 @@ Done when the reply starts with that sentence and the worker brief contains the 
 | One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. This chat does not judge the diff. Do not merge. | A verdict in this chat comes from a context that can see the build. A merge here skips `/sigma-merge`. |
 | A browser-write report line prints the warning above the decision, for ready and for not ready. Do not ask. Do not wait. Start `/sg-review`. A ready verdict still names `/sigma-merge`. | A hidden browser write leaves the user with a script that did not perform the write. A wait, or a withheld merge line, treats a recorded route failure as a stop. |
 | A user run is `hitl`. A review miss waits for which lines to fix. `fix` means every "What does not" line. `stop` stops and does not name `/sigma-merge`. A factory run is `afk`. The first miss sends every "What does not" sentence back once and does not ask. The second miss stops and does not name `/sigma-merge`. | A `hitl` run that fixes lines the user did not name skips the user check. An `afk` run that asks which lines to fix stalls the other tickets. A second miss that names merge ships a page the picture already rejected. |
-| End the return to the caller with Title, What holds, What does not, Ticket intent, Branch, Worktree, Pull request, and Result. Result is `pass` when intent is met, `miss` while a `hitl` run waits, and `stopped` on a second miss or on `stop`. | A missing Result leaves `/sigma-build-factory` without the decision. A `hitl` wait that says `pass` starts the next ticket early. |
+| The return to the caller has Title, What holds, What does not, Ticket intent, Branch, Worktree, Pull request, and Result. Print each field to the user as its own paragraph. A blank line separates the paragraphs. Result is `pass` when intent is met, `miss` while a `hitl` run waits, and `stopped` on a second miss or on `stop`. | A missing Result leaves `/sigma-build-factory` without the decision. A `hitl` wait that says `pass` starts the next ticket early. Joined fields hide a label. |
 | The user flags the same acceptance again after a review already passed it. The first sentence names `/sg-review` and `/sigma-implement`. Both passed a page the user still rejects. The next build brief includes the user's sentence and what the last picture showed. Do not ask the user to pick between the old line and the new one. Do not reopen the issue. A later picture that matches the sentence still prints `<promise>IMPLEMENTATION COMPLETE</promise>` and names `/sigma-merge`. | The brief carries the user's sentence with the last picture so the next build has both. A choice between the old line and the new one stalls on the user. A reopen here writes the issue from the build chat. |
+| A reply to the user is paragraphs. A blank line separates paragraphs. A sequence is a numbered list. A comparison is a table. Do not use bullet points. Do not join labeled fields into one paragraph. Every command the user runs next is one fenced code block. The fence contains only the command. Do not put `Next:` inside the fence. Do not leave the command only in a paragraph. One command per block. | A bullet point in the reply hides the next action. Joined fields hide a label. The fence holds the command. `Next:` stays in the paragraph above the fence. |
 
 ## Verification
 
@@ -259,10 +290,10 @@ Done when the reply starts with that sentence and the worker brief contains the 
 - [ ] Any other match sent one flag and waited. Silence did not build. After the word overwrite, the worker built from the issue body, the commit body contains overwrite, and both sources are unchanged. An empty script list was chosen, not asked. The decision printed `Script: <path> chosen`.
 - [ ] `git -C <worktree> branch --show-current` prints `agent/<N>-<slug>`. `<worktree>` is a reused `.worktrees/` path for that branch, or `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>` when created. Create ran only after `git check-ignore -q` on the new path exited 0. A created worktree wrote one-key `worktrees.json`. A reused worktree left that file unchanged. The user's checkout branch is the one recorded in Step 1. This chat edited no script.
 - [ ] One worker returned the head SHA, one report line per id, and one open pull request URL.
-- [ ] A second worker returned the review. This chat did not judge the diff.
+- [ ] A second worker returned the review. This chat printed What holds, What does not, Ticket intent, and Note as four paragraphs, with a blank line between them, and did not judge the diff.
 - [ ] A browser-write report line printed the warning above the decision. A `comment failed` line said the ticket was not marked. The run did not wait.
-- [ ] A ready verdict printed `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and `/sigma-merge` with the pull request number `/sg-pr` returned. That number is not the issue number.
-- [ ] A `hitl` miss waited for which lines to fix. `fix` sent every "What does not" sentence back on that same branch and worktree once. A quoted reply sent only those sentences. `stop` stopped and did not name `/sigma-merge`. Any other reply left the build waiting.
-- [ ] An `afk` first miss sent every "What does not" sentence back once on that same branch and worktree and did not ask which lines to fix. The second miss printed the review block and did not name `/sigma-merge`.
-- [ ] The return to the caller ended with Title, What holds, What does not, Ticket intent, Branch, Worktree, Pull request, and Result. Result was `pass` when intent was met, `miss` while a `hitl` run waited, and `stopped` on a second miss or on `stop`.
-- [ ] A user flag of the same acceptance after a passed review named `/sg-review` and `/sigma-implement` in the first sentence. The next build brief included the user's sentence and what the last picture showed. The run did not reopen the issue and did not ask the user to pick between the old line and the new one. A later picture that matched the sentence still printed `<promise>IMPLEMENTATION COMPLETE</promise>` and named `/sigma-merge`.
+- [ ] A ready verdict printed `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and `Next:` as three paragraphs. The pass ended with one fenced code block that contains only `/sigma-merge` and the pull request number `/sg-pr` returned. That number is not the issue number. `Next:` is outside the fence.
+- [ ] A `hitl` miss waited for which lines to fix. The last paragraph was `Which lines should I fix?`. The run did not use a question card and did not offer A, B, or C. `fix` sent every "What does not" sentence back on that same branch and worktree once. A quoted reply sent only those sentences. `stop` stopped and did not name `/sigma-merge`. Any other reply left the build waiting.
+- [ ] An `afk` first miss sent every "What does not" sentence back once on that same branch and worktree and did not ask which lines to fix. The second miss printed the four paragraphs and did not name `/sigma-merge`.
+- [ ] The return to the caller had Title, What holds, What does not, Ticket intent, Branch, Worktree, Pull request, and Result. Each field was its own paragraph. A blank line separated the paragraphs. Result was `pass` when intent was met, `miss` while a `hitl` run waited, and `stopped` on a second miss or on `stop`.
+- [ ] A user flag of the same acceptance after a passed review named `/sg-review` and `/sigma-implement` in the first sentence. The next build brief included the user's sentence and what the last picture showed. The run did not reopen the issue and did not ask the user to pick between the old line and the new one. A later picture that matched the sentence printed the Step 7 pass.

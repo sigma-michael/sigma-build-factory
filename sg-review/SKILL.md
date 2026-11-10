@@ -105,30 +105,44 @@ Done: every acceptance id has one status and a cite. A met id cites the screensh
 
 Return the report to `/sigma-implement`. Stop. Do not name a next command.
 
+The report is paragraphs. What holds, What does not, Ticket intent, and Note are each their own paragraph. Put a blank line between them. Name each met id in the What holds paragraph. A sequence of unmet lines is a numbered list. A comparison is a table. The report does not use bullet points.
+
+When the report names a command the user runs, that command is a fenced markdown code block with only the command inside. Do not put `Next:` inside the fence. This report names no command the user runs. Do not invent one.
+
 ```text
 ## Review - TICKET #<N> - <branch> @ <sha>
 
 Verdict: ready | not ready
 
 What holds
-- <id>. <what the screenshot shows, in one sentence>.
-- or: none
+
+<id>. <what the screenshot shows, in one sentence>. Or none.
 
 What does not
-- none
-- or: <id>. <what the screenshot shows, and what the ticket asks for>.
-- or: <id>. The page was not seen.
-- or: <wrong API call | write-scope>. <path>. <one sentence>.
+
+none
+
+or:
+
+1. <id>. The page was not seen.
+2. <wrong API call | write-scope>. <path>. <one sentence>.
+
+or:
+
+| Id | Picture | Ticket |
+|---|---|---|
+| <id> | <what the screenshot shows> | <what the ticket asks for> |
 
 Ticket intent
-- met | not met. <one sentence naming the behavior the ticket asks a person to see>.
+
+met | not met. <one sentence naming the behavior the ticket asks a person to see>.
 
 Note
-- none
-- or: <path> sits outside <spec globs>. The workbook still shows <id>.
+
+none. Or <path> sits outside <spec globs>. The workbook still shows <id>.
 ```
 
-Ticket intent is met when every acceptance id matches the screenshot. A note does not change that line. A script pass line does not change that line. Verdict ready matches ticket intent met and an empty "What does not" list.
+Ticket intent is met when every acceptance id matches the screenshot. A note does not change that line. A script pass line does not change that line. Verdict ready matches ticket intent met and What does not says none.
 
 Write each sentence so a person can read it. Name the drawer, the header, or the row, and the value. Leave out "silence", "does not build", and "does not start a fix".
 

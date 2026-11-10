@@ -81,13 +81,15 @@ Done when the file is read and the first question is chosen, or a missing file h
 
 Ask in this chat. Do not call AskUserQuestion. Do not use a question card. A card hides the text.
 
+A reply to the user is paragraphs. A blank line separates paragraphs. A sequence is a numbered list. A comparison of two or more lines is a table. `We have` and `We will write` across several lines are that table. Do not join `We have` and `We will write` onto the same line as the question. Do not use bullet points.
+
 Before the question, look up facts in the work repo with Glob and Read. When the repo answers the point, record the path and ask a decision instead. A filled Open questions section is context for the recommended answer.
 
 Before the question, print three short parts, in this order:
 
-- What this step does: one sentence.
-- When a line would change: `We have: <the full current sentence>` then `We will write: <the full new sentence>`. A new line has only `We will write`. Print the sentence. An id does not stand in for it.
-- The question is the last line. One question. It states one recommended answer as a sentence, then asks the user to agree. Wait for the reply in this chat.
+1. What this step does: one sentence.
+2. When a line would change, put `We have` and `We will write` in that table. A new line has only `We will write`. Print the sentence. An id does not stand in for it.
+3. The question is the last line. One question. It states one recommended answer as a sentence, then asks the user to agree. Wait for the reply in this chat.
 
 A yes closes that question.
 
@@ -107,17 +109,21 @@ Done when the user says they are done, and every branch is either decided or lis
 
 ### Step 4 - Show the five sections and wait for yes
 
-Show the text that will be written:
+Show the text that will be written. In the reply, each section is its own paragraph. A blank line separates paragraphs. The question is the last paragraph.
 
-- **Outcome** - the result this solution is for.
-- **Solution shape** - the chosen direction and its main parts.
-- **Workflows** - numbered end-to-end flows.
-- **Decisions** - each choice and why. A rejection that changes the shape is a decision line.
-- **Open questions** - each deferred branch, each clash the user does not speak about, and the consequence of leaving it open.
+Outcome is the result this solution is for.
 
-Before the question, print the full text that will be written under each heading, as the sentences themselves. Do not summarize a line by its id. For each numbered line that changes, print `We have:` and `We will write:`. For a new numbered line, print `We will write:` and say it is new. Say that every other line stays as written.
+Solution shape is the chosen direction and its main parts.
 
-The last line is exactly: `Is this accurate enough to write into docs/requirements/REQUIREMENTS.md?`
+Workflows are numbered end-to-end flows.
+
+Decisions are each choice and why. A rejection that changes the shape is a decision line.
+
+Open questions are each deferred branch, each clash the user does not speak about, and the consequence of leaving it open.
+
+Before the question, print the full text that will be written under each heading, as the sentences themselves. Do not summarize a line by its id. For each numbered line that changes, put `We have` and `We will write` in that table. For a new numbered line, print `We will write` and say it is new. Say that every other line stays as written.
+
+The question is the last paragraph. The last line is exactly: `Is this accurate enough to write into docs/requirements/REQUIREMENTS.md?`
 
 Ask that in this chat. Do not call AskUserQuestion. Do not use a question card. Do not offer A, B, or C.
 
@@ -143,17 +149,24 @@ Done when the file matches the yes and Step 6 has started.
 
 When no spec line and no ticket line differs from the requirements line with the same id, recommend `/sigma-to-spec`. Do not invoke it. Do not implement.
 
-When the user states a behavior, that sentence is the requirements line for that behavior. Carry that same sentence onto the spec and the tickets that already cite the id. Leave every other line as written. A clash the user does not speak about stays an Open question. Leave that pair out of the assumption. Do not ask which of the two old lines stands.
+Every command the user runs next is a fenced markdown code block. The fence contains only the command. One command per block. Do not put `Next:` inside the fence. Do not leave that command only in a paragraph. Use that fence for `/sigma-init-docs`, `/sigma-implement <ticket-number>`, and `/sigma-pick-tickets`.
 
-When one or more ids differ, show one assumption. A line the user reads starts with the sentence. Show the sentence we have, then the sentence we will write, then what this step does. The spec title may follow the sentence. An issue number stays in the command the user will type. It does not stand in for the sentence.
-
-```text
-We have: <old sentence>
-We will write: <the sentence the user stated>
-That change goes on the spec <spec title> and the ticket <ticket title>.
+```
+/sigma-to-spec
 ```
 
-That block is chat text. The question, if one is asked, is the last line in this chat. Do not use a question card.
+When the user states a behavior, that sentence is the requirements line for that behavior. Carry that same sentence onto the spec and the tickets that already cite the id. Leave every other line as written. A clash the user does not speak about stays an Open question. Leave that pair out of the assumption. Do not ask which of the two old lines stands.
+
+When one or more ids differ, show one assumption. A line the user reads starts with the sentence. `We have` and `We will write` are a table. Each changed sentence adds a `We have` row and a `We will write` row. The spec title may follow the sentence. An issue number stays in the command the user will type. It does not stand in for the sentence.
+
+| Line | Sentence |
+| --- | --- |
+| We have | <old sentence> |
+| We will write | <the sentence the user stated> |
+
+That change goes on the spec <spec title> and the ticket <ticket title>.
+
+That table is chat text. The question, if one is asked, is the last line in this chat. Do not use a question card.
 
 Name only the issues that differ. Skip a pair the user does not speak about. One yes covers every sentence in that assumption.
 
@@ -163,9 +176,9 @@ A reply that states a behavior writes that sentence into the requirements line f
 
 On yes, follow `/sigma-to-spec` for each spec that differs. Pass `caller: sigma-plan`, `carry: yes`, the spec number, and the ids with the sentence the user stated. Then follow `/sigma-to-tickets` for the tickets that contain those ids. Pass the same caller, `carry: yes`, and those ids. Do not ask a second digest. Do not ask grain.
 
-Report each updated spec and ticket. When a confirmed feature has no SPEC, the reply ends with `/sigma-to-spec`. That command files the spec and then names `/sigma-to-tickets` with the new spec number. Do not name `/sigma-to-tickets` here. It needs a spec number. Do not end with `/sigma-pick-tickets`.
+Report each updated spec and ticket. When a confirmed feature has no SPEC, the reply ends with `/sigma-to-spec` in that fence. That command files the spec and then names `/sigma-to-tickets` with the new spec number. Do not name `/sigma-to-tickets` here. It needs a spec number. Do not end with `/sigma-pick-tickets`.
 
-When every confirmed acceptance is already on a spec, and one ticket was updated, the reply ends with `/sigma-implement <ticket-number>`. When more than one ticket was updated, the reply ends with `/sigma-pick-tickets`. That command chooses an already filed ticket. Do not follow the named command.
+When every confirmed acceptance is already on a spec, and one ticket was updated, the reply ends with `/sigma-implement <ticket-number>` in that fence. When more than one ticket was updated, the reply ends with `/sigma-pick-tickets` in that fence. That command chooses an already filed ticket. Do not follow the named command.
 
 Done when the assumption was not needed and `/sigma-to-spec` was named, or the carry has finished and the next command is named.
 

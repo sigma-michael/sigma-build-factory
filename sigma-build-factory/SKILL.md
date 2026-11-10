@@ -5,13 +5,24 @@ description: >
   One worker follows /sigma-implement for each ticket. The workers start
   together. Wave 1 is every ticket with no open blocker. The next wave
   starts on a later run, after those blockers are closed. The worker brief
-  says mode afk. When a worker returns, print the review block in this
-  chat. Do not ask and do not wait. A worker that would ask, or wait for
-  fix, stop, overwrite, or "Which lines should I fix?", stops that ticket.
-  The first review miss returns once inside /sigma-implement. A second
-  miss stops that ticket and does not name /sigma-merge. A pass prints
-  Next: /sigma-merge with the pull request number. Do not merge. Do not
-  build a ticket whose acceptance id is not a numbered line on origin/main.
+  says mode afk. When a worker returns, print a table, then one section
+  per returned ticket. The table has one row per ticket. Columns are
+  Title, Result, and Next. Do not print a bullet list of titles before
+  the table. Result is pass, stopped, or waiting. The title, What holds,
+  What does not, Ticket intent, and Worktree are separate paragraphs. Do
+  not join those labels into one paragraph. Do not prefix the title with
+  TICKET:. Every command the user runs next is a fenced code block. The
+  fence contains only the command. Do not put Next: inside the fence. Do
+  not leave the command only in a paragraph or a table cell. A pass puts
+  /sigma-merge and the pull request number in that fence after the
+  paragraphs. One command per block. On a stop or a ticket that never
+  started, Next is the one unblock sentence. Do not use bullet points.
+  Do not ask and do not wait.
+  A worker that would ask, or wait for fix, stop, overwrite, or "Which
+  lines should I fix?", stops that ticket. The first review miss returns
+  once inside /sigma-implement. A second miss stops that ticket and does
+  not name /sigma-merge. Do not merge. Do not build a ticket whose
+  acceptance id is not a numbered line on origin/main.
   A local-only line stops that ticket only. Other tickets whose lines are
   on origin/main and whose blockers are closed still start. Each stopped
   or waiting ticket gets one next line. Do not close a blocker, do not
@@ -33,7 +44,7 @@ allowed-tools: [Bash, Read, Glob, Grep]
 
 `/sigma-build-factory` runs the ticket numbers `/sigma-pick-tickets` printed. One worker follows `/sigma-implement` for each ticket. The workers start together. Wave 1 is every ticket with no open blocker.
 
-The worker brief says `mode: afk`. When a worker returns, this chat prints Title, What holds, What does not, Ticket intent, and Worktree. The first line is the ticket title. The review sentences follow. Do not ask. Do not wait. A worker that would ask, or wait for the word fix, the word stop, the word overwrite, or "Which lines should I fix?", stops that ticket. The other tickets continue. The first review miss returns once inside `/sigma-implement` with the review sentences. A second miss stops that ticket and does not name `/sigma-merge`. A pass prints `Next: /sigma-merge` with the pull request number. Do not merge. Do not build a ticket whose acceptance id is not a numbered line on `origin/main`. A local-only line stops that ticket only. Other tickets in the wave whose lines are on `origin/main` and whose blockers are closed still start. Each stopped or waiting ticket gets one next line. Do not close a blocker, do not edit or file an issue.
+The worker brief says `mode: afk`. The reply starts with a table. One row per ticket in the wave. Columns are Title, Result, and Next. Do not print a bullet list of titles before the table. Result is pass, stopped, or waiting. On a pass, Next is `/sigma-merge` with the pull request number. On a stop, or a ticket that never started, Next is the one unblock sentence. Then one section per ticket that returned a review. The ticket title is its own paragraph. What holds, What does not, Ticket intent, and Worktree are each their own paragraph, with a blank line between them. Do not join those labels into one paragraph. Do not prefix the title with `TICKET:`. Every command the user runs next is a fenced code block. The fence contains only the command. Do not put `Next:` inside the fence. Do not leave the command only in a paragraph or a table cell. A pass puts `/sigma-merge` and the real pull request number in that fence after the paragraphs. One command per block. Do not use bullet points. A sequence that is not the wave table is a numbered list. Do not ask. Do not wait. A worker that would ask, or wait for the word fix, the word stop, the word overwrite, or "Which lines should I fix?", stops that ticket. The other tickets continue. The first review miss returns once inside `/sigma-implement` with the review sentences. A second miss stops that ticket and does not name `/sigma-merge`. Do not merge. Do not build a ticket whose acceptance id is not a numbered line on `origin/main`. A local-only line stops that ticket only. Other tickets in the wave whose lines are on `origin/main` and whose blockers are closed still start. Each stopped or waiting ticket gets one next line. Do not close a blocker, do not edit or file an issue.
 
 ## When to Use
 
@@ -73,7 +84,7 @@ Copy the acceptance ids from the body. An id that is not a numbered line on `ori
 
 An open blocker is a `blockedBy` issue whose state is open. Wave 1 is every remaining ticket with no open blocker. A ticket with an open blocker waits.
 
-Each stopped or waiting ticket gets one next line. Use the first case that matches. Print that line and do not ask. The line starts with the acceptance sentence, then what is in the way, then the one unblock. A line the user reads starts with the sentence. An issue number stays in the command the user will type. It does not stand in for the sentence.
+Each stopped or waiting ticket gets one next line. Use the first case that matches. Keep that line for the Next cell in Step 5. Do not print it before the table. Do not ask. The line starts with the acceptance sentence, then what is in the way, then the one unblock. A line the user reads starts with the sentence. An issue number stays in the command the user will type. It does not stand in for the sentence.
 
 1. The acceptance id is only in the local file. The line says: commit and push `docs/requirements/REQUIREMENTS.md` so that id is on `origin/main`, then run `/sigma-build-factory` again with the same numbers.
 2. The open blocker is also in this set. The line says: the factory builds that blocker in this wave.
@@ -81,7 +92,7 @@ Each stopped or waiting ticket gets one next line. Use the first case that match
 
 A Campaign ticket and an Organisation ticket are two workers. One worker receives one number.
 
-Done when wave 1 is listed and each stopped or waiting ticket has one next line.
+Done when wave 1 is every remaining ticket with no open blocker and each stopped or waiting ticket has one next line.
 
 ### Step 4 - One afk worker per ticket
 
@@ -110,21 +121,29 @@ Pull request: <url or none>
 Result: pass | miss | stopped
 ```
 
-Print Title, What holds, What does not, Ticket intent, and Worktree, in that order, for every ticket that returned a block. Copy the sentences from that return. The Worktree line is the path the worker returned. This skill does not create the branch, the worktree, or `worktrees.json`. `/sigma-implement` does that.
+Copy the sentences from that return. The Worktree value is the path the worker returned. This skill does not create the branch, the worktree, or `worktrees.json`. `/sigma-implement` does that.
 
-The first line is the ticket title. The review sentences follow. Any issue number outside the Worktree path sits inside a copy-paste command.
+The reply uses paragraphs, one table, and a numbered list only when a sequence is clearer than a table. Do not use bullet points. Do not print a bullet list of titles before the table.
 
-When Result is pass, the next line is `Next: /sigma-merge <pull-request-number>`. That number is the pull request number, not the issue number. Do not merge.
+Part 1 is a table. One row per ticket in the wave. Columns are Title, Result, and Next. A worker pass is pass. A ticket with an open blocker is waiting. A local-only line, a worker miss, or a worker stop is stopped. On a pass, Next is `/sigma-merge <pull-request-number>`. That number is the pull request number, not the issue number. On a stop, or a ticket that never started, Next is the one unblock sentence Step 3 set. When Step 3 set no line, Next is empty. Do not add a second line. Do not name `/sigma-merge` on a miss, a stop, or a ticket that never started. Do not merge.
 
-When Result is miss, those five lines are the whole report. Do not name `/sigma-merge`. Do not wait.
+Part 2 is one section per ticket that returned a review. The ticket title is its own paragraph. Do not prefix the title with `TICKET:`. Then each of these is its own paragraph, with a blank line between them: What holds, What does not, Ticket intent, Worktree. Do not join those labels into one paragraph. A ticket that never started has no review paragraphs. Any issue number outside the Worktree path sits inside a fenced command.
 
-When Result is stopped, or the ticket never started, print the one unblock line Step 3 set for that ticket. Do not add a second line. Do not name `/sigma-merge`. A ticket that never started has no review block. When Result is stopped and Step 3 set no line, the five lines are the report.
+Every command the user runs next is a fenced markdown code block. The fence contains only the command, so one click copies a runnable line. Do not put `Next:` inside the fence. Do not leave the command only in a paragraph or a table cell. One command per block.
+
+A pass looks like this, after the paragraphs. Use the real pull request number:
+
+```
+/sigma-merge 364
+```
+
+Use the pull request number from that ticket in place of 364. When the unblock sentence names a command, that command is its own fence. Put that fence after the paragraphs when the ticket has them. Put it after the table when the ticket has no paragraphs.
 
 Do not print "Which lines should I fix?". Do not ask. Do not wait.
 
 A waiting ticket stays unbuilt. The next run of `/sigma-build-factory` starts that ticket after its blocker is closed. Do not close a blocker, do not edit or file an issue, and do not merge.
 
-Done when every returned ticket shows those five lines in that order, each pass shows `Next: /sigma-merge` with the pull request number, and each stopped or waiting ticket shows its one Step 3 line. The reply does not contain "Which lines should I fix?". This skill does not close a blocker, does not edit or file an issue, and does not merge.
+Done when the reply starts with the table, each returned ticket has the title and the four labels as separate paragraphs, each pass has a fence that contains only `/sigma-merge` and the pull request number, and each stopped or waiting ticket shows its one Step 3 line in Next. The reply has no bullet points and does not contain "Which lines should I fix?". This skill does not close a blocker, does not edit or file an issue, and does not merge.
 
 ## Hard rules
 
@@ -133,9 +152,9 @@ Done when every returned ticket shows those five lines in that order, each pass 
 | The argument is the numbers `/sigma-pick-tickets` printed. No number names `/sigma-pick-tickets` and stops. Do not choose a different set. | A new set here builds tickets the user did not name. |
 | One worker follows `/sigma-implement` for one number. A Campaign ticket and an Organisation ticket are two workers. | One worker with two features mixes two branches. |
 | Fetch `origin` before a worker starts. Do not build a ticket whose acceptance id is not a numbered line on `origin/main`. A local-only line stops that ticket only. Other tickets in the wave whose lines are on `origin/main` and whose blockers are closed still start. That line says: commit and push `docs/requirements/REQUIREMENTS.md` so that id is on `origin/main`, then run `/sigma-build-factory` again with the same numbers. | A build from a local line ships a requirement `origin/main` does not have. |
-| The worker brief says `mode: afk`. When a worker returns, print the review block in this chat. Do not ask. Do not wait. A step that would ask, or wait for the word fix, the word stop, the word overwrite, or "Which lines should I fix?", stops that ticket. The other tickets continue. The first review miss returns once inside `/sigma-implement` with the review sentences. A second miss stops that ticket and does not name `/sigma-merge`. | A question here stalls the other tickets. A wait for "Which lines should I fix?" stalls the wave. A second miss that names merge ships a page the picture already rejected. |
+| The worker brief says `mode: afk`. When a worker returns, print the Step 5 table and the separate paragraphs in this chat. Do not ask. Do not wait. A step that would ask, or wait for the word fix, the word stop, the word overwrite, or "Which lines should I fix?", stops that ticket. The other tickets continue. The first review miss returns once inside `/sigma-implement` with the review sentences. A second miss stops that ticket and does not name `/sigma-merge`. | A question here stalls the other tickets. A wait for "Which lines should I fix?" stalls the wave. A second miss that names merge ships a page the picture already rejected. |
 | Wave 1 is every ticket with no open blocker. The next wave starts on a later run, after those blockers are closed. A waiting ticket gets one next line. The line says the factory builds that blocker in this wave when that blocker is in this set. When the blocker is outside this set, the line says: run `/sigma-implement` for that number, or add that number to the factory set. Do not close a blocker, do not edit or file an issue, and do not merge. | A close here marks a ticket done before `/sigma-merge`. |
-| Print Title, What holds, What does not, Ticket intent, and Worktree for each returned ticket. The Worktree value is the path the worker returned. This skill does not create the branch, the worktree, or `worktrees.json`. `/sigma-implement` does that. A pass prints `Next: /sigma-merge <pull-request-number>`. That number is the pull request number, not the issue number. Do not merge. A miss prints those five lines and does not name `/sigma-merge`. A stopped ticket, or a ticket that never started, prints its one Step 3 line and does not name `/sigma-merge`. | A merge here skips the command that reads the repository default method. The issue number in that command merges the wrong pull request. A worktree created here is a path the worker did not return. |
+| The reply starts with a table. One row per ticket in the wave. Columns are Title, Result, and Next. Do not print a bullet list of titles before the table. Result is pass, stopped, or waiting. On a pass, Next is `/sigma-merge <pull-request-number>`. That number is the pull request number, not the issue number. On a stop, or a ticket that never started, Next is the one Step 3 line. Then one section per ticket that returned a review. The title is its own paragraph. What holds, What does not, Ticket intent, and Worktree are each their own paragraph. Do not join those labels into one paragraph. Do not prefix the title with TICKET:. The Worktree value is the path the worker returned. This skill does not create the branch, the worktree, or `worktrees.json`. `/sigma-implement` does that. Every command the user runs next is a fenced code block that contains only the command. Do not put Next: inside the fence. Do not leave the command only in a paragraph or a table cell. A pass puts `/sigma-merge <pull-request-number>` in that fence after the paragraphs. One command per block. Do not use bullet points. Do not merge. A miss prints those paragraphs and does not name `/sigma-merge`. A stopped ticket, or a ticket that never started, prints its one Step 3 line and does not name `/sigma-merge`. | A merge here skips the command that reads the repository default method. The issue number in that command merges the wrong pull request. A worktree created here is a path the worker did not return. A bullet list of titles, then one paragraph of labels, hides the result. The fence holds the command the user copies. |
 
 ## Verification
 
@@ -144,4 +163,4 @@ Done when every returned ticket shows those five lines in that order, each pass 
 - [ ] A ticket whose acceptance id is not a numbered line on `origin/main` stops, and its worker does not start. Its next line says: commit and push `docs/requirements/REQUIREMENTS.md` so that id is on `origin/main`, then run `/sigma-build-factory` again with the same numbers. Other tickets in the wave whose lines are on `origin/main` and whose blockers are closed still start.
 - [ ] Each wave 1 brief said `mode: afk`. A worker that would have asked, or waited for the word fix, the word stop, the word overwrite, or "Which lines should I fix?", stopped that ticket. The other tickets in the wave continued. This chat did not ask and did not wait.
 - [ ] The first review miss returned once inside `/sigma-implement` with the review sentences. A second miss stopped that ticket and did not name `/sigma-merge`.
-- [ ] Each returned ticket prints Title, What holds, What does not, Ticket intent, and the worktree path the worker returned, in that order. The first line is the ticket title. A pass prints `Next: /sigma-merge` with the pull request number, not the issue number. A miss does not name `/sigma-merge`. A stopped ticket, or a ticket that never started, prints one Step 3 line and does not name `/sigma-merge`. The reply does not contain "Which lines should I fix?". This run did not create the branch, the worktree, or `worktrees.json`. A blocker in this set says the factory builds that blocker in this wave. A blocker outside this set says: run `/sigma-implement` for that number, or add that number to the factory set. This run does not close a blocker, does not edit or file an issue, and does not merge.
+- [ ] The reply starts with a table. Columns are Title, Result, and Next. One row per ticket. No bullet list of titles comes before the table. Each returned ticket prints the title, What holds, What does not, Ticket intent, and the worktree path the worker returned as separate paragraphs, with a blank line between them. The title has no `TICKET:` prefix. A pass has a fenced code block after those paragraphs that contains only `/sigma-merge` and the pull request number, not the issue number. The fence does not contain `Next:`. The command is not left only in a paragraph or a table cell. One command per block. The reply has no bullet points. A sequence that is not the wave table is a numbered list. A miss, a stop, or a ticket that never started does not name `/sigma-merge`. A stopped or waiting ticket shows one Step 3 line in Next. The reply does not contain "Which lines should I fix?". This run did not create the branch, the worktree, or `worktrees.json`. A blocker in this set says the factory builds that blocker in this wave. A blocker outside this set says: run `/sigma-implement` for that number, or add that number to the factory set. This run does not close a blocker, does not edit or file an issue, and does not merge.
