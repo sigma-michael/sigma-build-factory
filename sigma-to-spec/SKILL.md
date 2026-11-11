@@ -58,7 +58,7 @@ The spec has no open questions. Title, label, and body detail, with the reason a
 
 When the handoff has `caller: sigma-plan` and `carry: yes`, the assumption yes is the publish yes for those ids.
 
-Read the named spec through `/sg-create-ticket` action `view`. Replace each named acceptance line with the sentence the user stated. Keep every other acceptance id, the title, and the rest of the body. An id the spec already states with that sentence stays unchanged.
+Read the named spec through `/sg-create-ticket` action `view`. Replace each named acceptance line with the sentence the user stated. Keep every other acceptance id and the rest of the body. An id the spec already states with that sentence stays unchanged. When the spec title still uses a word that sentence replaced, rewrite the title with the word the user stated. Pass the new title with the body.
 
 Invoke `/sg-create-ticket` with `caller: sigma-to-spec`, `confirmed: yes`, `action: update`, `kind: spec`, the issue number, and the body. Do not run `gh`.
 

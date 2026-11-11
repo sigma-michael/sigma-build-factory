@@ -240,7 +240,7 @@ Parse `N` from the URL. A ticket body whose Branch line is missing or still cont
 gh issue edit <N> --repo "$REPO" --body-file "$f"
 ```
 
-On a confirmed update, `gh issue edit` replaces title and body and fixes labels. Remove the other mode label so only the matching one remains. Do not change parent on edit.
+On a confirmed update, `gh issue edit` replaces title and body and fixes labels. When the handoff names a new title, pass `--title`. When the Branch slug in the body changed, write that slug. Do not rename an existing git branch. Remove the other mode label so only the matching one remains. Do not change parent on edit.
 
 A SPEC gets label `spec` only. An EPIC gets `type:epic` only. A TICKET gets `type:ticket` and the one mode label.
 
