@@ -56,6 +56,10 @@ gh pr view <n> --json number,state,url,headRefName,baseRefName
 
 When `gh pr view` fails, stop and report that the number is not a pull request. Do not look up an issue and do not merge a different pull request.
 
+When `headRefName` starts with `agent/`, stop. Say that branch merges into the factory branch, not into main. Do not run `gh pr merge` for that number.
+
+When `headRefName` starts with `factory/`, merge it. The base is main. This is the batch the user accepted.
+
 When `state` is `MERGED`, skip `gh pr merge` and keep the saved names for cleanup.
 
 Otherwise read the repository default once. `gh repo view --json nameWithOwner --jq .nameWithOwner` prints `owner/name`. Use that owner and name in:
@@ -96,7 +100,7 @@ Done: each merged base matches `origin/<baseRefName>`, or the reply says the mai
 
 ### Step 3 - Remove a clean worktree and the local branch
 
-For each pull request that is `MERGED`, `headRefName` is `agent/<N>-<slug>`.
+For each pull request that is `MERGED`, `headRefName` is `factory/<YYYY-MM-DD>-<slug>` or, outside a factory batch, `agent/<N>-<slug>`.
 
 Find the `git worktree list` row whose branch is `headRefName` and whose path is under `.worktrees/`. When `git -C <path> status --porcelain` is empty, run `git -C <main> worktree remove <path>` with no `--force`. When the status is not empty, stop and report the path and the porcelain lines. Leave that worktree and its local branch in place. Do not continue cleanup after that stop.
 
@@ -118,6 +122,7 @@ Done: the reply lists merged, removed, and retained.
 
 | Rule | Why / violation looks like |
 |---|---|
+| A head named `agent/` does not merge into main. Say it merges into the factory branch and stop that number. A head named `factory/` merges into its base. | An agent pull request merged here lands one ticket on main before the user accepts the batch. |
 | Merge only numbers named in this invocation or in the reply in this chat. When the invocation names none, print each candidate as its title and its URL, then a fenced code block that contains only `/sigma-merge <number>`. One command per block. Then ask which of these to merge. When the answer names none, stop. A ticket comment that says `API write failed` does not remove a named number from the merge set. | A number from `gh pr list` is not permission. The user must name the numbers in the reply. Skipping a named number because the write used the browser blocks a merge the user already asked for. |
 | Save `gh pr view` JSON, then run `gh pr merge <n> --delete-branch` with the repository default method. `SQUASH` is `--squash`, `REBASE` is `--rebase`, and `MERGE` is `--merge`. Pass a different method only when this invocation names one. Do not pass `--admin` unless this invocation names it. | A missing method flag stops a non-interactive merge. Asking the user to pick `--squash`, `--rebase`, or `--merge` leaves the pull request open. `--admin` merges past a failure the user did not accept. |
 | `git fetch --prune`, then `git merge --ff-only` on the main checkout. | A merge with no `--ff-only` adds a merge commit on the base. Force-push rewrites the base. |

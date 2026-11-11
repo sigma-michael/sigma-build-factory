@@ -59,7 +59,9 @@ Done: `git ls-remote --heads origin <branch>` prints one branch, and this comman
 
 ### Step 3 - Open or update one pull request
 
-List open pull requests for that head:
+When the handoff names a factory branch, `factory/<YYYY-MM-DD>-<slug>`, open or update one pull request for that head. The base is the repo default branch. Pass `--base <default>`. The title is the factory branch name. The body lists each ticket title from the handoff, one paragraph per title. Do not write `Closes #<N>`. Do not open a pull request for an `agent/` branch in that same handoff. When an open pull request for the factory head exists, edit it. Do not open a second one. Return the URL and the number. Stop this step.
+
+When the head is `agent/{N}-{slug}`, list open pull requests for that head:
 
 ```bash
 gh pr list --head <branch> --state open --json number
@@ -94,6 +96,7 @@ Done: the return is the URL and the number. The pull request state is `OPEN`.
 
 | Rule | Why / violation looks like |
 |---|---|
+| A handoff that names `factory/<YYYY-MM-DD>-<slug>` opens or updates one pull request into the default branch. The body lists the ticket titles and does not write `Closes #<N>`. That handoff does not open an `agent/` pull request. | An agent pull request targets main. A `Closes` line on the factory pull request closes issues the user has not accepted. |
 | When the worker hands the pushed branch, open the pull request. Do not wait for a ready verdict. Do not judge the diff. | A ready question here blocks the pull request that review then reads. |
 | Use the `agent/{N}-{slug}` line on the TICKET, and only when `git ls-remote` prints it. When it is missing, stop and return that fact to the worker. | A commit or a push here is feature work. A made-up slug opens the pull request on the wrong branch. |
 | Create one pull request, or edit that same pull request, with `--body-file`. When one open pull request already exists, return its URL. Do not open a second one. Do not pass `--fill` or a guessed `--base`. | A second pull request splits the look. `--fill` replaces `Closes #<N>` and the script paths. |
