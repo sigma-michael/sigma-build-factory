@@ -5,15 +5,18 @@ description: >
   a browser annotation that cannot send /sigma-feedback. The words after
   that phrase are the note. Read the requirements and the specs, then follow
   one skill in this chat: /sigma-plan, /sigma-to-spec, or /sigma-to-tickets
-  with a spec number. Pass Topic: <the user's words> through /sigma-plan and
+  with a spec number. When this chat already has a factory branch and a
+  ticket list, the note goes to those workers through /sigma-implement.
+  Otherwise pass Topic: <the user's words> through /sigma-plan and
   /sigma-to-tickets onto every ticket that note files or updates. When a
   closed ticket's acceptance is the behavior the user says was not
   delivered, hand /sg-create-ticket action: reopen and the new acceptance
-  sentence. This skill does not write requirements, does not file, and does
-  not build.
+  sentence. This skill does not write requirements and does not file.
+  It builds only when this chat has a factory branch and the note matches
+  a ticket in that list.
 argument-hint: "[pasted note]"
 user-invocable: true
-model-invoked-skills: [sigma-plan, sigma-to-spec, sigma-to-tickets, sg-create-ticket]
+model-invoked-skills: [sigma-plan, sigma-to-spec, sigma-to-tickets, sigma-implement, sg-create-ticket]
 allowed-tools: [Read, Glob]
 ---
 
@@ -32,7 +35,7 @@ allowed-tools: [Read, Glob]
 
 ## Overview
 
-`/sigma-feedback` takes a pasted note and follows exactly one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` in this chat. Pass the spec number when the door is `/sigma-to-tickets`. Pass `Topic: <the user's words>` through `/sigma-plan` and `/sigma-to-tickets`. When a closed ticket's acceptance is the behavior the user says was not delivered, hand `/sg-create-ticket` `action: reopen` and the new acceptance sentence. Do not file a second ticket. The user answers the next question inside the door skill.
+`/sigma-feedback` takes a pasted note. When this chat already has a factory branch and the ticket list from `/sigma-build-factory`, the note goes to those workers. Otherwise it follows exactly one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` in this chat. Pass the spec number when the door is `/sigma-to-tickets`. Pass `Topic: <the user's words>` through `/sigma-plan` and `/sigma-to-tickets`. When a closed ticket's acceptance is the behavior the user says was not delivered, hand `/sg-create-ticket` `action: reopen` and the new acceptance sentence. Do not file a second ticket. The user answers the next question inside the door skill.
 
 The first sentence names the skill. The next sentence says why. Then follow that skill's file from its Step 1.
 
@@ -41,7 +44,7 @@ The first sentence names the skill. The next sentence says why. Then follow that
 - **Use when:** the user says `sigma feedback` or `do sigma feedback`, or invokes `/sigma-feedback`. A browser annotation cannot send the slash command. Those words start this skill. The words after the phrase are the note.
 - **Do not use when:** the user already named `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. Follow that skill. Do not classify again.
 - **Do not use when:** the user typed `/sigma-unslop`. That command is the entrance. Do not classify it here. Do not follow it from this skill.
-- **Do not use when:** the next step is to build a filed ticket. Name `/sigma-implement <ticket-number>` and stop. Print that command in a fenced code block that contains only the command. Do not follow it.
+- **Do not use when:** the next step is to build one filed ticket and this chat has no factory branch. Name `/sigma-implement <ticket-number>` and stop. Print that command in a fenced code block that contains only the command. Do not follow it.
 
 ## Input
 
@@ -79,6 +82,7 @@ When the note names two specs and it says what the product should do, that last 
 
 Use the first match.
 
+- This chat already has a factory branch and the ticket list from `/sigma-build-factory`. The door is those workers. Match the note to a ticket when a remaining word from the note appears in that ticket's title or acceptance sentence. Ignore these function words: a, an, the, and, or, of, on, in, to, for, from, with, by, at, as. Hand each match to `/sigma-implement` with the note, `mode: afk`, `pr: none`, and `base:` set to that factory branch. Do not follow `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` for that note. When no ticket matches, print the titles as a numbered list. The last line asks which title the sentence changes. Wait in this chat.
 - The behavior is not in the requirements yet, or the note is too thin to call a bug. The door is `/sigma-plan`. Plan asks the questions.
 - The bug is clear and no spec acceptance line states it. The door is `/sigma-to-spec`.
 - The bug is clear and a spec acceptance line already states it. The door is `/sigma-to-tickets` with that spec number.
@@ -107,15 +111,15 @@ Done when that skill's steps are the next actions in this chat, or when `action:
 |---|---|
 | Read the requirements file and the specs before naming a door. Specs load through `/sg-create-ticket` `list-specs` and `view`. A ticket number named in the note or the spec body loads through `view`. Do not ask for `list-tickets`. Use `view`. `list-tickets` from this caller stops. Do not run `gh`. | A door chosen from the note alone files the wrong spec. `gh` here is a second issue path. A `list-tickets` call from this caller stops the run. |
 | Ask one question only when the note names two specs, or when the note does not say what the product should do. Ask in this chat after the quoted acceptance sentences. The question is the last line. Do not call AskUserQuestion. Do not use a question card. Do not offer A, B, or C. Do not ask about the old line. Pass `Topic: <the user's words>`. Do not ask which source wins. Pass that same line. Silence does not start a skill. | A second question makes the user pick the command this skill exists to pick. A card hides the text. A question about the old line, or about which source wins, drops the user's words. Silence would start a skill the user did not confirm. |
-| Follow exactly one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets <spec-number>` from its Step 1. Pass `Topic: <the user's words>` through `/sigma-plan` and `/sigma-to-tickets` onto every ticket that note files or updates. Do not follow `/sigma-unslop`. | Stopping at the name makes the user retype the command. Following two skills skips the confirm inside the first one. A ticket without that line hides the words the user used. |
+| When this chat has a factory branch and a ticket list, hand the note to `/sigma-implement` for each matching ticket with `mode: afk`, `pr: none`, and that factory base. Otherwise follow exactly one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets <spec-number>` from its Step 1. Pass `Topic: <the user's words>` through `/sigma-plan` and `/sigma-to-tickets`. Do not follow `/sigma-unslop`. | A factory note that stops at plan leaves the workers with nothing to build. Following two skills skips the confirm inside the first one. |
 | When a viewed ticket is closed and its acceptance is the behavior the user says was not delivered, hand `/sg-create-ticket` `caller: sigma-feedback`, `action: reopen`, and the new acceptance sentence. When no ticket number was named, pass that handoff to `/sigma-to-tickets`. Do not file a second ticket. Do not treat the closed ticket as proof the work is done. | A second ticket copies a closed acceptance. A closed ticket treated as done leaves the missing behavior closed. |
-| Do not write `docs/requirements/REQUIREMENTS.md`, do not file an issue, and do not build. When a closed ticket's acceptance is the behavior the user says was not delivered, hand `action: reopen` and the new acceptance sentence. | A write here skips the yes inside the skill that owns that file or issue. A second ticket copies the closed acceptance. |
+| Do not write `docs/requirements/REQUIREMENTS.md` and do not file an issue. Build only when this chat has a factory branch and the note matches a ticket in that list. When a closed ticket's acceptance is the behavior the user says was not delivered, and there is no factory branch in this chat, hand `action: reopen` and the new acceptance sentence. | A write here skips the yes inside the skill that owns that file or issue. A factory note that does not build leaves the sentence in the chat. |
 
 ## Verification
 
 - [ ] `REPO_ROOT` contains `.git`, and `docs/requirements/REQUIREMENTS.md` was read, or the run stopped at `/sigma-init-docs` in a fenced code block that contains only that command.
 - [ ] Specs were loaded through `/sg-create-ticket` `list-specs` and `view`. A named ticket number was loaded through `view`. This run did not ask for `list-tickets` and did not run `gh`.
-- [ ] One door was chosen by the first match: `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` with that spec number, or `action: reopen` was handed for the closed ticket. One question was asked only when the note names two specs, or when the note does not say what the product should do. That question was the last line in this chat after the quoted acceptance sentences. This run did not call AskUserQuestion, did not use a question card, and did not offer A, B, or C. The run did not ask about the old line and did not ask which source wins. Silence did not start a skill.
+- [ ] One door was chosen by the first match. A factory branch and ticket list in this chat handed the note to `/sigma-implement` for each matching ticket with `mode: afk`, `pr: none`, and that factory base. Otherwise the door was `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` with that spec number, or `action: reopen` was handed for the closed ticket. One question was asked only when the note names two specs, or when the note does not say what the product should do. That question was the last line in this chat after the quoted acceptance sentences. This run did not call AskUserQuestion, did not use a question card, and did not offer A, B, or C. The run did not ask about the old line and did not ask which source wins. Silence did not start a skill.
 - [ ] The reply names that skill, says why, and follows its file from Step 1. `Topic: <the user's words>` is passed through `/sigma-plan` and `/sigma-to-tickets` onto every ticket that note files or updates. `/sigma-to-tickets` receives the spec number. `/sigma-to-spec` receives the note.
 - [ ] A closed ticket whose acceptance is the behavior the user says was not delivered was handed to `/sg-create-ticket` as `action: reopen` and the new acceptance sentence. `caller: sigma-feedback` handed it when that ticket was viewed. `caller: sigma-to-tickets` handed it when `/sigma-to-tickets` found that ticket. A second ticket was not filed.
 - [ ] This run did not write the requirements file and did not build.

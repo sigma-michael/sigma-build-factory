@@ -12,7 +12,7 @@ Skill folders: `sigma-init-docs`, `sigma-feedback`, `sigma-plan`, `sigma-to-spec
 
 ## Lane
 
-Each command stops and names the next command. A next command is a fenced code block with only the command inside. Do not call the next command from inside a skill. Four exceptions exist. `/sigma-feedback` follows exactly one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. It does not follow `/sigma-unslop`. `/sigma-plan` follows `/sigma-to-spec` and then `/sigma-to-tickets` only for the ids in an assumption the user accepted. A confirmed feature with no SPEC ends at `/sigma-to-spec`. `/sigma-build-factory` starts one `/sigma-implement` worker per ticket in the wave. `/sigma-implement` starts one worker for `/sg-tdd` then `/sg-pr`, and a second worker for `/sg-review`. Those skills still stop at their own end.
+Each command stops and names the next command. A next command is a fenced code block with only the command inside. Do not call the next command from inside a skill. Four exceptions exist. `/sigma-feedback` follows the factory workers when this chat has a factory branch. Otherwise it follows exactly one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. It does not follow `/sigma-unslop`. `/sigma-plan` follows `/sigma-to-spec` and then `/sigma-to-tickets` only for the ids in an assumption the user accepted. A confirmed feature with no SPEC ends at `/sigma-to-spec`. `/sigma-build-factory` creates one factory branch, starts one `/sigma-implement` worker per ticket from that branch, merges each pass back, and waits. A factory brief says `pr: none`, so that worker does not follow `/sg-pr`. A standalone `/sigma-implement` starts one worker for `/sg-tdd` then `/sg-pr`, and a second worker for `/sg-review`. Those skills still stop at their own end.
 
 `/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sg-create-ticket` → GitHub → `/sigma-pick-tickets` → `/sigma-implement` → `/sigma-merge`
 
@@ -20,7 +20,7 @@ Each command stops and names the next command. A next command is a fenced code b
 
 Three entrances are parallel.
 
-1. `/sigma-feedback` follows exactly one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. It does not follow `/sigma-unslop`.
+1. `/sigma-feedback` follows the factory workers when this chat has a factory branch. Otherwise it follows exactly one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. It does not follow `/sigma-unslop`.
 2. The user types `/sigma-unslop-tickets` to repair open tickets. A yes writes through `/sg-create-ticket`. The reply names `/sigma-pick-tickets`.
 3. The user types `/sigma-unslop`. That command writes one review and stops.
 

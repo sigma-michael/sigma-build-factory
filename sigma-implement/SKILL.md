@@ -155,11 +155,11 @@ When every remaining word appears in an acceptance sentence or a requirements li
 
 When the create path is already a worktree on another branch, stop and ask. Do not switch it.
 
-Create only when that row is missing. After `git fetch origin`, base a new branch on `origin/<default>`. `<default>` is `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`. Do not base the branch on the user's current branch. Create the branch only in this step.
+Create only when that row is missing. After `git fetch origin`, read the base from the brief. When the brief names `base: factory/<YYYY-MM-DD>-<slug>`, that branch is the base. When the brief names no base, the base is `origin/<default>`. `<default>` is `gh repo view --json defaultBranchRef --jq .defaultBranchRef.name`. Do not base the branch on the user's current branch. Create the branch only in this step.
 
 Before create, `git check-ignore -q .worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>` must exit 0. A non-zero exit stops the run. The user must ignore `.worktrees/`. Do not edit `.gitignore`.
 
-Run `git worktree add` when every remaining word appears in an acceptance sentence or a requirements line. When the branch is missing, the row is missing, and the create path is not already a worktree, run `git worktree add -b agent/<N>-<slug> .worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N> origin/<default>`. When the branch exists, the row is missing, and the create path is not already a worktree, run `git worktree add .worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N> agent/<N>-<slug>`.
+Run `git worktree add` when every remaining word appears in an acceptance sentence or a requirements line. When the branch is missing, the row is missing, and the create path is not already a worktree, run `git worktree add -b agent/<N>-<slug> .worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N> <base>`. `<base>` is the factory branch from the brief, or `origin/<default>` when the brief names no base. When the branch exists, the row is missing, and the create path is not already a worktree, run `git worktree add .worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N> agent/<N>-<slug>`. When the brief names a factory base and the agent branch already exists, merge that factory branch into the agent worktree before the worker starts. Do not merge the agent branch into main.
 
 When you create the worktree, write `.worktrees/loop_<YYYY-MM-DD>-<slug>/worktrees.json` as one key. Use the real issue number, date, and path:
 
@@ -189,13 +189,13 @@ Done when the list has one or more paths and every path is under `scripts/`. Do 
 
 If the worktree is dirty, every dirty path must be on that list. Any other dirty path stops the run.
 
-### Step 6 - One worker builds and opens the pull request
+### Step 6 - One worker builds
 
-Start one worker. That worker follows `/sg-tdd` from Step 1, then follows `/sg-pr`. Pass the issue number, the worktree path, the branch, the locked script paths, the acceptance ids, and whether the user said overwrite.
+Start one worker. That worker follows `/sg-tdd` from Step 1. When the brief names `pr: none`, do not follow `/sg-pr`. The return uses `Pull request: none`. When the brief does not name `pr: none`, the same worker then follows `/sg-pr`. Pass the issue number, the worktree path, the branch, the locked script paths, the acceptance ids, and whether the user said overwrite.
 
 This chat does not edit scripts. This chat does not commit. This chat does not judge the diff.
 
-Done when the worker returns the head SHA, one report line per id, and an open pull request URL and pull request number. The issue number is not that pull request number. Continue at Step 7. Do not merge.
+Done when the worker returns the head SHA and one report line per id. A brief without `pr: none` also returns an open pull request URL and pull request number. The issue number is not that pull request number. A brief with `pr: none` returns no pull request. Continue at Step 7. Do not merge.
 
 ### Step 7 - Fresh review and the decision
 
@@ -231,7 +231,9 @@ The pull request paragraph is `Pull request: <url>`.
 
 The next paragraph is `Next:`.
 
-A pass ends with one fenced code block. The fence contains only the command. Do not put `Next:` inside the fence. Do not leave the command only in a paragraph. One command per block.
+When the brief names `pr: none`, a pass prints the four paragraphs and the return fields. Result is `pass`. Pull request is `none`. Do not print `/sigma-merge`. Do not print a fence. The factory merges the agent branch.
+
+When the brief does not name `pr: none`, a pass ends with one fenced code block. The fence contains only the command. Do not put `Next:` inside the fence. Do not leave the command only in a paragraph. One command per block.
 
 ```
 /sigma-merge <pull-request-number>
@@ -299,7 +301,7 @@ Done when the reply starts with that sentence and the worker brief contains the 
 | A `spec` or `type:epic` label sends the `/sigma-to-tickets` flag, then waits. Overwrite on an epic uses the Step 5 path and the worker builds only that path. | A spec or epic has no single script list. The flag names the split. The chosen path is the write list. |
 | A matched `type:ticket` builds with no flag when every acceptance id is a numbered line in `docs/requirements/REQUIREMENTS.md` and appears in the parent SPEC. Any other result sends one flag and waits. Overwrite builds from the issue body. The commit body contains overwrite. Both sources stay unedited. A reply that does not say overwrite leaves the build waiting. Do not print that wait rule. | A hard stop hides the command that adds the missing line. An edit to either source removes the evidence. |
 | Stop before `git worktree add` and before `scripts/<slug>` when the ticket title or the branch slug uses a word the acceptance line and the requirements line do not use. The branch slug is the slug copied from the branch line. Split the ticket title and the branch slug on spaces and hyphens. Drop the issue number and the `agent/` prefix. Drop `a`, `an`, `the`, `and`, `or`, `of`, `on`, `in`, `to`, `for`, `from`, `with`, `by`, `at`, `as`. Compare case-insensitively. The acceptance sentence is the ticket acceptance line. The requirements line is the numbered line in `docs/requirements/REQUIREMENTS.md` with that same id. A remaining word that appears in neither the acceptance sentence nor the numbered requirements line for that acceptance id makes the title stale. When the ticket has more than one acceptance id, the word is stale when it appears in none of the acceptance sentences and none of the requirements lines for those ids. Print the stale title and the word. Say the acceptance line and the requirements line do not use that word. Result for the caller is `stopped`. Do not create the branch. Do not create the worktree. Do not write `worktrees.json`. Do not choose `scripts/<slug>`. Do not start `/sg-tdd`. Do not rewrite the title. Do not delete an existing git branch. The old branch stays. Do not follow a build command. Overwrite does not continue this run. | The branch slug is copied into the branch name, the worktree path, and `scripts/<slug>.py`. Those paths then contain a word the acceptance line and the requirements line do not use. An overwrite here still builds those paths. The old branch stays. |
-| Use branch `agent/{N}-{slug}` from the ticket body. Reuse a `git worktree list` row whose branch is `agent/<N>-<slug>` and whose path is under `.worktrees/`. Otherwise create `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>` from `origin/<default>` only when `git check-ignore -q` on that path exits 0. When that path is a worktree on another branch, stop and ask. Do not switch it. Write `worktrees.json` only on create. The worker commits only in that worktree. | An invented slug disagrees with the ticket. A second worktree, or a switch onto another branch, splits the checkout. A commit on the user's current branch mixes this ticket into other work. An unignored worktree lists its files in the user's checkout. |
+| Use branch `agent/{N}-{slug}` from the ticket body. When the brief names `base: factory/<YYYY-MM-DD>-<slug>`, create that agent branch from the factory branch. When the brief names no base, create it from `origin/<default>`. When the brief names `pr: none`, do not follow `/sg-pr` and do not print `/sigma-merge`. Reuse a `git worktree list` row whose branch is `agent/<N>-<slug>` and whose path is under `.worktrees/`. Otherwise create `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>` from that base only when `git check-ignore -q` on that path exits 0. When that path is a worktree on another branch, stop and ask. Do not switch it. Write `worktrees.json` only on create. The worker commits only in that worktree. | An invented slug disagrees with the ticket. A second worktree, or a switch onto another branch, splits the checkout. A commit on the user's current branch mixes this ticket into other work. An unignored worktree lists its files in the user's checkout. |
 | Lock the permitted `scripts/**` paths and hand that list to the worker. A ticket uses the paths it names. When it names none, choose the closest script, or one new path under `scripts/`. Do not ask. This chat does not edit scripts. | A question here stops on a choice the user cannot see. A doc or any file outside that list is out of bounds. |
 | One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. This chat does not judge the diff. Do not merge. | A verdict in this chat comes from a context that can see the build. A merge here skips `/sigma-merge`. |
 | A browser-write report line prints the warning above the decision, for ready and for not ready. Do not ask. Do not wait. Start `/sg-review`. A ready verdict still names `/sigma-merge`. | A hidden browser write leaves the user with a script that did not perform the write. A wait, or a withheld merge line, treats a recorded route failure as a stop. |
