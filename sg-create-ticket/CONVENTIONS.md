@@ -58,7 +58,7 @@ Context cites the spec number. `Topic: <the user's words>` sits next to these se
 
 **Reason.** Context points at the spec. Acceptance is the check. `Topic: <the user's words>` stores the words the user used. Branch is the checkout name. Mode tells `/sigma-implement` whether to wait.
 
-**Trap.** A rewritten acceptance line lets the ticket pass a check the spec does not state. A missing `Topic: <the user's words>` line leaves the user's words off the ticket. `/sigma-pick-tickets` then has no Topic line to match. A ticket with no parent has no spec line to copy. A bug whose behavior is not on the spec belongs in `/sigma-to-spec` first.
+**Trap.** A rewritten acceptance line lets the ticket pass a check the spec does not state. A missing `Topic: <the user's words>` line leaves the user's words off the ticket. `/sigma-pick-tickets` then has no Topic line to match. A ticket with no parent has no spec line to copy. A bug whose behavior is not on the spec belongs in `/sigma-to-spec` first. A title that keeps a word the acceptance line replaced sends the factory a stale branch and a stale script name.
 
 ## Scripts in bounds
 

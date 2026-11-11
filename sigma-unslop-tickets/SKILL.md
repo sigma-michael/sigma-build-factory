@@ -25,7 +25,7 @@ allowed-tools: [Read, Glob]
 
 ## Overview
 
-`/sigma-unslop-tickets` is optional. The user can start here once issues exist, when the open set needs a repair, including as an entrance, not only after `/sigma-to-tickets`. It reads the open ticket set and asks once about the repairs. After yes, confirmed closes, body edits, and blocker links go through `/sg-create-ticket`. Leave `action: create` out. The reply then names `/sigma-pick-tickets` in a fenced code block that contains only that command, and does not follow it.
+`/sigma-unslop-tickets` is optional. The user can start here once issues exist, when the open set needs a repair, including as an entrance, not only after `/sigma-to-tickets`. It reads the open ticket set and asks once about the repairs. After yes, confirmed closes, body edits, title updates, and blocker links go through `/sg-create-ticket`. Leave `action: create` out. The reply then names `/sigma-pick-tickets` in a fenced code block that contains only that command, and does not follow it.
 
 A requirements clash names `/sigma-plan`. A ticket that should split names `/sigma-to-tickets`. Print each named command in a fenced code block that contains only that command. One command per block. This skill does not start either command, and it does not start `/sigma-pick-tickets`.
 
@@ -65,7 +65,8 @@ Done when the requirements file, the spec list, and the ticket list are read. A 
 
 Treat each ticket body as a claim. One disposition per ticket. Use the first match.
 
-- **Clash.** Two lines in the ticket, the parent spec, or the requirements file cannot both be true. Name `/sigma-plan`. Leave the requirements file unchanged. Leave this ticket off the close list.
+- **Stale name.** The acceptance matches the requirements line, and the title uses a word that line does not use. Recommend the new title. The new name uses the word in the requirements line, names the screen and the result, and stays one short name. The Branch slug follows that name. The old git branch stays. This update is the title and the Branch line. Do not name `/sigma-plan`.
+- **Clash.** Two acceptance lines in the ticket, the parent spec, or the requirements file cannot both be true. Name `/sigma-plan`. Leave the requirements file unchanged. Leave this ticket off the close list. A title that only keeps an old word is Stale name, not Clash.
 - **Stale.** A closed ticket already states the same acceptance ids, or the behavior is absent from the requirements file. Close as already done, or name `/sigma-plan` when the behavior is absent.
 - **Duplicate.** Another open or closed ticket carries the same acceptance ids. Close this ticket and name the keeper.
 - **Too split.** Two open tickets are one behavior. Keep one body, and close the other as a duplicate of that keeper. A body edit is allowed only for the keeper, and only to hold the shared acceptance ids.
@@ -92,7 +93,7 @@ Done when the user says yes to that list, or silence has stopped the run.
 
 ### Step 5 - Apply the confirmed writes
 
-Hand `/sg-create-ticket` only the closes, body edits, and blocker links in the yes. `caller: sigma-unslop-tickets`. `action: close` or `action: update`. Pass the issue number. A close passes the keeper number or the words `already done`. An update passes the confirmed body, the blocker number, or both. Leave `action: create` out of the handoff.
+Hand `/sg-create-ticket` only the closes, body edits, title updates, and blocker links in the yes. `caller: sigma-unslop-tickets`. `action: close` or `action: update`. Pass the issue number. A close passes the keeper number or the words `already done`. An update passes the confirmed body, the new title, the blocker number, or all three. A stale-name update passes the new title and the body whose Branch slug matches that title. Leave `action: create` out of the handoff.
 
 A clash or a split is not in that handoff. The reply names `/sigma-plan` or `/sigma-to-tickets <spec-number>` in a fenced code block that contains only that command, and does not follow that skill.
 
