@@ -30,7 +30,7 @@ allowed-tools: [Bash, Read, Glob, Grep]
 
 `/sigma-build-factory` runs the ticket numbers `/sigma-pick-tickets` printed. It creates `factory/<YYYY-MM-DD>-<slug>` from the local requirements file. One worker follows `/sigma-implement` for each ticket, with that factory branch as the base. A pass merges that `agent/` branch into the factory branch. One pull request tracks the factory branch into main. The chat waits once per round. A product sentence is filed as a ticket and handed to the workers. An epic is filed with `Next skill: /sigma-plan` and is not handed to the workers. The words yes, accept, or happy accept the batch and print `/sigma-merge` for that one pull request. This skill does not merge into main.
 
-The worker brief says `mode: afk` and `pr: none`. Workers do not ask. The reply starts with a table. One row per ticket. Columns are Title, Result, and Next. Do not print a bullet list of titles. Then one section per returned ticket. The ticket title, What holds, What does not, Ticket intent, and Worktree are separate paragraphs. Do not prefix the title with `TICKET:`. A command the user runs is a fenced code block that contains only the command. Do not put `Next:` inside the fence. An acceptance id in the local `docs/requirements/REQUIREMENTS.md` is buildable. A stale title stops that ticket before its worker starts. Other tickets whose titles are not stale and whose blockers are closed still start. Do not close a blocker, do not edit or file an issue.
+The worker brief says `mode: afk` and `pr: none`. Workers do not ask. The reply is one table. One row per ticket. Columns are Title, Does, Outcome, and Status. Each cell is one short sentence. Status is Met or Not met. Do not print What holds, What does not, Ticket intent, or the worktree. A command the user runs is a fenced code block that contains only the command. Do not put `Next:` inside the fence. An acceptance id in the local `docs/requirements/REQUIREMENTS.md` is buildable. A stale title stops that ticket before its worker starts. Other tickets whose titles are not stale and whose blockers are closed still start. Do not close a blocker, do not edit or file an issue.
 
 ## When to Use
 
@@ -107,13 +107,21 @@ Done when every wave 1 worker has returned its block, or that ticket has stopped
 
 Follow `/sg-pr` once for the factory branch. The head is `factory/<YYYY-MM-DD>-<slug>`. The base is `<default>`. Do not open a pull request for an `agent/` branch. When an open pull request for that factory head already exists, update that same pull request. Do not open a second one.
 
-The reply uses paragraphs, one table, and a numbered list only when a sequence is clearer than a table. Do not use bullet points. Do not print a bullet list of titles before the table.
+The reply is one table. One row per ticket. Do not use bullet points. Do not print a paragraph of review notes.
 
-Part 1 is a table. One row per ticket in the wave. Columns are Title, Result, and Next. A merged pass is pass. A stale title is stopped. A ticket with an open blocker and no stale title is waiting. A missing requirements id, a worker miss, or a worker stop is stopped. On a pass, Next is the factory pull request. On a stop, or a ticket that never started, Next is the one unblock sentence from Step 3. When Step 3 set no line, Next is empty. Do not name `/sigma-merge` on a miss, a stop, or a ticket that never started.
+Columns are Title, Does, Outcome, and Status.
 
-Part 2 is one section per ticket that returned a review. The ticket title is its own paragraph. Do not prefix the title with `TICKET:`. Then each of these is its own paragraph, with a blank line between them: What holds, What does not, Ticket intent, Worktree. Do not join those labels into one paragraph. A ticket that never started has no review paragraphs.
+Title is the ticket title. Do not prefix it with `TICKET:`.
 
-Then one paragraph: a sentence about the product sends that sentence back to the matching tickets. The words yes, accept, or happy accept the batch.
+Does is one sentence in plain language: what this ticket asks a person to do.
+
+Outcome is one sentence: what the page shows now. A ticket that did not run says why in that one sentence.
+
+Status is `Met` or `Not met`. A pass is Met. A miss, a stop, a stale title, a missing id, or a ticket that did not run is Not met.
+
+Do not print What holds, What does not, Ticket intent, Worktree, or Result.
+
+Then one sentence: a product sentence is filed and built. The words yes, accept, or happy accept the batch.
 
 When at least one ticket passed, the last thing before the wait is one fenced code block. The fence contains only the command. Use the factory pull request number.
 
@@ -123,7 +131,7 @@ When at least one ticket passed, the last thing before the wait is one fenced co
 
 Do not put `Next:` inside the fence. Do not merge. Then wait in this chat. Do not use a question card. Do not offer A, B, or C.
 
-A product sentence is filed through `/sigma-feedback` in this turn and handed to the workers. One outcome is a ticket. A large area is an epic with `Next skill: /sigma-plan` and is not handed to the workers. Hand the ticket to `/sigma-implement` with that sentence, `mode: afk`, `pr: none`, and `base: factory/<YYYY-MM-DD>-<slug>`. Merge each resulting pass back into the factory branch. Update the same pull request. Print the table and the paragraphs again. Wait again.
+A product sentence is filed through `/sigma-feedback` in this turn and handed to the workers. One outcome is a ticket. A large area is an epic with `Next skill: /sigma-plan` and is not handed to the workers. Hand the ticket to `/sigma-implement` with that sentence, `mode: afk`, `pr: none`, and `base: factory/<YYYY-MM-DD>-<slug>`. Merge each resulting pass back into the factory branch. Update the same pull request. Print the table again. Wait again.
 
 The words yes, accept, or happy accept the batch. Print the same fence again and stop. Do not start a worker. Do not merge. The user runs that fence. `/sigma-merge` merges the factory pull request into main.
 
@@ -131,7 +139,7 @@ Do not print "Which lines should I fix?". A worker still does not ask.
 
 A waiting ticket stays unbuilt until its blocker is closed. The next round can include it. Do not close a blocker, do not edit or file an issue, and do not merge into main.
 
-Done when the factory pull request is open, the table and the paragraphs are printed, and this chat is waiting. An accept prints the fence and stops. A product sentence was filed as a ticket, handed to the workers, and the same pull request was updated. An epic was not handed to the workers.
+Done when the factory pull request is open, the table is printed, and this chat is waiting. An accept prints the fence and stops. A product sentence was filed as a ticket, handed to the workers, and the same pull request was updated. An epic was not handed to the workers.
 
 Each worker return still ends with this block. The factory reads it. It does not paste the block as one paragraph.
 
@@ -158,7 +166,7 @@ Copy the sentences from that return. `/sigma-implement` creates the agent branch
 | A title is stale only when it still uses a word an older line used and the current acceptance sentence and requirements line use a different word instead. A title word the sentence does not repeat is not stale. Name the title, the old word, and the word the line uses. Say the title should use the line's word. Do not spawn `/sigma-implement`. The fence contains only `/sigma-unslop-tickets`. | A word the sentence does not repeat is a title verb, not a replaced name. Dropping it leaves a ticket we just filed out of the build with no rewrite. |
 | The worker brief says `mode: afk`, `pr: none`, and `base: factory/<YYYY-MM-DD>-<slug>`. A worker does not ask. After the passes are merged into the factory branch, print the table and wait once. A product sentence is filed as a ticket and handed to the workers. An epic is filed with `Next skill: /sigma-plan` and is not handed to the workers. The words yes, accept, or happy print the `/sigma-merge` fence and stop. This skill does not merge into main. | A question inside a worker stalls the other tickets. Ending the wave without a wait leaves the user's sentence with no worker. Merging into main here skips the accept. |
 | Wave 1 is every ticket with no open blocker and no stale title. The next wave starts on a later run, after those blockers are closed. A waiting ticket gets one next line. The line says the factory builds that blocker in this wave when that blocker is in this set. When the blocker is outside this set, the line says: run `/sigma-implement` for that number, or add that number to the factory set. Do not close a blocker, do not edit or file an issue, and do not merge. | A close here marks a ticket done before `/sigma-merge`. |
-| Open one pull request for `factory/<YYYY-MM-DD>-<slug>` into `<default>`. Do not open a pull request for an `agent/` branch. The reply starts with a table, then separate paragraphs per ticket, then one fence that contains only `/sigma-merge` and the factory pull request number. A product sentence is filed as a ticket, handed to the workers, and updates that same pull request. An epic is not handed to the workers. An accept prints that fence and stops. | A ticket pull request merges that ticket into main before the user sees the batch. A second factory pull request splits the review. |
+| The reply is one table. Columns are Title, Does, Outcome, and Status. Each cell is one sentence. Status is Met or Not met. Do not print What holds, What does not, Ticket intent, or the worktree. Then one fence that contains only `/sigma-merge` and the factory pull request number when a pass exists. | A paragraph per field hides the result. |
 
 ## Verification
 
@@ -168,4 +176,4 @@ Copy the sentences from that return. `/sigma-implement` creates the agent branch
 - [ ] A stale title stops only when it still uses a word an older line used and the current line uses a different word. Next names the title, the old word, and the word the line uses, and says the title should use the line's word. The fence contains only `/sigma-unslop-tickets`. A title word the sentence does not repeat did not stop the ticket.
 - [ ] Each wave 1 brief said `mode: afk`, `pr: none`, and `base: factory/<YYYY-MM-DD>-<slug>`. A pass merged that agent branch into the factory branch and did not open a pull request to main.
 - [ ] The first review miss returned once inside `/sigma-implement` with the review sentences. A second miss stopped that ticket and did not name `/sigma-merge`.
-- [ ] One pull request tracks the factory branch into the default branch. The reply is a table, then separate paragraphs, then one fence that contains only `/sigma-merge` and that pull request number. A product sentence was filed as a ticket, handed to the workers, and updated that same pull request. An epic was not handed to the workers. The words yes, accept, or happy printed that fence and stopped. This skill did not merge into main.
+- [ ] One pull request tracks the factory branch into the default branch. The reply is one table. Columns are Title, Does, Outcome, and Status. Each cell is one sentence. Status is Met or Not met. The reply does not print What holds, What does not, Ticket intent, or the worktree. A pass has one fence that contains only `/sigma-merge` and that pull request number. A product sentence was filed as a ticket, handed to the workers, and updated that same pull request. An epic was not handed to the workers. The words yes, accept, or happy printed that fence and stopped. This skill did not merge into main.
