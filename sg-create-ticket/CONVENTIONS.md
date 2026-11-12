@@ -110,7 +110,7 @@ Context cites the spec number. `Topic: <the user's words>` sits next to these se
 
 ## Who says yes
 
-**Convention.** `/sigma-to-spec` shows a digest and waits for yes. `/sigma-to-tickets` asks one confirm of grain and blockers. Those yes replies do not get a second question in `/sg-create-ticket`. The ids `/sigma-unslop` recorded are not a filing yes. File only a body those two skills confirmed in this session. Silence does not file.
+**Convention.** `/sigma-to-spec` shows a digest and waits for yes. `/sigma-to-tickets` prints the cut and files a clear spec in that same turn. That filing does not get a second question in `/sg-create-ticket`. The ids `/sigma-unslop` recorded are not a filing yes. File only a body `/sigma-to-spec` confirmed or `/sigma-to-tickets` printed for a clear spec. Silence does not file a spec.
 
 **Reason.** The skill that composed the body already asked. A draft from this chat has no filing yes.
 

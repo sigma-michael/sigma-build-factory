@@ -3,18 +3,14 @@ name: sigma-pick-tickets
 description: >
   /sigma-pick-tickets reads open type:ticket issues already on GitHub and
   prints a numbered list of ticket titles, then a fenced code block with
-  the next command. A topic word matches any of: ticket title, acceptance
-  text, the Topic line, parent spec title, parent spec body, and the
-  numbered requirements line for each acceptance id on the ticket. An empty
-  argument lists the smallest closeable tickets ahead of epic-sized ones.
-  The fence after the list holds only /sigma-build-factory and every number
-  in list order, or only /sigma-implement and the one number when the list
-  has one ticket. Do not put Next: inside the fence. When no ticket matches,
-  the stop names the open tickets whose acceptance ids sit on requirements
-  lines that differ from origin/main, says the topic word was absent from
-  the titles, and does not start /sigma-implement. An empty argument with
-  an empty set names the wait and prints no number. This skill does not
-  close, edit, or create, and does not follow either command.
+  the next command. A topic matches a ticket by the outcome in its
+  acceptance, Topic line, parent spec, and requirements lines. A shared
+  word is not required and is not enough. This skill does not judge titles,
+  clashes, blockers, or origin/main. That is /sigma-unslop-tickets. An epic
+  is context, not a build ticket. When the outcome is specified and no
+  ticket carries it, the fence holds only /sigma-to-tickets. The fence
+  after a ticket list holds only /sigma-build-factory and every number,
+  or only /sigma-implement when the list has one ticket.
 argument-hint: "[topic words]"
 user-invocable: true
 disable-model-invocation: true
@@ -31,7 +27,7 @@ allowed-tools: [Read, Glob]
 
 ## Overview
 
-`/sigma-pick-tickets` reads open tickets already on GitHub and prints the set to build. A topic word matches any of: ticket title, acceptance text, the `Topic` line, parent spec title, parent spec body, and the numbered requirements line for each acceptance id on the ticket. An empty argument lists the smallest closeable tickets first. The reply is a numbered list of ticket titles, then a fenced code block with the next command. It does not print the acceptance body. The fence holds only `/sigma-build-factory` and every number in list order, or only `/sigma-implement` and the one number when the list has one ticket. Do not put `Next:` inside the fence. When no ticket matches, the stop names the open tickets whose acceptance ids sit on requirements lines that differ from origin/main and says the topic word was absent from the titles.
+`/sigma-pick-tickets` reads open tickets already on GitHub and prints the set to build. It matches a topic to the outcome in the acceptance, the Topic line, the parent spec, and the requirements lines. A shared word is not required and is not enough. It does not judge a title, a clash, a blocker, or `origin/main`. That is `/sigma-unslop-tickets`. The reply is a numbered list of ticket titles, then a fenced code block with the next command. It does not print the acceptance body. The fence holds only `/sigma-build-factory` and every number in list order, or only `/sigma-implement` and the one number when the list has one ticket. Do not put `Next:` inside the fence. When the outcome is specified and no ticket carries it, the fence holds only `/sigma-to-tickets`.
 
 The list is read-only through `/sg-create-ticket` with `caller: sigma-pick-tickets`. This skill does not close, edit, or create an issue. It does not start `/sigma-implement`. Do not name `/sg-create-ticket` as the next command.
 
@@ -66,17 +62,19 @@ Done when the requirements file, the spec list, and the ticket list are read. A 
 
 ### Step 3 - Choose the set
 
-Read `docs/requirements/REQUIREMENTS.md`. A numbered line has the id as its first token. Drop a ticket when any acceptance id is not a numbered line. Name `/sigma-plan` and that id. Do not put the ticket in the set.
+The task is `$ARGUMENTS`. When the argument is empty, the task is the open set.
 
-When `$ARGUMENTS` has topic words, a topic word matches any of: ticket title, acceptance text, the `Topic` line, parent spec title, parent spec body, and the numbered requirements line for each acceptance id on the ticket. Keep a ticket that matches. A ticket that does not match is out. When no ticket matches, do not print the small-ticket list and do not start `/sigma-implement`. Compare each numbered requirements line with `origin/main`. The stop names the open tickets whose acceptance ids sit on requirements lines that differ from origin/main. Say the topic word was absent from the titles. Do not invent a match. When the only matches lack a numbered line, say that and stop.
+Read each open ticket's title, acceptance, and Topic line. Read the parent spec title and body. Read the numbered requirements lines for that ticket's acceptance ids. An epic stays out of the build list. Its title and body are context for the tickets under it.
 
-When `$ARGUMENTS` is empty, drop three kinds of ticket. Drop a ticket whose acceptance lines cannot both be true. Drop a ticket that mixes behaviors that can ship apart. Drop a ticket whose `blockedBy` names an open issue. Keep a ticket with one acceptance id ahead of a ticket with more than one. An epic-sized ticket stays in the list after every one-id ticket.
+A ticket is in the set when that text is about the same outcome as the task. "Edit the input dimensions" includes a ticket about opening the dimension page, adding a dimension row, or hiding a dimension row. A shared word is not required. A shared word is not enough. Do not keep a ticket whose outcome is a different screen.
 
-Drop a ticket whose title uses a word the acceptance line and the requirements line do not use. Say the title is stale. Do not put that ticket in the build set. Do not start `/sigma-implement` or `/sigma-build-factory` on it.
+Do not drop a ticket for its title, a clash, a missing blocker, the length of the acceptance, or a line that differs from `origin/main`. Those checks are `/sigma-unslop-tickets`.
 
-Order the kept tickets so a number in `blockedBy` comes after that blocker when the blocker is also in the set.
+When the task matches a requirements sentence or an epic and no `type:ticket` is about that outcome, print the sentence. Say it is specified and not ticketed. The fence in Step 4 holds only `/sigma-to-tickets`. Do not say there is no factory set. Do not invent a ticket.
 
-Done when the set is ordered, or no ticket matches and the stop has named the open tickets whose acceptance ids sit on requirements lines that differ from origin/main and said the topic word was absent from the titles.
+When the argument is empty, the set is the open tickets. Order a blocker before the ticket that waits on it when both are in the set.
+
+Done when the set is the tickets about the task, or the reply says the outcome is specified and not ticketed.
 
 ### Step 4 - Print the set and stop
 
@@ -98,7 +96,7 @@ When the list has more than one title, the fence holds every number in list orde
 
 Do not put `Next:` inside the fence. The ticket number appears only inside that fence. Do not follow either command.
 
-When `$ARGUMENTS` is empty and the set is empty, name the wait and print no number. A topic with no match stopped in Step 3. Do not follow `/sigma-implement`.
+When the outcome is specified and no ticket carries it, skip the title list. The fence holds only `/sigma-to-tickets`. When the argument is empty and no ticket is open, name the wait and print no number. Do not follow `/sigma-implement`.
 
 This skill does not ask with a question card. If a reply must ask, ask in this chat after the acceptance sentences.
 
@@ -109,8 +107,7 @@ Done when the set is printed and this skill has not built.
 | Rule | Why / violation looks like |
 |---|---|
 | Read issues already on GitHub through `/sg-create-ticket` with `caller: sigma-pick-tickets`. Do not run `gh`. Do not close, edit, or create. Do not name `/sg-create-ticket` as the next command. | A close here repairs the board inside the pickup. `gh` here is a second issue path. Naming the gateway as the next command skips `/sigma-implement`. |
-| A topic word matches any of: ticket title, acceptance text, the `Topic` line, parent spec title, parent spec body, and the numbered requirements line for each acceptance id on the ticket. When no ticket matches, do not print the small-ticket list and do not start `/sigma-implement`. The stop names the open tickets whose acceptance ids sit on requirements lines that differ from origin/main. Say the topic word was absent from the titles. Do not invent a match. | Falling through to the small-ticket list builds work the user did not name. An invented match starts `/sigma-implement` on a ticket the topic word did not hit. |
-| An empty argument skips a clash, a split, an open blocker, and an epic. One acceptance id comes before a longer ticket. A title that uses a word the acceptance line and the requirements line do not use stays out of the build set. | The first line is then a small ticket that can close before an epic. A stale title sends the factory the old name. |
+| Match the task to the outcome in the acceptance, the Topic line, the parent spec, and the requirements lines. A shared word is not required and is not enough. Do not drop a ticket for its title, a clash, a blocker, or `origin/main`. That is `/sigma-unslop-tickets`. An epic is context. When the outcome is specified and no ticket carries it, the fence holds only `/sigma-to-tickets`. | A word search misses a ticket whose title does not repeat the task. A title check here rejects a ticket this command just found. |
 | Print a numbered list of ticket titles, in `blockedBy` order, then a fenced code block with the next command. Do not print the acceptance body or why the ticket is in the set. Do not use bullet points. Do not print a preamble. One title ends with a fence that holds only `/sigma-implement` and that number. More than one title ends with a fence that holds only `/sigma-build-factory` and every number in list order. Do not put `Next:` inside the fence. Do not follow either command. | A paragraph per ticket hides the list. Starting the build here puts the choice and the script edit in one chat. |
 | This skill does not ask with a question card. If a reply must ask, ask in this chat after the acceptance sentences. | A card hides the text. |
 
@@ -118,8 +115,7 @@ Done when the set is printed and this skill has not built.
 
 - [ ] Specs and tickets were loaded through `/sg-create-ticket` with `caller: sigma-pick-tickets`. This run did not run `gh` and did not name `/sg-create-ticket` as the next command.
 - [ ] This run did not close, edit, or create an issue.
-- [ ] A topic word matched any of: ticket title, acceptance text, the `Topic` line, parent spec title, parent spec body, and the numbered requirements line for each acceptance id on the ticket.
-- [ ] When no ticket matched, the run did not print the small-ticket list and did not start `/sigma-implement`. The stop named the open tickets whose acceptance ids sit on requirements lines that differ from origin/main, and said the topic word was absent from the titles. The run did not invent a match.
-- [ ] An empty argument listed one-id tickets before longer tickets, and left epics, clashes, splits, and open blockers out.
+- [ ] A ticket was kept because its acceptance, Topic line, parent spec, or requirements lines are the same outcome as the task. A shared word was not the test. The run did not drop a ticket for its title, a clash, a blocker, or `origin/main`.
+- [ ] When the outcome was specified and no ticket carried it, the reply said so and the fence held only `/sigma-to-tickets`. An epic was not in the build list.
 - [ ] The reply was a numbered list of ticket titles, then a fenced code block with the next command. It did not print the acceptance body, did not use bullet points, and did not print a preamble. One title ended with a fence that held only `/sigma-implement` and that number. More than one title ended with a fence that held only `/sigma-build-factory` and every number in list order. The fence did not contain `Next:`. An empty set named the wait and printed no number. This run did not build.
 - [ ] This run did not call AskUserQuestion and did not ask with a question card. A reply that asked did so in this chat after the acceptance sentences.
