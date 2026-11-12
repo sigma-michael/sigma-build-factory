@@ -2,7 +2,7 @@
 
 Agent skills for building Sigma work from a requirements document through to a merged pull request. Claude Code, Cursor, Codex, and any other agent that reads a `SKILL.md` folder can run them.
 
-You keep the product decisions in one requirements file. The agent writes API scripts only where a ticket says it may. Each command finishes and tells you the next command. A next command is a fenced code block with only the command inside. One worker writes the scripts and opens the pull request. A second worker screenshots the live page and compares it with the ticket. A user run of `/sigma-implement` is `hitl`. A miss asks `Which lines should I fix?` and waits. The question is not a question card. A factory run is `afk`. It does not ask and does not wait. The first miss goes back once. A second miss stops and does not name merge.
+You keep the product decisions in one requirements file. The agent writes API scripts only where a ticket says it may. Each command finishes and tells you the next command. A next command is a fenced code block with only the command inside. One worker writes the scripts and opens the pull request. A second worker screenshots the live page and compares it with the ticket. A user run of `/sigma-implement` is `hitl`. A miss asks `Which lines should I fix?` and waits. The question is not a question card. A factory run builds on one factory branch and waits after the tickets are merged into it. A product sentence is filed as a ticket and handed to the workers. Main changes only after you accept.
 
 Commands you type use the `sigma-` prefix. `/sigma-implement` starts `/sg-tdd`, `/sg-pr`, and `/sg-review`. The other commands start `/sg-create-ticket` when an issue must be filed or read.
 
@@ -37,7 +37,7 @@ The steps in each `SKILL.md` are the contract. Extra frontmatter such as `disabl
 
 ## When to run which command
 
-Run `/sigma-init-docs`, then `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, `/sg-create-ticket`, GitHub, `/sigma-pick-tickets`, `/sigma-implement`, and `/sigma-merge`. Start at `/sigma-init-docs` once, on a new work repo. `/sigma-feedback`, `/sigma-unslop-tickets`, and `/sigma-unslop` are three ways to start.
+Run `/sigma-init-docs`, then `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, `/sg-create-ticket`, GitHub, `/sigma-pick-tickets`, `/sigma-build-factory`, and `/sigma-merge`. Start at `/sigma-init-docs` once, on a new work repo. `/sigma-feedback` files a note as a ticket. `/sigma-unslop-docs` rewrites the spec from the code. Those two lanes do not call each other.
 
 ```mermaid
 flowchart TD
@@ -45,37 +45,37 @@ flowchart TD
   plan --> spec["/sigma-to-spec"]
   spec --> tickets["/sigma-to-tickets"]
   tickets --> file["/sg-create-ticket"]
+  note["/sigma-feedback"] --> file
+  docs["/sigma-unslop-docs"] --> spec
   clean["/sigma-unslop-tickets"] --> file
   file --> gh["GitHub"]
   gh --> pick["/sigma-pick-tickets"]
-  pick --> impl["/sigma-implement"]
-  impl --> merge["/sigma-merge"]
+  pick --> factory["/sigma-build-factory"]
+  factory --> merge["/sigma-merge"]
 ```
 
 `/sigma-to-spec` and `/sigma-to-tickets` hand the body to `/sg-create-ticket`. `/sigma-unslop-tickets` closes, edits, or links through `/sg-create-ticket`. `/sg-create-ticket` is the only arrow into GitHub. GitHub continues to `/sigma-pick-tickets`. `/sigma-pick-tickets` orders tickets that already exist and prints a numbered list of titles. The next command is a fenced code block with only the command inside. One ticket uses `/sigma-implement` and that number. More than one uses `/sigma-build-factory` and every number. A confirmed feature with no SPEC ends at `/sigma-to-spec`. When a spec or a ticket still has an old sentence, `/sigma-plan` shows one assumption. A yes updates those ids in the same chat. Say overwrite and `/sigma-implement` continues a flagged build.
 
 ### Where a note goes
 
-`/sigma-feedback`, `/sigma-unslop-tickets`, and `/sigma-unslop` are three ways to start. Feedback reads the requirements and the specs. When this chat already has a factory branch, the note goes to those workers. Otherwise it follows `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` in this chat.
+Feedback and document repair are two lanes. They do not call each other. `/sigma-feedback` files the note as a ticket or an epic and does not edit requirements or a spec. A large area is an epic whose body says `Next skill: /sigma-plan`. When this chat has a factory branch, a ticket is also built by the workers. `/sigma-unslop-docs` later rewrites the spec from the code, the passing tests, and the closed tickets the code shows.
 
 ```mermaid
 flowchart TD
-  unslop["/sigma-unslop"]
-  feedback["/sigma-feedback"] -->|New behavior| plan["/sigma-plan"]
-  plan --> spec["/sigma-to-spec"]
-  feedback -->|No spec line| spec
-  spec --> tickets["/sigma-to-tickets"]
-  feedback -->|States it| tickets
-  tickets --> file["/sg-create-ticket"]
-  clean["/sigma-unslop-tickets"] --> file
-  file --> gh["GitHub"]
-  gh --> pick["/sigma-pick-tickets"]
-  pick --> impl["/sigma-implement"]
+  note[Feedback note]
+  note --> cut{One outcome or a large area}
+  cut -->|one outcome| ticket[File a ticket]
+  cut -->|large area| epic["File an epic with Next skill /sigma-plan"]
+  ticket --> factory{Factory wave}
+  factory -->|yes| workers[Hand the note to the workers]
+  factory -->|no| pick["/sigma-pick-tickets"]
+  code[Code and passing tests] --> docs["/sigma-unslop-docs"]
+  docs --> spec[Spec matches the code]
 ```
 
-1. New behavior, including a role the requirements do not mention, follows `/sigma-plan`. Plan asks one question at a time in the chat. The question is not a question card. The question is the last line.
-2. A clear bug whose spec has no line follows `/sigma-to-spec`.
-3. A clear bug whose spec line already states that behavior follows `/sigma-to-tickets` with that spec number. The ticket copies the line. `/sg-create-ticket` files it. `/sigma-pick-tickets` names the first filed ticket to build.
+1. A feedback note that is one outcome is filed as a ticket. The acceptance sentence is the note. Requirements and the spec stay as they are.
+2. A feedback note that is a large area is filed as an epic. The body says `Next skill: /sigma-plan`. Feedback does not start that skill.
+3. When this chat has a factory branch, that ticket is handed to the workers and built. With no factory branch, the fence contains only `/sigma-pick-tickets`.
 4. The user types `/sigma-unslop` for drifted scripts. It writes `docs/reviews/<date>-<topic>.md` and stops.
 5. The user types `/sigma-unslop-tickets` to repair the open set. A yes closes, edits, or links through `/sg-create-ticket`. The reply names `/sigma-pick-tickets`.
 6. Say overwrite and `/sigma-implement` continues a flagged build.
@@ -86,20 +86,18 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  impl["/sigma-implement"] --> tdd["/sg-tdd"]
-  tdd --> pr["/sg-pr"]
-  pr --> review["/sg-review"]
-  review --> verdict{Verdict}
-  verdict -->|hitl pass| hitlpass["IMPLEMENTATION COMPLETE, pull request URL, /sigma-merge code block"]
-  verdict -->|hitl miss| ask["Return block, then Which lines should I fix?"]
-  ask -->|fix or a quoted sentence| tdd
-  ask -->|stop| stop["Stop. Does not name merge."]
-  verdict -->|afk first miss| tdd
-  verdict -->|afk pass| next["/sigma-merge code block"]
-  verdict -->|afk second miss| unblock["One unblock line. Does not name merge."]
+  factory["/sigma-build-factory"] --> agent["agent branch per ticket"]
+  agent --> review["/sg-review"]
+  review --> back["Merge into the factory branch"]
+  back --> wait[Wait]
+  wait -->|product sentence| filed["File a ticket and build"]
+  filed --> back
+  wait -->|yes accept or happy| merge["/sigma-merge"]
 ```
 
-You type `/sigma-implement`. It matches the ticket. It opens or creates `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>/` on branch `agent/<N>-<slug>`. It reuses a `git worktree list` row already on that branch under `.worktrees/`. A new branch comes from `origin/<default>`, not the user's current branch. It writes `.worktrees/loop_<YYYY-MM-DD>-<slug>/worktrees.json` only when it creates the worktree. A fix stays on that same branch and worktree. `.worktrees/` must be gitignored. It does not edit `.gitignore`. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That review screenshots the live page. A script line that says pass is not evidence. A script outside the spec globs is a note. The implement chat does not edit scripts and does not judge the diff.
+The diagram is a factory run. Ticket branches merge into the factory branch. The chat waits. A product sentence is filed and built. Yes, accept, or happy prints `/sigma-merge` for that one pull request.
+
+You type `/sigma-implement` on one ticket outside a factory run. It matches the ticket. It opens or creates `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>/` on branch `agent/<N>-<slug>`. It reuses a `git worktree list` row already on that branch under `.worktrees/`. A new branch comes from `origin/<default>`, not the user's current branch. It writes `.worktrees/loop_<YYYY-MM-DD>-<slug>/worktrees.json` only when it creates the worktree. A fix stays on that same branch and worktree. `.worktrees/` must be gitignored. It does not edit `.gitignore`. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That review screenshots the live page. A script line that says pass is not evidence. A script outside the spec globs is a note. The implement chat does not edit scripts and does not judge the diff.
 
 1. A user run of `/sigma-implement` is `hitl`. It prints What holds, What does not, Ticket intent, and Note. A pass prints `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and a fenced code block that contains only `/sigma-merge <pull-request-number>`, and does not ask. A miss prints the return block (Title, What holds, What does not, Ticket intent, Branch, Worktree, Pull request, Result `miss`), then the last line is `Which lines should I fix?`, then it waits. The question is not a question card. `fix` sends every What does not sentence. A quoted What does not sentence sends that sentence only. `stop` stops and does not name merge.
 2. A factory run is `afk`. It does not ask and does not wait. A worker that would ask, or wait for `fix`, `stop`, `overwrite`, or `Which lines should I fix?`, stops that ticket. Other tickets continue. The first miss goes back once. A second miss stops and does not name merge. When the wave returns, the factory prints a table with Title, Result, and Next. Each review is then its own paragraphs: What holds, What does not, Ticket intent, and Worktree. A pass then prints a fenced code block that contains only `/sigma-merge <pull-request-number>`. A stop, or a ticket that never started, prints one unblock line and does not name merge.
@@ -121,10 +119,10 @@ The first column is the command you type. A row with `none` describes that comma
 | `/sigma-plan` | `/sigma-to-spec` | After yes to the assumption, updates the named acceptance ids. It does not ask a second digest. |
 | `/sigma-plan` | `/sigma-to-tickets` | After that same yes, updates tickets that already contain those ids. It does not ask grain and it does not create a ticket. |
 | `/sigma-to-spec` | none | Writes one spec digest and waits for yes. The question is asked in the chat. It is not a question card. Before the question, the reply says what this step does, then `We have:` and `We will write:` when a line changes. The question is the last line. An id does not stand in for the sentence. It copies only numbered lines from the requirements file. A remaining clash is named and left out. The other lines are still offered for publish. |
-| `/sigma-to-tickets` | none | Copies numbered requirements lines from the spec onto tickets or epics and waits for one confirm. The question is asked in the chat. It is not a question card. Before the question, the reply says what this step does, then `We have:` and `We will write:` when a line changes. The question is the last line. An id does not stand in for the sentence. After filing, it names `/sigma-pick-tickets`. |
-| `/sigma-pick-tickets` | none | A topic keeps matching tickets. An empty argument lists the smallest closeable tickets first. The reply is a numbered list of titles and does not print the acceptance body. The next command is a fenced code block with only the command inside. One ticket uses `/sigma-implement` and that number. More than one uses `/sigma-build-factory` and every number. A ticket whose id is not a numbered line stays out. A title that uses a word the acceptance line and the requirements line do not use stays out. |
+| `/sigma-to-tickets` | none | Copies a clear spec onto tickets and files them in the same turn. One ticket is one outcome an implement can build. Sentences for that same page stay together. The reply shows that cut and does not ask the user to confirm it. After filing, it names `/sigma-pick-tickets`. |
+| `/sigma-pick-tickets` | none | A topic keeps matching tickets. An empty argument lists the smallest closeable tickets first. The reply is a numbered list of titles and does not print the acceptance body. The next command is a fenced code block with only the command inside. One ticket uses `/sigma-implement` and that number. More than one uses `/sigma-build-factory` and every number. A ticket whose id is not a numbered line stays out. It matches the task to the outcome in the ticket, the spec, and the requirements lines. It does not judge titles or lines. That is `/sigma-unslop-tickets`. When the outcome is specified and no ticket carries it, the fence holds only `/sigma-to-tickets`. |
 | `/sigma-build-factory` | `/sigma-implement` | Builds the named tickets on `factory/<YYYY-MM-DD>-<slug>` from the local requirements file. Each ticket uses `agent/<N>-<slug>` from that factory branch. A pass merges the agent branch into the factory branch. One pull request tracks the factory branch into main. The chat waits. A product sentence goes back to the matching workers. The words yes, accept, or happy print a fenced code block that contains only `/sigma-merge` and that pull request number. This command does not merge into main. A stale title stops that ticket before a worker starts. |
-| `/sigma-implement` | none | Matches one ticket. It opens or creates `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>/` on branch `agent/<N>-<slug>`. It reuses a `git worktree list` row already on that branch under `.worktrees/`. A new branch comes from `origin/<default>`, not the user's current branch. It writes `.worktrees/loop_<YYYY-MM-DD>-<slug>/worktrees.json` only when it creates the worktree. A fix stays on that same branch and worktree. `.worktrees/` must be gitignored. It does not edit `.gitignore`. A title that uses a word the acceptance line and the requirements line do not use stops before the branch and the script. The old git branch stays. A user run is `hitl`. It prints What holds, What does not, Ticket intent, and Note. A pass prints `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and a fenced code block that contains only `/sigma-merge <pull-request-number>`, and does not ask. A miss prints the return block (Title, What holds, What does not, Ticket intent, Branch, Worktree, Pull request, Result `miss`), then the last line is `Which lines should I fix?`, then it waits. The question is not a question card. `fix` sends every What does not sentence. A quoted What does not sentence sends that sentence only. `stop` stops and does not name merge. When the ticket names no script, it chooses the closest file or one new path. It does not edit scripts and it does not judge the diff. |
+| `/sigma-implement` | none | Matches one ticket. It opens or creates `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>/` on branch `agent/<N>-<slug>`. It reuses a `git worktree list` row already on that branch under `.worktrees/`. A new branch comes from `origin/<default>`, not the user's current branch. It writes `.worktrees/loop_<YYYY-MM-DD>-<slug>/worktrees.json` only when it creates the worktree. A fix stays on that same branch and worktree. `.worktrees/` must be gitignored. It does not edit `.gitignore`. A title stops before the branch and the script only when it still uses a word the current line replaced. The stop names the word the title should use. The old git branch stays. A user run is `hitl`. It prints What holds, What does not, Ticket intent, and Note. A pass prints `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and a fenced code block that contains only `/sigma-merge <pull-request-number>`, and does not ask. A miss prints the return block (Title, What holds, What does not, Ticket intent, Branch, Worktree, Pull request, Result `miss`), then the last line is `Which lines should I fix?`, then it waits. The question is not a question card. `fix` sends every What does not sentence. A quoted What does not sentence sends that sentence only. `stop` stops and does not name merge. When the ticket names no script, it chooses the closest file or one new path. It does not edit scripts and it does not judge the diff. |
 | `/sigma-implement` | `/sg-tdd` | Runs red, then green, commits, and pushes. On a fix, every What does not sentence is the miss. A quoted What does not sentence is that sentence only. An existing script pass does not close it. A rows-route 404 writes in the browser and the run continues. |
 | `/sigma-implement` | `/sg-pr` | Opens one pull request on the pushed branch. Same worker as `/sg-tdd`. It does not wait for review. |
 | `/sigma-implement` | `/sg-review` | A second worker screenshots the live page and compares it with the ticket. A script line that says pass is not evidence. A script outside the spec globs is a note. An API-failed comment stays a note. The screenshot decides the line. |
@@ -145,8 +143,9 @@ The first column is the command you type. A row with `none` describes that comma
 
 | You type | System skill | What it does |
 |---|---|---|
-| `/sigma-feedback` | none | Starts from `/sigma-feedback`, `sigma feedback`, or `do sigma feedback`, including a browser annotation. When this chat has a factory branch, the note goes to the matching workers. Otherwise it follows one of `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets` in this chat. |
-| `/sigma-feedback` | `/sg-create-ticket` | Returns the spec list or one issue. Does not file. |
+| `/sigma-feedback` | none | Starts from `/sigma-feedback`, `sigma feedback`, or `do sigma feedback`, including a browser annotation. Files the note as a ticket or an epic. Does not edit requirements or a spec. A factory ticket is also built. |
+| `/sigma-feedback` | `/sg-create-ticket` | Files that ticket or epic. A large area includes `Next skill: /sigma-plan`. |
+| `/sigma-unslop-docs` | none | Rewrites one spec from the scripts, the passing tests, and the closed tickets the code shows. A closed ticket with no code is left out. Does not file a ticket and does not build. |
 | `/sigma-unslop` | none | The user types this command. It writes one review and stops. It does not file and it does not build. |
 
 ### System writer
@@ -155,7 +154,8 @@ The first column is the command you type. A row with `none` describes that comma
 
 | You type | System skill | What it does |
 |---|---|---|
-| `/sigma-feedback` | `/sg-create-ticket` | Returns the spec list or one issue. Does not file. |
+| `/sigma-feedback` | `/sg-create-ticket` | Files one ticket or one epic from the note. Does not file a spec. |
+| `/sigma-unslop-docs` | `/sg-create-ticket` | Updates one spec body from the code. Does not file a ticket. |
 | `/sigma-plan` | `/sg-create-ticket` | Returns the spec list and the ticket list. It does not file. |
 | `/sigma-to-spec` | `/sg-create-ticket` | Files or updates that spec. |
 | `/sigma-to-tickets` | `/sg-create-ticket` | Files those issues. |
