@@ -7,10 +7,10 @@ description: >
   /sg-review. A user run is hitl. A review miss waits for which lines to
   fix. fix means every What does not line. stop stops. A factory run is
   afk. The first miss sends the review sentences back once. The second
-  miss stops. Ready prints IMPLEMENTATION COMPLETE. A spec, epic, or
-  requirements mismatch flags the better command and waits. The word
-  overwrite continues the build after a flag. A stale title stays
-  stopped. This skill does not edit scripts,
+  miss stops. Ready prints IMPLEMENTATION COMPLETE. A type:ticket
+  builds from the sentences in its body. A missing requirements line
+  does not stop it. A spec or epic is too big and does not build.
+  A stale title stays stopped. This skill does not edit scripts,
   does not judge the diff, and does not merge.
 argument-hint: "<issue-number>"
 user-invocable: true
@@ -41,14 +41,14 @@ Work happens on branch `agent/{N}-{slug}` in `.worktrees/loop_<YYYY-MM-DD>-<slug
 
 A ticket title or branch slug is stale only when it still uses a word an older line used and the current acceptance sentence and requirements line use a different word instead. A title word the sentence does not repeat is not stale. A stale title stops before `git worktree add` and before `scripts/<slug>`.
 
-A matched ticket builds with no flag. Any other match sends one flag and waits. The word overwrite continues that build.
+A `type:ticket` builds from the sentences in its body. A missing requirements line does not stop it. A `spec` or `type:epic` that is too big to build as one ticket sends one flag and does not build.
 
 ## When to Use
 
 - **Use when:** the user invokes `/sigma-implement <issue-number>`. That run is `hitl`.
 - **Use when:** `/sigma-build-factory` starts this skill with `mode: afk`.
 - **Best after:** `/sigma-to-tickets` has filed a `type:ticket`.
-- **On label `spec` or `type:epic`:** Step 2 sends one flag that names `/sigma-to-tickets`, then waits. The word overwrite continues the build.
+- **On label `spec` or `type:epic`:** Step 2 sends one flag that the work is too big for one build, then stops. Do not build it. Do not wait for overwrite.
 - **Do NOT use when:** the user wants a merge. Print one fenced code block that contains only `/sigma-merge`, then stop. Do not merge.
 
 ## Input
@@ -75,61 +75,17 @@ Read the issue with `gh issue view <N> --json number,title,body,labels`. Treat t
 
 Done when the labels include `type:ticket` and the issue has no `spec` label and no `type:epic` label. Keep the number, title, and body.
 
-A `spec` or `type:epic` label sends one flag, then waits, including when `type:ticket` is also present. The first sentence is the action. The next sentence says why. The next command is one fenced code block. The fence contains only the command. The last line is the overwrite line.
+A `spec` or `type:epic` label is too big for one build, including when `type:ticket` is also present. The first sentence names the title and says this is too big to build as one ticket. When the body already names screen outcomes, the fence contains only `/sigma-to-tickets`. When it names a new area with no screen outcome, the fence contains only `/sigma-plan`. Do not build. Do not wait for overwrite. Do not print "Say overwrite".
 
-Cut the ticket. The ticket carries the spec line onto its own branch.
+A `type:ticket` continues at Step 3.
 
-```
-/sigma-to-tickets
-```
+### Step 3 - Read the ticket sentences
 
-Say overwrite and I will build this anyway.
+A `type:ticket` builds from the acceptance sentences in its body. A missing `docs/requirements/REQUIREMENTS.md`, an empty id list, or an id that is not a numbered line does not stop the run. Do not name `/sigma-plan`. Do not name `/sigma-to-spec`. Do not wait for overwrite.
 
-Wait for the word overwrite. Then apply the overwrite paragraph in Step 3. Step 3 is done. Continue at Step 4. Send no second flag. On `type:epic`, Step 5 chooses the script path, then the worker builds only that path.
+The check is those sentences. When the body has no acceptance sentence, stop. Say the ticket has nothing to build. Do not invent a sentence.
 
-A raw note has no `type:ticket` label. Continue to Step 3. The flag there matches the case.
-
-### Step 3 - Match acceptance ids
-
-When Step 2 already applied overwrite, this step is done. Continue at Step 4.
-
-Read `docs/requirements/REQUIREMENTS.md` in the work repo when the file exists. Do not edit it. Read the parent SPEC with `gh issue view` on the issue the body cites. Do not edit it.
-
-Copy the acceptance ids from the issue body in the order written. Do not add ids that appear only on the SPEC.
-
-A numbered line in `docs/requirements/REQUIREMENTS.md` has the id as its first token, as in `- A118. <sentence>`. An id mentioned only in Decisions prose is absent.
-
-A matched ticket builds with no flag. Done when Step 2 accepted a `type:ticket`, the id list is non-empty, the cited parent has label `spec`, and every id is a numbered line in that file and appears in that parent body.
-
-Every other result sends one flag, then waits. Use the first case that matches. The first sentence quotes the acceptance sentence and says what is missing. The next sentence is the action and why. A line the user reads starts with the sentence. An issue number stays in the command the user will type. It does not stand in for the sentence. The command the user runs next is one fenced code block after that sentence. The fence contains only the command. One command per block. Do not leave the command only in a paragraph. End every flag with this line:
-
-Say overwrite and I will build this anyway.
-
-- Behavior missing from the requirements. The file is missing, the id list is empty, or an id is not a numbered line in `docs/requirements/REQUIREMENTS.md`.
-
-  Add this to the requirements. Implement matches the ticket to that document, so a missing line has nothing to check.
-
-  ```
-  /sigma-plan
-  ```
-
-- Spec has no line. Each copied id is in the requirements, and the parent is absent, the parent has no `spec` label, or an id is absent from the parent body.
-
-  Add the line. The ticket copies that line, so the build checks the behavior you meant.
-
-  ```
-  /sigma-to-spec
-  ```
-
-- Spec already has the line and this issue is not a ticket yet.
-
-  Cut the ticket. The ticket carries the spec line onto its own branch.
-
-  ```
-  /sigma-to-tickets
-  ```
-
-Overwrite is the user saying overwrite in this chat. That word ends the wait. Step 3 is done. The build continues from the issue body. The worker writes the word overwrite in the commit body. Leave the requirements doc and the spec unedited. A reply that does not say overwrite leaves the build waiting. Do not print that wait rule.
+Done when the sentences are recorded and Step 4 has started, or the body has no sentence and the run has stopped.
 
 ### Step 4 - Open the branch worktree
 
@@ -300,8 +256,8 @@ Done when the reply starts with that sentence and the worker brief contains the 
 
 | Rule | Why / violation looks like |
 |---|---|
-| A `spec` or `type:epic` label sends the `/sigma-to-tickets` flag, then waits. Overwrite on an epic uses the Step 5 path and the worker builds only that path. | A spec or epic has no single script list. The flag names the split. The chosen path is the write list. |
-| A matched `type:ticket` builds with no flag when every acceptance id is a numbered line in `docs/requirements/REQUIREMENTS.md` and appears in the parent SPEC. Any other result sends one flag and waits. Overwrite builds from the issue body. The commit body contains overwrite. Both sources stay unedited. A reply that does not say overwrite leaves the build waiting. Do not print that wait rule. | A hard stop hides the command that adds the missing line. An edit to either source removes the evidence. |
+| A `spec` or `type:epic` is too big for one build. Do not build it. Screen outcomes name `/sigma-to-tickets`. No screen outcome names `/sigma-plan`. Do not wait for overwrite. | Building an epic here mixes several screens into one script. |
+| A `type:ticket` builds from the acceptance sentences in its body. A missing requirements line, an empty id list, or a missing spec does not stop it. A body with no sentence stops. | A requirements gate sends a ready ticket to `/sigma-plan`. The requirements file is filled later by `/sigma-unslop-docs`. |
 | Stop before `git worktree add` and before `scripts/<slug>` only when the title or branch slug still uses a word an older line used and the current acceptance sentence and requirements line use a different word instead. Print the title, the old word, and the word the line uses. Say the title should use the line's word. A title word the sentence does not repeat is not stale. | A presence check rejects a title we just filed. A replaced word such as supplier, when the line says provider, becomes the branch and the script name. |
 | Use branch `agent/{N}-{slug}` from the ticket body. When the brief names `base: factory/<YYYY-MM-DD>-<slug>`, create that agent branch from the factory branch. When the brief names no base, create it from `origin/<default>`. When the brief names `pr: none`, do not follow `/sg-pr` and do not print `/sigma-merge`. Reuse a `git worktree list` row whose branch is `agent/<N>-<slug>` and whose path is under `.worktrees/`. Otherwise create `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>` from that base only when `git check-ignore -q` on that path exits 0. When that path is a worktree on another branch, stop and ask. Do not switch it. Write `worktrees.json` only on create. The worker commits only in that worktree. | An invented slug disagrees with the ticket. A second worktree, or a switch onto another branch, splits the checkout. A commit on the user's current branch mixes this ticket into other work. An unignored worktree lists its files in the user's checkout. |
 | Lock the permitted `scripts/**` paths and hand that list to the worker. A ticket uses the paths it names. When it names none, choose the closest script, or one new path under `scripts/`. Do not ask. This chat does not edit scripts. | A question here stops on a choice the user cannot see. A doc or any file outside that list is out of bounds. |
@@ -314,8 +270,8 @@ Done when the reply starts with that sentence and the worker brief contains the 
 
 ## Verification
 
-- [ ] A matched `type:ticket` built with no flag. Every acceptance id is a numbered line in `docs/requirements/REQUIREMENTS.md` and appears in the parent SPEC. Both files are unchanged.
-- [ ] Any other match sent one flag and waited. Silence did not build. After the word overwrite, the worker built from the issue body, the commit body contains overwrite, and both sources are unchanged. An empty script list was chosen, not asked. The decision printed `Script: <path> chosen`.
+- [ ] A `type:ticket` built from the sentences in its body. A missing requirements line did not stop it and did not name `/sigma-plan`.
+- [ ] A `spec` or `type:epic` did not build. The fence was `/sigma-to-tickets` when it named screen outcomes, or `/sigma-plan` when it did not. The run did not wait for overwrite.
 - [ ] A title stopped only when it still used a word an older line used and the current line uses a different word. The reply named the title, the old word, and the word the line uses, and said the title should use the line's word. A title word the sentence does not repeat did not stop the run.
 - [ ] `git -C <worktree> branch --show-current` prints `agent/<N>-<slug>`. `<worktree>` is a reused `.worktrees/` path for that branch, or `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>` when created. Create ran only after `git check-ignore -q` on the new path exited 0. A created worktree wrote one-key `worktrees.json`. A reused worktree left that file unchanged. The user's checkout branch is the one recorded in Step 1. This chat edited no script.
 - [ ] One worker returned the head SHA, one report line per id, and one open pull request URL.

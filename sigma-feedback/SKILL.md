@@ -4,8 +4,9 @@ description: >
   "sigma feedback" and "do sigma feedback" start this skill, including from
   a browser annotation that cannot send /sigma-feedback. The words after
   that phrase are the note. File that note through /sg-create-ticket in
-  the same turn. One outcome is a ticket. A large area is an epic whose
-  body says Next skill: /sigma-plan. Do not start that skill. Do not write
+  the same turn. Each screen change is a ticket. An epic is only a new
+  area with no screen outcome yet, and its body says Next skill:
+  /sigma-plan. Do not start that skill. Do not write
   requirements. Do not edit a spec. When this chat has a factory branch, a
   ticket is also handed to the workers and built. When it does not, the
   fence contains only /sigma-pick-tickets.
@@ -24,7 +25,7 @@ allowed-tools: [Read, Glob]
 
 ## Overview
 
-`/sigma-feedback` takes a pasted note and files it in the same turn. One outcome is a ticket. The acceptance sentence is the note. The title names the screen and the result. A large area, such as role-level security, is an epic. The epic body contains the line `Next skill: /sigma-plan`. Feedback does not start that skill.
+`/sigma-feedback` takes a pasted note and files it in the same turn. Each screen change is a ticket. The acceptance sentence is that change. The title names the screen and the result. An epic is only a new area with no screen outcome yet, such as role-level security for the whole workbook. The epic body contains the line `Next skill: /sigma-plan`. Feedback does not start that skill.
 
 This skill does not write `docs/requirements/REQUIREMENTS.md`. It does not edit a spec. It does not follow `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`.
 
@@ -54,27 +55,27 @@ Done when `REPO_ROOT` contains `.git`. A missing `.git` stops the run. Name the 
 
 ### Step 2 - Cut the note
 
-A note that names one screen outcome is a ticket. A note that names a whole area, many screens, or a control that decides access across pages is an epic.
+A screen change is a ticket. A note that names several screen changes is several tickets, one per change. Making a table editable, moving a button, changing a modal sentence, and removing a modal are tickets. Do not file those as one epic. Do not open a plan. Do not ask whether the note is an epic. Do not name `/sigma-plan` for them.
 
-The ticket title names the screen and the result in present tense. The acceptance sentence is the note, unchanged. The body includes `Topic: <the user's words>`. Mode is `afk`.
+An epic is only a new product area that has no screen outcome yet, such as role-level security for the whole workbook. The epic body contains the line `Next skill: /sigma-plan`. Do not start `/sigma-plan`.
 
-The epic title names the area. The body contains the note and the line `Next skill: /sigma-plan`. Do not start `/sigma-plan`.
+Each ticket title names the screen and the result in present tense. The acceptance sentence is that one change. The body includes `Topic: <the user's words>`. Mode is `afk`.
 
 When an open issue already has that title, reuse it. Do not file a second issue.
 
-Done when the cut is one ticket or one epic, and the title and the acceptance sentence are written.
+Done when each screen change is one ticket, or the note is one epic because it has no screen outcome yet.
 
 ### Step 3 - File it
 
-Hand `/sg-create-ticket` `caller: sigma-feedback`, `action: create`, and `kind: ticket` or `kind: epic`. Pass the title and the body. Do not pass `kind: spec`. Do not run `gh`.
+Hand `/sg-create-ticket` once per ticket and once for an epic. `caller: sigma-feedback`, `action: create`, and `kind: ticket` or `kind: epic`. Pass the title and the body. Do not pass `kind: spec`. Do not run `gh`.
 
 Do not write `docs/requirements/REQUIREMENTS.md`. Do not edit a spec.
 
-Done when the return has an issue URL, or the return says the title was reused.
+Done when each return has an issue URL, or the return says that title was reused.
 
 ### Step 4 - Build or stop
 
-When this chat has a factory branch and Step 2 filed a ticket, hand that note to `/sigma-implement` with `mode: afk`, `pr: none`, and `base:` set to that factory branch. The ticket number is the one Step 3 returned.
+When this chat has a factory branch, hand each ticket from Step 3 to `/sigma-implement` with that ticket's sentence, `mode: afk`, `pr: none`, and `base:` set to that factory branch. One worker per ticket.
 
 When Step 2 filed an epic, do not hand it to `/sigma-implement`. The reply names the epic title and the line `Next skill: /sigma-plan`.
 
@@ -92,15 +93,15 @@ Done when a factory ticket was handed to `/sigma-implement`, or an epic was name
 
 | Rule | Why / violation looks like |
 |---|---|
-| File the note through `/sg-create-ticket` in the same turn. One outcome is a ticket. A large area is an epic with `Next skill: /sigma-plan`. Do not start that skill. | A note that waits for a plan rewrite loses the sentence inside the old requirements. Starting plan here edits the spec. |
+| File each screen change as a ticket through `/sg-create-ticket` in the same turn. An epic is only a new area with no screen outcome yet, and its body says `Next skill: /sigma-plan`. Do not start that skill. | Several small screen changes filed as one epic send the user to plan. |
 | Do not write `docs/requirements/REQUIREMENTS.md`. Do not edit a spec. Do not follow `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. | Those doors let an older line outlast the note. |
-| When this chat has a factory branch, hand a ticket to `/sigma-implement` with `mode: afk`, `pr: none`, and that factory base. Do not hand an epic to the workers. | The ticket is the record. The workers build the note now. An epic is too large to build in this turn. |
+| When this chat has a factory branch, hand each ticket to `/sigma-implement` with `mode: afk`, `pr: none`, and that factory base. Do not hand an epic to the workers. | The tickets are the record. The workers build them now. An epic has no screen outcome to build. |
 | When this chat has no factory branch, the fence contains only `/sigma-pick-tickets`. Do not follow it. | Naming a build here starts work the user has not picked. |
 | When the title already exists, reuse that issue. Do not file a second issue. | A second issue splits one note. |
 
 ## Verification
 
-- [ ] The note was filed through `/sg-create-ticket` as a ticket or an epic. A large area has the line `Next skill: /sigma-plan`. This run did not start `/sigma-plan`.
+- [ ] Each screen change was filed as its own ticket. An epic was filed only when the note had no screen outcome, and that body contains `Next skill: /sigma-plan`. This run did not start `/sigma-plan`.
 - [ ] This run did not write `docs/requirements/REQUIREMENTS.md` and did not edit a spec. It did not follow `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`.
 - [ ] A factory ticket was handed to `/sigma-implement` with `mode: afk`, `pr: none`, and the factory base. An epic was not handed to the workers.
 - [ ] With no factory branch, the fence contains only `/sigma-pick-tickets` and this run did not follow it.
