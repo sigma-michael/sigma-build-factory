@@ -7,7 +7,7 @@ description: >
   /sigma-feedback hands that spec number. Filing goes through
   /sg-create-ticket. That write lands the issues on GitHub. After filing,
   name /sigma-pick-tickets. Do not invoke it. This skill does not run gh.
-  /sigma-implement flags an epic. A carry from /sigma-plan replaces the named
+  A long spec becomes many tickets. A carry from /sigma-plan replaces the named
   acceptance lines on open tickets that already contain those ids. It does not
   ask grain and it does not create a ticket. Write Topic: <the user's words>
   on every ticket that note files or updates. A closed ticket with that
@@ -33,7 +33,7 @@ allowed-tools: [Read]
 
 A clear bug belongs here only when an acceptance line on that spec already states the behavior. Copy that line. If the spec has no such line, stop and recommend `/sigma-to-spec`. Do not invent the line here.
 
-`/sigma-implement` flags an epic and names this command. A filed ticket builds with no flag. After filing, name `/sigma-pick-tickets`. Do not invoke it. Do not recommend `/sigma-unslop-tickets`.
+A filed ticket builds with no flag. A long spec becomes many tickets. After filing tickets, name `/sigma-pick-tickets`. Do not invoke it. Do not say that `/sigma-implement` flags an epic unless this run filed an epic. Do not recommend `/sigma-unslop-tickets`.
 
 Filing goes through `/sg-create-ticket`. That write lands the issues on GitHub. This skill does not run `gh`. `/sg-create-ticket` is the vehicle. It does not choose the split.
 
@@ -81,11 +81,9 @@ Invoke `/sg-create-ticket` for action `view` with that number. Read [../sg-creat
 
 Continue only when the label list includes `spec` and the title is `SPEC: <name>`. Otherwise stop and name the issue that came back.
 
-Record the acceptance ids, the script globs, and the out of scope lines.
+Record the acceptance text, the script globs, and the out of scope lines. The spec body is the source. A sentence that is not a numbered line in `docs/requirements/REQUIREMENTS.md` still goes on a ticket. Do not name `/sigma-plan` for that.
 
-Read `docs/requirements/REQUIREMENTS.md`. A numbered line has the id as its first token. Drop an id that is not a numbered line. Name `/sigma-plan` and that id. Do not put it on a ticket.
-
-Done when those three are recorded, or the run has stopped.
+Done when the acceptance text, the script globs, and the out of scope lines are recorded, or the run has stopped.
 
 For a clear bug, keep only the acceptance ids that already state the broken behavior. If none do, stop and recommend `/sigma-to-spec`. Do not add a line.
 
@@ -95,13 +93,14 @@ Load tickets through `/sg-create-ticket` action `list-tickets` with `caller: sig
 
 Put each acceptance id on one slice. A closed ticket with that acceptance id stays that ticket.
 
-A ticket is one outcome one `/sigma-implement` can build and one screenshot review can judge. Sentences that describe that same outcome on the same page stay on one ticket. A later outcome that can ship after the first one is the next ticket and names the first as a blocker. Do not file one ticket per acceptance sentence. Do not file one ticket that mixes two outcomes a person can use apart.
+A long spec is many tickets. One ticket is one result a person can see and one screenshot review can judge. Do not file the whole spec as one ticket because the results share a page or a modal.
 
-Opening a page, its containers, and its tabs is one ticket. Adding a row, the duplicate check, and the rule that an existing row cannot be edited stay on the next ticket when the page must exist first. Hide and unhide of a row on that same page stay with that add ticket.
+A credential-paste modal is not one ticket. The paste box is one ticket. The parse, one person per line, is one ticket. The preview and Upload are one ticket. The fields the paste does not set, with no controls for them, are one ticket. A later ticket names the earlier one as a blocker when it cannot be checked first.
 
-- A slice that is one outcome is a TICKET.
-- A slice that is still a bundle of outcomes is an EPIC. Parent is the SPEC. File a child ticket for each outcome. The epic parents those tickets. The epic lists only the ids that have no ticket yet.
-- A ticket that is not inside a bundle uses the SPEC as its parent.
+File an epic only when you cannot name those results yet. When the tickets are named, do not file an epic.
+
+- Each named result is a TICKET. Parent is the SPEC.
+- An unnamed bundle is an EPIC. Parent is the SPEC. Do not file an epic and also file the tickets under it in the same run.
 
 Each ticket line in the proposal has title, parent, blockers by slice title, the copied acceptance ids, and Mode `hitl` or `afk`. The name after `TICKET: ` says what a person can see or do, names the screen and the result in present tense and plain words, stays one short name, and is not a copy of the acceptance line when that line is hard to say out loud. The example is in [CONVENTIONS.md](../sg-create-ticket/CONVENTIONS.md). Each epic line has title, parent spec number, the ids it holds, and why it is still a bundle.
 
@@ -137,7 +136,7 @@ Done when each slice has an issue URL, or the return says why that slice was not
 
 ### Step 5 - Stop
 
-Report every title and URL. Say that `/sigma-implement` flags an epic and names `/sigma-to-tickets`.
+Report every title and URL. When the run filed only tickets, do not mention an epic. When the run filed an epic, say `/sigma-implement` does not build it and the next command is `/sigma-to-tickets` only if the epic now has screen outcomes. Otherwise the epic body already says `Next skill: /sigma-plan`.
 
 The write through `/sg-create-ticket` lands the issues on GitHub. When at least one ticket or epic was filed, name `/sigma-pick-tickets`. Do not invoke it. Do not recommend `/sigma-unslop-tickets`. Do not recommend `/sigma-implement` from this skill.
 
@@ -152,7 +151,7 @@ Every command the user runs next is a fenced markdown code block. The fence cont
 | Rule | Why / violation looks like |
 |---|---|
 | Load the SPEC through `/sg-create-ticket` and continue only for label `spec`. A clear bug with no matching acceptance line stops at `/sigma-to-spec`. | A ticket with no spec line has nothing for `/sigma-implement` to match. |
-| One ticket is one outcome one `/sigma-implement` can build and one screenshot review can judge. Sentences for that same outcome on the same page stay together. A later outcome is the next ticket and names the first as a blocker. A bundle of outcomes is an EPIC. | One ticket per sentence wastes a build. One ticket for two outcomes mixes two implements. |
+| A long spec is many tickets. One ticket is one visible result. Do not file the whole spec as one ticket because the results share a page or a modal. File an epic only when the results cannot be named. When the tickets are named, do not file an epic. | One ticket for a whole modal hides the other results. An epic line after a ticket list tells the user the split did not finish. |
 | Copy acceptance lines by id. Do not rewrite them. | A rewritten line lets the ticket pass a check the spec does not state. |
 | Write `Topic: <the user's words>` on every ticket that note files or updates. When the title still uses a word the winning sentence replaced, rewrite the title and the Branch slug. The old git branch stays. | A body without that line hides the words `/sigma-pick-tickets` matches. A title that keeps the old word sends the factory a stale branch and a stale script name. |
 | A closed ticket with that acceptance id is reopened through `/sg-create-ticket` `caller: sigma-to-tickets`, `action: reopen`, and the new acceptance sentence. Do not copy it into a new issue. Carry still updates open tickets. Closed matches use reopen. | A new issue copies a closed acceptance. A carry that reopens an open ticket skips the update. |
@@ -169,4 +168,4 @@ Every command the user runs next is a fenced markdown code block. The fence cont
 - [ ] When the spec number was missing, the titles and acceptance sentences were printed in this chat, and the question was the last line. The run did not ask for a spec number.
 - [ ] A clear spec was printed and filed in the same turn. The cut groups sentences that are one outcome. The run did not ask the user to confirm grain or blockers. A carry from `/sigma-plan` updated open tickets on the named lines and created none. A closed ticket with that acceptance id was reopened through `/sg-create-ticket` `action: reopen` and the new acceptance sentence. It was not copied into a new issue.
 - [ ] Epics are parents. Filing went through `/sg-create-ticket`. This skill did not run `gh`.
-- [ ] The reply says `/sigma-implement` flags an epic and names `/sigma-to-tickets`, names `/sigma-pick-tickets`, and does not invoke it. The reply does not recommend `/sigma-unslop-tickets`.
+- [ ] The reply lists every filed title. A ticket-only run does not mention an epic. The fence holds only `/sigma-pick-tickets` and this run does not invoke it. The reply does not recommend `/sigma-unslop-tickets`.
