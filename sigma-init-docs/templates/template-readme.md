@@ -6,7 +6,7 @@ Read this file before you add a file. The layout is closed.
 
 `/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sg-create-ticket` → GitHub → `/sigma-pick-tickets` → `/sigma-build-factory` → `/sigma-merge`
 
-`/sigma-feedback` files a ticket or an epic and does not edit requirements or a spec. `/sigma-unslop-docs` rewrites one spec from the code. Those two lanes do not call each other.
+`/sigma-feedback` files a ticket or an epic and does not edit requirements or a spec. `/sigma-unslop-docs` rewrites one spec from the code. Those two lanes do not call each other. `/sigma-retro` is optional. Merge does not wait for it.
 
 `/sigma-unslop-tickets` also points at `/sg-create-ticket`. It is optional. It is not a required hop between `/sigma-to-tickets` and `/sigma-pick-tickets`.
 

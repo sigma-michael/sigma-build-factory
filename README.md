@@ -37,7 +37,7 @@ The steps in each `SKILL.md` are the contract. Extra frontmatter such as `disabl
 
 ## When to run which command
 
-Run `/sigma-init-docs`, then `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, `/sg-create-ticket`, GitHub, `/sigma-pick-tickets`, `/sigma-build-factory`, and `/sigma-merge`. Start at `/sigma-init-docs` once, on a new work repo. `/sigma-feedback` files a note as a ticket. `/sigma-unslop-docs` rewrites the spec from the code. Those two lanes do not call each other.
+Run `/sigma-init-docs`, then `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, `/sg-create-ticket`, GitHub, `/sigma-pick-tickets`, `/sigma-build-factory`, and `/sigma-merge`. Start at `/sigma-init-docs` once, on a new work repo. `/sigma-feedback` files a note as a ticket. `/sigma-unslop-docs` rewrites the spec from the code. Those two lanes do not call each other. `/sigma-retro` is optional. It reviews one factory or implement session and does not block `/sigma-merge`.
 
 ```mermaid
 flowchart TD
@@ -146,6 +146,7 @@ The first column is the command you type. A row with `none` describes that comma
 | `/sigma-feedback` | none | Starts from `/sigma-feedback`, `sigma feedback`, or `do sigma feedback`, including a browser annotation. Files the note as a ticket or an epic. Does not edit requirements or a spec. A factory ticket is also built. |
 | `/sigma-feedback` | `/sg-create-ticket` | Files one ticket per screen change. An epic is only a new area with no screen outcome, and it includes `Next skill: /sigma-plan`. |
 | `/sigma-unslop-docs` | none | Rewrites one spec from the scripts, the passing tests, and the closed tickets the code shows. A closed ticket with no code is left out. Does not file a ticket and does not build. |
+| `/sigma-retro` | none | Reviews one factory or implement session. Prints a table of Moment, Home, and Destination. Writes nothing until you pick one row, then files one issue on this pack and stops. Does not build a workbook ticket. Merge does not wait for it. |
 | `/sigma-unslop` | none | The user types this command. It writes one review and stops. It does not file and it does not build. |
 
 ### System writer

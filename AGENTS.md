@@ -8,7 +8,7 @@ Write the action, the stop, and the next command in the skill file. Do not add a
 
 Write `README.md`, `AGENTS.md`, and each skill's `SKILL.md` or templates. Do not add a doc outside those paths. Ask when a file fits none of them.
 
-Skill folders: `sigma-init-docs`, `sigma-feedback`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sg-create-ticket`, `sigma-unslop-tickets`, `sigma-unslop-docs`, `sigma-pick-tickets`, `sigma-build-factory`, `sigma-implement`, `sg-tdd`, `sg-pr`, `sg-review`, `sigma-merge`, `sigma-unslop`. Ask before you add a skill folder. Commands the user types use the `sigma-` prefix. Skills another command starts use the `sg-` prefix.
+Skill folders: `sigma-init-docs`, `sigma-feedback`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sg-create-ticket`, `sigma-unslop-tickets`, `sigma-unslop-docs`, `sigma-retro`, `sigma-pick-tickets`, `sigma-build-factory`, `sigma-implement`, `sg-tdd`, `sg-pr`, `sg-review`, `sigma-merge`, `sigma-unslop`. Ask before you add a skill folder. Commands the user types use the `sigma-` prefix. Skills another command starts use the `sg-` prefix.
 
 ## Lane
 
@@ -16,16 +16,17 @@ Each command stops and names the next command. A next command is a fenced code b
 
 `/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sg-create-ticket` → GitHub → `/sigma-pick-tickets` → `/sigma-build-factory` → `/sigma-merge`
 
-`/sigma-feedback` files a ticket or an epic and does not edit requirements or a spec. `/sigma-unslop-docs` rewrites one spec from the code. Those two lanes do not call each other.
+`/sigma-feedback` files a ticket or an epic and does not edit requirements or a spec. `/sigma-unslop-docs` rewrites one spec from the code. Those two lanes do not call each other. `/sigma-retro` is optional and off the build lane. Merge does not wait for it.
 
 `/sigma-unslop-tickets` also points at `/sg-create-ticket`. It is optional. It is not a required hop between `/sigma-to-tickets` and `/sigma-pick-tickets`.
 
-Four entrances are parallel.
+Five entrances are parallel.
 
 1. `/sigma-feedback` files each screen change as a ticket. It does not edit requirements or a spec. A factory ticket is handed to a worker. An epic is only a new area with no screen outcome, and it records `Next skill: /sigma-plan`.
 2. The user types `/sigma-unslop-tickets` to repair open tickets. A yes writes through `/sg-create-ticket`. The reply names `/sigma-pick-tickets`.
 3. The user types `/sigma-unslop`. That command writes one review and stops.
 4. The user types `/sigma-unslop-docs`. That command rewrites one spec from the code, the passing tests, and the closed tickets the code shows. A closed ticket with no code is left out.
+5. The user types `/sigma-retro` after a factory or implement run. It lists skill fixes and writes nothing until one row is picked. Merge does not wait for it.
 
 `/sigma-implement` matches one ticket. It opens or creates `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>/` on branch `agent/<N>-<slug>` when the build starts. It reuses a `git worktree list` row already on that branch under `.worktrees/`. A new branch comes from `origin/<default>`, not the user's current branch. It writes `.worktrees/loop_<YYYY-MM-DD>-<slug>/worktrees.json` only when it creates the worktree. It creates that path only if `.worktrees/` is gitignored. A fix stays on that same branch and worktree. One worker follows `/sg-tdd`, then `/sg-pr`. A second worker follows `/sg-review`. That worker did not write the scripts. The review screenshots the live page. A script line that says pass is not evidence. A script outside the spec globs is a note. A user run is `hitl`. It prints What holds, What does not, Ticket intent, and Note. A pass prints `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and a fenced code block that contains only `/sigma-merge <pull-request-number>`, and does not ask. A miss prints the return block. The last line is `Which lines should I fix?`. The question is not a question card. It waits. `fix` sends every "What does not" sentence. A quoted "What does not" sentence sends that sentence only. `stop` stops and does not name merge. A factory run is `afk`. It does not ask and does not wait. A worker that would ask, or wait for `fix`, `stop`, `overwrite`, or "Which lines should I fix?", stops that ticket. The first miss goes back once. A second miss stops and does not name merge. When the wave returns, the factory prints one table. Columns are Title, Does, Outcome, and Status. Each cell is one sentence. Status is Met or Not met. A pass then prints a fenced code block that contains only `/sigma-merge <pull-request-number>`. The implement chat does not edit scripts and does not judge the diff. `/sigma-merge` stays the command you type.
 
