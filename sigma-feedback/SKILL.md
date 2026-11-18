@@ -8,8 +8,9 @@ description: >
   area with no screen outcome yet, and its body says Next skill:
   /sigma-plan. Do not start that skill. Do not write
   requirements. Do not edit a spec. When this chat has a factory branch, a
-  ticket is also handed to the workers and built. When it does not, the
-  fence contains only /sigma-pick-tickets.
+  ticket is also handed to the workers and built. A pass merges into
+  that factory branch. When it does not, the fence contains only
+  /sigma-pick-tickets.
 argument-hint: "[pasted note]"
 user-invocable: true
 model-invoked-skills: [sg-create-ticket, sigma-implement]
@@ -29,7 +30,7 @@ allowed-tools: [Read, Glob]
 
 This skill does not write `docs/requirements/REQUIREMENTS.md`. It does not edit a spec. It does not follow `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`.
 
-When this chat already has a factory branch, a ticket is also handed to the workers and built on that branch. The ticket is the record. The workers do the work now. An epic is filed and is not handed to the workers.
+When this chat already has a factory branch, a ticket is also handed to the workers and built on that branch. A pass merges into that factory branch. The ticket is the record. The workers do the work now. An epic is filed and is not handed to the workers.
 
 When this chat has no factory branch, the reply ends with a fence that contains only `/sigma-pick-tickets`.
 
@@ -75,7 +76,7 @@ Done when each return has an issue URL, or the return says that title was reused
 
 ### Step 4 - Build or stop
 
-When this chat has a factory branch, hand each ticket from Step 3 to `/sigma-implement` with that ticket's sentence, `mode: afk`, `pr: none`, and `base:` set to that factory branch. One worker per ticket.
+When this chat has a factory branch, hand each ticket from Step 3 to `/sigma-implement` with that ticket's sentence, `mode: afk`, `pr: none`, and `base:` set to that factory branch. One worker per ticket. When that run returns `pass`, merge the agent branch into the open factory branch with `git merge --no-ff`, then push the factory branch. Do not merge into main.
 
 When Step 2 filed an epic, do not hand it to `/sigma-implement`. The reply names the epic title and the line `Next skill: /sigma-plan`.
 
@@ -95,7 +96,7 @@ Done when a factory ticket was handed to `/sigma-implement`, or an epic was name
 |---|---|
 | File each screen change as a ticket through `/sg-create-ticket` in the same turn. An epic is only a new area with no screen outcome yet, and its body says `Next skill: /sigma-plan`. Do not start that skill. | Several small screen changes filed as one epic send the user to plan. |
 | Do not write `docs/requirements/REQUIREMENTS.md`. Do not edit a spec. Do not follow `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`. | Those doors let an older line outlast the note. |
-| When this chat has a factory branch, hand each ticket to `/sigma-implement` with `mode: afk`, `pr: none`, and that factory base. Do not hand an epic to the workers. | The tickets are the record. The workers build them now. An epic has no screen outcome to build. |
+| When this chat has a factory branch, hand each ticket to `/sigma-implement` with `mode: afk`, `pr: none`, and that factory base. When the run returns `pass`, merge the agent branch into the factory branch with `git merge --no-ff` and push that branch. Do not merge into main. Do not hand an epic to the workers. | The tickets are the record. A pass left only on the agent branch never reaches the factory pull request. An epic has no screen outcome to build. |
 | When this chat has no factory branch, the fence contains only `/sigma-pick-tickets`. Do not follow it. | Naming a build here starts work the user has not picked. |
 | When the title already exists, reuse that issue. Do not file a second issue. | A second issue splits one note. |
 
@@ -103,6 +104,6 @@ Done when a factory ticket was handed to `/sigma-implement`, or an epic was name
 
 - [ ] Each screen change was filed as its own ticket. An epic was filed only when the note had no screen outcome, and that body contains `Next skill: /sigma-plan`. This run did not start `/sigma-plan`.
 - [ ] This run did not write `docs/requirements/REQUIREMENTS.md` and did not edit a spec. It did not follow `/sigma-plan`, `/sigma-to-spec`, or `/sigma-to-tickets`.
-- [ ] A factory ticket was handed to `/sigma-implement` with `mode: afk`, `pr: none`, and the factory base. An epic was not handed to the workers.
+- [ ] A factory ticket was handed to `/sigma-implement` with `mode: afk`, `pr: none`, and the factory base. A pass was merged into the factory branch with `git merge --no-ff` and that branch was pushed. The run did not merge into main. An epic was not handed to the workers.
 - [ ] With no factory branch, the fence contains only `/sigma-pick-tickets` and this run did not follow it.
 - [ ] An existing title was reused. A second issue was not filed.

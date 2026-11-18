@@ -3,8 +3,10 @@ name: sigma-merge
 description: >
   /sigma-merge merges only the pull request numbers named in this invocation,
   then fast-forwards the base branch and removes a clean .worktrees/ checkout
-  and the leftover local agent/ branch. Use when the user invokes /sigma-merge
-  and names those numbers. Ask in this chat when no number is named. Building is
+  and the leftover local agent/ branch. A dirty docs/requirements/REQUIREMENTS.md
+  is copied aside for that fast-forward and put back uncommitted. Any other
+  dirty path stops it. Use when the user invokes /sigma-merge and names those
+  numbers. Ask in this chat when no number is named. Building is
   /sigma-implement. Judging the diff is /sg-review.
 argument-hint: "<pr-numbers>"
 user-invocable: true
@@ -19,7 +21,7 @@ allowed-tools: [Bash, Read]
 
 ## Overview
 
-`/sigma-merge` merges the pull request numbers named in this invocation, fast-forwards each base branch, and removes the matching clean worktree and leftover local `agent/` branch.
+`/sigma-merge` merges the pull request numbers named in this invocation, fast-forwards each base branch, and removes the matching clean worktree and leftover local `agent/` branch. When the only dirty path is `docs/requirements/REQUIREMENTS.md`, that file is copied aside, the base fast-forwards, and the file is put back uncommitted. Any other dirty path stops the fast-forward.
 
 You name the pull request numbers. This command reads the repository default and passes that method. The lane ends at this command.
 
@@ -86,7 +88,7 @@ Done: each named pull request is `MERGED`, or the sequence stopped on the first 
 
 Run git from the main checkout. The main checkout is the `git worktree list` path that is not under `.worktrees/`. A current directory under `.worktrees/` cannot remove that worktree.
 
-When `git -C <main> status --porcelain` is not empty, stop and report those lines. Do not stash.
+When `git -C <main> status --porcelain` lists any path other than `docs/requirements/REQUIREMENTS.md`, stop and report those lines. Do not stash. When the only dirty path is `docs/requirements/REQUIREMENTS.md`, copy that file aside, fast-forward, and copy it back so it stays uncommitted. Do not commit it. Do not stash any other path. After the fast-forward, Step 3 still removes a clean factory worktree.
 
 ```bash
 git -C <main> fetch --prune
@@ -134,7 +136,7 @@ Done: the reply lists merged, removed, and retained.
 
 - [ ] The merge set is the numbers named in this invocation, or the numbers the user named in the reply in this chat. `gh pr list` did not grant permission. When the answer names none, the command stopped. An `API write failed` comment did not remove a named number.
 - [ ] Each named pull request had `gh pr view` first. `gh pr merge` passed the repository default method, or the one method the user named. A failed default query stopped before the merge. A merge error stopped the sequence, with no `--admin` added after the failure.
-- [ ] `git fetch --prune` ran from the main checkout. Each merged base matches `origin/<baseRefName>`, or the reply says `--ff-only` refused or the main checkout is dirty.
+- [ ] `git fetch --prune` ran from the main checkout. A dirty tree whose only path is `docs/requirements/REQUIREMENTS.md` was copied aside, the base was fast-forwarded, and that file was put back uncommitted. Any other dirty path stopped the fast-forward. Each merged base matches `origin/<baseRefName>`, or the reply says `--ff-only` refused.
 - [ ] Each clean matching path under `.worktrees/` is gone from `git worktree list`. A dirty path is still present, and the reply lists its porcelain lines. No remove used `--force`.
 - [ ] A leftover local `agent/` branch was removed with `git branch -d`, or the reply says `-d` refused. No `git branch -D` and no force-push.
 - [ ] The reply lists merged, removed, and retained, and says the lane ends at `/sigma-merge`.

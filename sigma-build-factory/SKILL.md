@@ -11,8 +11,10 @@ description: >
   type:ticket builds from the sentences in its body. A missing
   requirements line does not stop it. A spec or epic is too big and
   does not start. A stale
-  title stops that ticket before its worker starts. Workers do not ask.
-  The wait is once per round, after the merge into the factory branch.
+  title stops that ticket before its worker starts. A ticket whose
+  script writes a workbook runs only after the previous workbook
+  ticket has returned. Workers do not ask. The wait is once per
+  round, after the merge into the factory branch.
 argument-hint: "<ticket numbers from /sigma-pick-tickets>"
 user-invocable: true
 disable-model-invocation: true
@@ -93,11 +95,11 @@ Done when the factory branch exists, the local requirements file is on it when t
 
 ### Step 4 - One afk worker per ticket
 
-Start one worker per wave 1 ticket. The workers start together. Each worker follows `/sigma-implement` for its one number.
+Start one worker per wave 1 ticket. Each worker follows `/sigma-implement` for its one number. A ticket whose script writes a workbook runs only after the previous workbook ticket has returned. Other tickets in the wave may still start together.
 
 The worker brief says `mode: afk`, `pr: none`, and `base: factory/<YYYY-MM-DD>-<slug>`. The worker does not ask. The worker does not wait for the word fix, the word stop, the word overwrite, or "Which lines should I fix?". A step that would ask, or wait for one of those, stops that ticket. The other workers in the wave continue.
 
-In `afk`, the first review miss returns once inside `/sigma-implement` with the review sentences. A second miss stops that ticket. That worker does not name `/sigma-merge`.
+In `afk`, the first review miss returns once inside `/sigma-implement` with the review sentences. A second miss stops that ticket. That worker does not name `/sigma-merge`. When the brief names the factory base, that miss still merges the agent branch into the factory branch and pushes it. It does not merge into main.
 
 When Result is `pass`, merge that `agent/<N>-<slug>` branch into the factory branch from the factory worktree. `git merge --no-ff`. Do not merge it into main. Do not delete the agent branch. Push the factory branch.
 
@@ -173,9 +175,9 @@ Copy the sentences from that return. `/sigma-implement` creates the agent branch
 ## Verification
 
 - [ ] No numbers named `/sigma-pick-tickets` and stopped. The run did not add or drop a passed number.
-- [ ] Each wave 1 ticket had one worker. A Campaign ticket and an Organisation ticket were not the same worker.
+- [ ] Each wave 1 ticket had one worker. A Campaign ticket and an Organisation ticket were not the same worker. A ticket whose script writes a workbook started only after the previous workbook ticket returned.
 - [ ] The factory branch is `factory/<YYYY-MM-DD>-<slug>`. A `type:ticket` started from its body sentences. A missing requirements line did not stop it. A `spec` or `type:epic` did not start. The user's checkout and main were unchanged.
 - [ ] A stale title stops only when it still uses a word an older line used and the current line uses a different word. Next names the title, the old word, and the word the line uses, and says the title should use the line's word. The fence contains only `/sigma-unslop-tickets`. A title word the sentence does not repeat did not stop the ticket.
 - [ ] Each wave 1 brief said `mode: afk`, `pr: none`, and `base: factory/<YYYY-MM-DD>-<slug>`. A pass merged that agent branch into the factory branch and did not open a pull request to main.
-- [ ] The first review miss returned once inside `/sigma-implement` with the review sentences. A second miss stopped that ticket and did not name `/sigma-merge`.
+- [ ] The first review miss returned once inside `/sigma-implement` with the review sentences. A second miss stopped that ticket, did not name `/sigma-merge`, and merged the agent branch into the factory branch.
 - [ ] One pull request tracks the factory branch into the default branch. The reply is one table. Columns are Title, Does, Outcome, and Status. Each cell is one sentence. Status is Met or Not met. The reply does not print What holds, What does not, Ticket intent, or the worktree. A pass has one fence that contains only `/sigma-merge` and that pull request number. A product sentence was filed as a ticket, handed to the workers, and updated that same pull request. An epic was not handed to the workers. The words yes, accept, or happy printed that fence and stopped. This skill did not merge into main.
