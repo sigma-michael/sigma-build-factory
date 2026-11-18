@@ -2,7 +2,9 @@
 name: sg-review
 description: >
   /sg-review <issue-number> screenshots the live workbook page and compares
-  it with the ticket. A script line that says pass is not evidence. Return
+  it with the ticket. A script line that says pass is not evidence. An
+  empty preview from a control the browser did not commit is not a
+  failed append when the destination list already shows the row. Return
   the verdict to /sigma-implement. Do not name a next command.
 argument-hint: "<issue-number>"
 user-invocable: false
@@ -68,13 +70,15 @@ Open the workbook page the ticket names in the browser. Use the Cursor browser o
 
 Compare the picture with the acceptance sentence. Mark the id met only when the picture shows that sentence. Cite the screenshot and what it shows: the page, the control, and the value. A script line that says pass is not evidence. A JSON read-back can support the cite. It cannot override a picture that shows the opposite.
 
+An empty preview caused by a control the browser did not commit is not evidence the acceptance failed. When the destination list already shows the row the ticket names, mark the id met. Do not report that append as failed.
+
 When the page cannot be opened, mark the id missing. Say the page was not seen. Do not use the script pass line instead.
 
 The script path may sit outside the spec globs. That path is a note. It does not mark the id missing.
 
 The write can be absent from the diff when the browser holds the rows, because POST /v2/workbooks/{workbookId}/elements/{elementId}/rows is not a public route. Record no breakage for a 404 on that rows route. The route is not public. A ticket comment that says `API write failed` is not breakage. The id is met only when the screenshot shows the acceptance.
 
-Mark the id missing when the picture does not show the acceptance, or the page was not seen. The id stays missing until a later screenshot shows it.
+Mark the id missing when the picture does not show the acceptance, or the page was not seen, and the empty picture is not an uncommitted control whose destination list already shows the row. The id stays missing until a later screenshot shows it.
 
 Then check the same diff:
 
@@ -164,7 +168,7 @@ Write each sentence so a person can read it. Name the drawer, the header, or the
 - [ ] This chat did not write the scripts. When it did, the return said so and judged nothing.
 - [ ] The TICKET, the parent SPEC, and `docs/requirements/REQUIREMENTS.md` were read, or the run stopped on the missing piece.
 - [ ] The diff is `agent/{N}-{slug}` against the base. The head SHA is in the report. The worktree is unchanged.
-- [ ] Every acceptance id is met, missing, or contradicted. A met id cites a screenshot of the live page. A script pass line was not the cite. A picture that showed the opposite stayed missing. A page that was not seen stayed missing.
+- [ ] Every acceptance id is met, missing, or contradicted. A met id cites a screenshot of the live page. A script pass line was not the cite. A picture that showed the opposite stayed missing. A page that was not seen stayed missing. An empty preview from a control the browser did not commit stayed met when the destination list already showed the named row, and the append was not reported as failed.
 - [ ] Breakage covers a wrong API call and a write-scope path. A script outside the spec globs is a note and did not change the verdict.
 - [ ] The return is the verdict, the acceptance cites, and breakage. It names no next command.
 - [ ] No file edit, commit, push, or pull request.
