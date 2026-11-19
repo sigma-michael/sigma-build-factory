@@ -14,7 +14,7 @@ A next command is a fenced code block with only the command inside.
 
 Five entrances are parallel. Feedback and document repair do not call each other. `/sigma-retro` is optional. Merge does not wait for it.
 
-1. `/sigma-feedback` files each screen change as a ticket. It does not edit requirements or a spec. A factory ticket is handed to a worker, and a pass is merged into the factory branch. An epic is only a new area with no screen outcome, and it records `Next skill: /sigma-plan`.
+1. `/sigma-feedback` files each screen change as a ticket. It does not edit requirements or a spec. A note that names a new screen result is handed to a worker, and a pass is merged into the factory branch. A complaint that the published page changed is filed and is not built in this turn. An epic is only a new area with no screen outcome, and it records `Next skill: /sigma-plan`.
 2. The user types `/sigma-unslop-tickets` to repair open tickets. A yes writes through `/sg-create-ticket`. The reply names `/sigma-pick-tickets`.
 3. The user types `/sigma-unslop`. That command writes one review and stops.
 4. The user types `/sigma-unslop-docs`. That command rewrites one spec from the code and the passing tests. A closed ticket with no code is left out.
