@@ -106,16 +106,11 @@ Done when the set is printed and this skill has not built.
 
 | Rule | Why / violation looks like |
 |---|---|
-| Read issues already on GitHub through `/sg-create-ticket` with `caller: sigma-pick-tickets`. Do not run `gh`. Do not close, edit, or create. Do not name `/sg-create-ticket` as the next command. | A close here repairs the board inside the pickup. `gh` here is a second issue path. Naming the gateway as the next command skips `/sigma-implement`. |
-| Match the task to the outcome in the acceptance, the Topic line, the parent spec, and the requirements lines. A shared word is not required and is not enough. Do not drop a ticket for its title, a clash, a blocker, or `origin/main`. That is `/sigma-unslop-tickets`. An epic is context. When the outcome is specified and no ticket carries it, the fence holds only `/sigma-to-tickets`. | A word search misses a ticket whose title does not repeat the task. A title check here rejects a ticket this command just found. |
-| Print a numbered list of ticket titles, in `blockedBy` order, then a fenced code block with the next command. Do not print the acceptance body or why the ticket is in the set. Do not use bullet points. Do not print a preamble. One title ends with a fence that holds only `/sigma-implement` and that number. More than one title ends with a fence that holds only `/sigma-build-factory` and every number in list order. Do not put `Next:` inside the fence. Do not follow either command. | A paragraph per ticket hides the list. Starting the build here puts the choice and the script edit in one chat. |
-| This skill does not ask with a question card. If a reply must ask, ask in this chat after the acceptance sentences. | A card hides the text. |
+| Load the open set through `/sg-create-ticket`. Leave the issues unchanged. | A close here repairs the board inside pickup. |
+| Match the outcome, not a shared word. Leave title, clash, blocker, and `origin/main` checks to `/sigma-unslop-tickets`. | A word search drops a ticket this command just found. |
+| Print a numbered list of titles and one fence. Ask in this chat. | A paragraph per ticket hides the list. A card hides the sentences. |
 
 ## Verification
 
-- [ ] Specs and tickets were loaded through `/sg-create-ticket` with `caller: sigma-pick-tickets`. This run did not run `gh` and did not name `/sg-create-ticket` as the next command.
-- [ ] This run did not close, edit, or create an issue.
-- [ ] A ticket was kept because its acceptance, Topic line, parent spec, or requirements lines are the same outcome as the task. A shared word was not the test. The run did not drop a ticket for its title, a clash, a blocker, or `origin/main`.
-- [ ] When the outcome was specified and no ticket carried it, the reply said so and the fence held only `/sigma-to-tickets`. An epic was not in the build list.
-- [ ] The reply was a numbered list of ticket titles, then a fenced code block with the next command. It did not print the acceptance body, did not use bullet points, and did not print a preamble. One title ended with a fence that held only `/sigma-implement` and that number. More than one title ended with a fence that held only `/sigma-build-factory` and every number in list order. The fence did not contain `Next:`. An empty set named the wait and printed no number. This run did not build.
-- [ ] This run did not call AskUserQuestion and did not ask with a question card. A reply that asked did so in this chat after the acceptance sentences.
+- [ ] A ticket stayed because its outcome matched the task. A shared word was not the test.
+- [ ] One title fenced `/sigma-implement`. More than one fenced `/sigma-build-factory`. This run did not build.

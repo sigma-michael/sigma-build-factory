@@ -163,21 +163,18 @@ Done when that recommendation is the last action and no ticket or epic was filed
 
 | Rule | Why / violation looks like |
 |---|---|
-| Stop and recommend `/sigma-plan` when Solution shape, Workflows, and Decisions are all empty. | A spec written from a scaffold line has no solution to file. |
-| Ask at most 3 gap questions, one at a time, each with one recommended answer. The question is the last line in this chat after the sentences. | A fourth question reopens `/sigma-plan`. A card hides the text. |
-| Leave open questions in `REQUIREMENTS.md`. Do not edit that file. The spec body has no open questions. | An open question copied into the spec becomes an acceptance line with no answer. |
-| Keep existing acceptance ids that are still numbered lines. Do not append an id the requirements file does not number. Globs stay under `scripts/`. | Renumbering `A1`, or a glob outside `scripts/`, breaks the tickets that copy the spec. A new id born on the spec has nothing for `/sigma-implement` to match. |
-| Show the digest in this chat. The last line of that reply is "Publish this spec?" A card must not replace the digest. Publish only after an explicit yes to that digest. A sentence the user states in this run is the line in the digest. Do not park that sentence as a clash and do not send the user back to `/sigma-plan` for it. A clash the user does not state in this run stays named and absent from the spec. Do not ask which line stands. The other acceptance lines stay in the digest. | A yes to a gap question, or silence, files a spec the user has not accepted. A card replaces the digest and hides the text. Parking a stated sentence as a clash sends the user back to `/sigma-plan` for a line they already gave. Asking which line stands leaves that sentence out of the digest. |
-| File only through `/sg-create-ticket`. Do not run `gh`. | A second create path skips the label and title rules. |
-| Stop and recommend `/sigma-to-tickets <spec-number>`. Do not invoke it. A `caller: sigma-plan` carry returns to `/sigma-plan` after the named ids are updated. | Invoking the split from a normal publish starts the next command inside this chat. Asking "Publish this spec?" after the assumption asks the user to approve the same sentence again. |
+| When Solution shape, Workflows, and Decisions are all empty, recommend `/sigma-plan` and stop. | A spec from scaffold lines has no solution to file. |
+| Ask at most 3 gap questions, one at a time in this chat, each with one recommended answer. No question card. | A fourth gap reopens planning. A card hides the digest lines. |
+| Do not edit `REQUIREMENTS.md`. Open questions stay there. The spec body has none. | An open question on the spec becomes an acceptance line with no answer. |
+| Keep numbered acceptance ids from the requirements file. Do not invent ids. Globs stay under `scripts/`. | Renumbered ids or globs outside `scripts/` break tickets and implement matching. |
+| Show the digest in this chat. Last line: "Publish this spec?" File only after an explicit yes to that digest. | A yes to a gap question, or silence, files a spec the user did not accept. |
+| On `caller: sigma-plan` with `carry: yes`, update the named ids and return to `/sigma-plan`. Do not show the digest or ask "Publish this spec?" again. | A second digest makes the user approve the assumption twice. |
+| File only through `/sg-create-ticket`. Do not run `gh`. Recommend `/sigma-to-tickets <spec-number>`; do not invoke it. | A direct `gh` path skips labels and titles. Invoking the split starts the next skill inside this turn. |
 
 ## Verification
 
-- [ ] `REPO_ROOT` contains `.git`, and `docs/requirements/REQUIREMENTS.md` was read or the run stopped for a missing file.
-- [ ] Empty solution sections ended in a `/sigma-plan` recommendation, with no digest and no filing.
-- [ ] Existing SPEC issues were loaded through `/sg-create-ticket`, and the run is marked new or update `#N`.
-- [ ] At most 3 gap questions were asked, one at a time, each with one recommended answer. Each question was the last line in this chat after the sentences.
-- [ ] `REQUIREMENTS.md` was not edited. The spec body has no open questions.
-- [ ] The digest was shown in this chat, and "Publish this spec?" was the last line of that reply. An explicit yes to that digest came before filing. A sentence the user states in this run is a line in the digest. A clash the user does not state in this run stays named and absent from the spec. The run does not ask which line stands. The other acceptance lines stay offered for publish.
-- [ ] Create or edit went through `/sg-create-ticket`. This skill did not run `gh`.
-- [ ] The last action recommends `/sigma-to-tickets <spec-number>` and does not invoke it. A carry from `/sigma-plan` updates only the named ids with the sentence the user stated, asks no question, and returns to `/sigma-plan`.
+- [ ] Empty solution sections stopped with `/sigma-plan`; no digest and no filing.
+- [ ] `REQUIREMENTS.md` was not edited. The filed spec has no open questions.
+- [ ] A normal run showed the digest with "Publish this spec?" last; an explicit yes to that digest came before filing.
+- [ ] A `/sigma-plan` carry updated only the named ids, asked no publish question, and returned to `/sigma-plan`.
+- [ ] Filing used `/sg-create-ticket` only. The last action recommends `/sigma-to-tickets <spec-number>` and does not invoke it.

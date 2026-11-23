@@ -96,17 +96,10 @@ Done: the return is the URL and the number. The pull request state is `OPEN`.
 
 | Rule | Why / violation looks like |
 |---|---|
-| A handoff that names `factory/<YYYY-MM-DD>-<slug>` opens or updates one pull request into the default branch. The body lists the ticket titles and does not write `Closes #<N>`. That handoff does not open an `agent/` pull request. | An agent pull request targets main. A `Closes` line on the factory pull request closes issues the user has not accepted. |
-| When the worker hands the pushed branch, open the pull request. Do not wait for a ready verdict. Do not judge the diff. | A ready question here blocks the pull request that review then reads. |
-| Use the `agent/{N}-{slug}` line on the TICKET, and only when `git ls-remote` prints it. When it is missing, stop and return that fact to the worker. | A commit or a push here is feature work. A made-up slug opens the pull request on the wrong branch. |
-| Create one pull request, or edit that same pull request, with `--body-file`. When one open pull request already exists, return its URL. Do not open a second one. Do not pass `--fill` or a guessed `--base`. | A second pull request splits the look. `--fill` replaces `Closes #<N>` and the script paths. |
-| Body order is `Closes #<N>`, a short summary, then What to look at with the acceptance ids and the script paths copied from the TICKET. | A missing `Closes #<N>` line leaves the issue open. An invented id sends the look to the wrong check. An evidence block or a second verdict repeats `/sg-review`. |
-| Return the URL and the number to the worker. Leave the pull request open. | A merge here skips `/sigma-merge`. A next command for the user skips the decision in `/sigma-implement`. |
+| A factory handoff opens one pull request into the default branch and lists the ticket titles. An agent handoff opens one pull request whose first line is `Closes #<N>`. | An agent pull request from a factory handoff lands one ticket on main before the user accepts the batch. |
+| Open or update that one pull request and return its URL. Leave it open. | A merge here skips `/sigma-merge`. A second pull request splits the look. |
 
 ## Verification
 
-- [ ] The worker handed the issue number and the pushed branch. This command wrote no verdict and asked no ready question.
-- [ ] The head is the TICKET's `agent/{N}-{slug}` line, and `git ls-remote --heads origin` prints it. This command made no commit and no push.
-- [ ] One open pull request exists for that head. A later run edited that same pull request. The create or edit command had no `--fill`.
-- [ ] Line 1 is `Closes #<N>`. A short summary follows. What to look at lists acceptance ids and script paths copied from the TICKET.
-- [ ] The return to the worker is the pull request URL and number. The pull request state is `OPEN`. This command did not merge and did not open a second pull request.
+- [ ] A factory pull request did not write `Closes #<N>`. An agent pull request started with `Closes #<N>`.
+- [ ] The return was one open pull request URL and number. This command did not merge.

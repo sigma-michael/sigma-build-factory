@@ -53,7 +53,7 @@ A `type:ticket` builds from the sentences in its body. A missing requirements li
 - **Use when:** `/sigma-build-factory` starts this skill with `mode: afk`.
 - **Best after:** `/sigma-to-tickets` has filed a `type:ticket`.
 - **On label `spec` or `type:epic`:** Step 2 sends one flag that the work is too big for one build, then stops. Do not build it. Do not wait for overwrite.
-- **Do NOT use when:** the user wants a merge. Print one fenced code block that contains only `/sigma-merge`, then stop. Do not merge.
+- **Do NOT use when:** the user wants to merge a `factory/` pull request. Print one fenced code block that contains only `/sigma-merge` and that number, then stop. Do not merge. When the head is `agent/`, do not print `/sigma-merge`. Say that branch merges into the factory branch.
 
 ## Input
 
@@ -167,7 +167,7 @@ Start a fresh worker. That worker follows `/sg-review`. It did not write the scr
 
 Print the locked path above the decision. When the issue named it, the line is `Script: <path>`. When this step chose it, the line is `Script: <path> chosen`. Do not ask. Do not wait.
 
-When the worker report has a browser-write line, print one warning per id above the decision. Do not ask a question. Do not wait. The review started above still runs. A ready verdict still names `/sigma-merge`.
+When the worker report has a browser-write line, print one warning per id above the decision. Do not ask a question. Do not wait. The review started above still runs. A ready verdict does not name `/sigma-merge` when the pull request head is `agent/`.
 
 ```text
 Browser write: <id>. POST /v2/workbooks/{workbookId}/elements/{elementId}/rows returned 404. The ticket comment records the failed route.
@@ -187,7 +187,7 @@ Note: <sentence>
 
 When ticket intent is met, print each return field at the end of this step after those four paragraphs. Each field is its own paragraph. Result is `pass`. A blank line separates the paragraphs. Do not ask a question on a pass. Do not start Step 8.
 
-Then print the promise, the pull request URL, and `Next:` as their own paragraphs. A blank line separates them.
+Then print the promise, the pull request URL, and `Next:` as their own paragraphs. A blank line separates them. When the brief names no factory base, stop after the pull request URL. Do not print `Next:`. Do not print `/sigma-merge`.
 
 The promise paragraph is `<promise>IMPLEMENTATION COMPLETE</promise>`.
 
@@ -197,17 +197,11 @@ The next paragraph is `Next:`.
 
 When the brief names `pr: none`, a pass prints the four paragraphs and the return fields. Result is `pass`. Pull request is `none`. Do not print `/sigma-merge`. Do not print a fence. The factory merges the agent branch.
 
-When the brief does not name `pr: none`, a pass ends with one fenced code block. The fence contains only the command. Do not put `Next:` inside the fence. Do not leave the command only in a paragraph. One command per block.
-
-```
-/sigma-merge <pull-request-number>
-```
-
-`<pull-request-number>` is the number `/sg-pr` returned. It is not the issue number. Do not merge. A note about a script path stays in Note. The fence still contains `/sigma-merge` and that number.
+When the brief names no factory base, the pull request head is `agent/<N>-<slug>`. Print the promise and the pull request URL, then stop. Do not print `/sigma-merge`. Do not print a fence. `/sigma-merge` refuses an `agent/` head. Say the agent branch merges into a factory branch, not into main.
 
 A later flag of the same acceptance, after this pass, is Step 9. A later picture that matches the sentence still prints this pass.
 
-A browser-write id whose screenshot shows the acceptance is not a missing line. The browser-write warning is already printed. It does not change the verdict and it does not withhold `/sigma-merge` when ticket intent is met.
+A browser-write id whose screenshot shows the acceptance is not a missing line. The browser-write warning is already printed. It does not change the verdict. An `agent/` head still does not print `/sigma-merge`.
 
 When mode is `hitl` and ticket intent is not met, keep the four paragraphs above. Print the return block below with Result `miss`. Each field is its own paragraph. The last paragraph after that block is `Which lines should I fix?`.
 
@@ -242,7 +236,7 @@ Pull request: <url or none>
 
 Result: pass | miss | stopped
 
-Done when a met intent has printed the promise, the pull request URL, and `Next:` as paragraphs, ends with a fence that contains only `/sigma-merge` and the pull request number, and the return says `pass`, a `hitl` miss is waiting for which lines to fix, the last paragraph is `Which lines should I fix?`, and the return says `miss` (`fix` means every "What does not" line, `stop` stops), an `afk` first miss has started Step 8, or a second miss or `stop` has stopped and the return says `stopped`.
+Done when a met intent with no factory base has printed the promise and the pull request URL, has not printed `/sigma-merge`, and the return says `pass`, a `pr: none` pass has printed the four paragraphs and the return fields and has not printed a fence, a `hitl` miss is waiting for which lines to fix, the last paragraph is `Which lines should I fix?`, and the return says `miss` (`fix` means every "What does not" line, `stop` stops), an `afk` first miss has started Step 8, or a second miss or `stop` has stopped and the return says `stopped`.
 
 ### Step 8 - Fixes after review
 
@@ -264,29 +258,17 @@ Done when the reply starts with that sentence and the worker brief contains the 
 
 | Rule | Why / violation looks like |
 |---|---|
-| A `spec` or `type:epic` is too big for one build. Do not build it. Screen outcomes name `/sigma-to-tickets`. No screen outcome names `/sigma-plan`. Do not wait for overwrite. | Building an epic here mixes several screens into one script. |
-| A `type:ticket` builds from the acceptance sentences in its body. A missing requirements line, an empty id list, or a missing spec does not stop it. A body with no sentence stops. | A requirements gate sends a ready ticket to `/sigma-plan`. The requirements file is filled later by `/sigma-unslop-docs`. |
-| Stop before `git worktree add` and before `scripts/<slug>` only when the title or branch slug still uses a word an older line used and the current acceptance sentence and requirements line use a different word instead. Print the title, the old word, and the word the line uses. Say the title should use the line's word. A title word the sentence does not repeat is not stale. | A presence check rejects a title we just filed. A replaced word such as supplier, when the line says provider, becomes the branch and the script name. |
-| Use branch `agent/{N}-{slug}` from the ticket body. When the brief names `base: factory/<YYYY-MM-DD>-<slug>`, create that agent branch from the factory branch. When the brief names no base, create it from `origin/<default>`. When the brief names `pr: none`, do not follow `/sg-pr` and do not print `/sigma-merge`. Reuse a `git worktree list` row whose branch is `agent/<N>-<slug>` and whose path is under `.worktrees/`. Otherwise create `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>` from that base only when `git check-ignore -q` on that path exits 0. When that path is a worktree on another branch, stop and ask. Do not switch it. Write `worktrees.json` only on create. The worker commits only in that worktree. | An invented slug disagrees with the ticket. A second worktree, or a switch onto another branch, splits the checkout. A commit on the user's current branch mixes this ticket into other work. An unignored worktree lists its files in the user's checkout. |
-| Lock the permitted `scripts/**` paths and hand that list to the worker. A ticket uses the paths it names. When it names none, choose the closest script, or one new path under `scripts/`. Do not ask. This chat does not edit scripts, except conflict markers in the locked script during Step 4. Finish that conflict before `/sg-tdd` starts. An unmerged path outside the locked script stops the run. Name that path. Do not start `/sg-tdd`. | A question here stops on a choice the user cannot see. A doc or any file outside that list is out of bounds. A conflict left in the locked script makes `/sg-tdd` edit markers. |
-| One worker follows `/sg-tdd`, then `/sg-pr`. When the brief says the commit exists, do not start `/sg-tdd`. Continue at Step 7. A second worker follows `/sg-review`. When the brief names `base: factory/<YYYY-MM-DD>-<slug>`, pass that base. This chat does not judge the diff. Do not merge into main. | A verdict in this chat comes from a context that can see the build. A merge into main here skips `/sigma-merge`. A second `/sg-tdd` after the commit publishes the workbook again. A review without the factory base treats the factory requirements file as this ticket's change. |
-| A browser-write report line prints the warning above the decision, for ready and for not ready. Do not ask. Do not wait. Start `/sg-review`. A ready verdict still names `/sigma-merge`. | A hidden browser write leaves the user with a script that did not perform the write. A wait, or a withheld merge line, treats a recorded route failure as a stop. |
-| A user run is `hitl`. A review miss waits for which lines to fix. `fix` means every "What does not" line. `stop` stops and does not name `/sigma-merge`. A factory run is `afk`. The first miss sends every "What does not" sentence back once and does not ask. The second miss stays `stopped` and does not name `/sigma-merge`. When the brief names a factory base, that miss does not merge the agent branch into the factory branch. The script already published the workbook. Leave the factory branch unchanged. Do not merge into main. When an afk fix returns the same head SHA because an API read-back passed, that return is not a pass. Start a fresh `/sg-review`. The pictured miss is met only when that screenshot shows the acceptance. | A `hitl` run that fixes lines the user did not name skips the user check. An `afk` run that asks which lines to fix stalls the other tickets. A second miss that names merge ships a page the picture already rejected. A second miss that merges the agent branch records a page the picture already rejected. A read-back pass with no new screenshot lets the factory merge a page the picture missed. |
-| The return to the caller has Title, What holds, What does not, Ticket intent, Branch, Worktree, Pull request, and Result. Print each field to the user as its own paragraph. A blank line separates the paragraphs. Result is `pass` when intent is met, `miss` while a `hitl` run waits, and `stopped` on a second miss or on `stop`. | A missing Result leaves `/sigma-build-factory` without the decision. A `hitl` wait that says `pass` starts the next ticket early. Joined fields hide a label. |
-| The user flags the same acceptance again after a review already passed it. The first sentence names `/sg-review` and `/sigma-implement`. Both passed a page the user still rejects. The next build brief includes the user's sentence and what the last picture showed. Do not ask the user to pick between the old line and the new one. Do not reopen the issue. A later picture that matches the sentence still prints `<promise>IMPLEMENTATION COMPLETE</promise>` and names `/sigma-merge`. | The brief carries the user's sentence with the last picture so the next build has both. A choice between the old line and the new one stalls on the user. A reopen here writes the issue from the build chat. |
-| A reply to the user is paragraphs. A blank line separates paragraphs. A sequence is a numbered list. A comparison is a table. Do not use bullet points. Do not join labeled fields into one paragraph. Every command the user runs next is one fenced code block. The fence contains only the command. Do not put `Next:` inside the fence. Do not leave the command only in a paragraph. One command per block. | A bullet point in the reply hides the next action. Joined fields hide a label. The fence holds the command. `Next:` stays in the paragraph above the fence. |
+| A `spec` or `type:epic` is too big for one build. Do not build it. | Several screens mixed into one script. |
+| Stop before the worktree or script choice when the title or slug still carries a replaced word the current line no longer uses. | That word becomes the branch and script name. |
+| The worker commits only in the ticket worktree. This chat does not edit scripts except conflict markers in the locked script, and does not judge the diff. Do not merge into main. | A commit on the user's branch mixes tickets. A verdict here is not from the build context. |
+| Finish a locked-script conflict before `/sg-tdd` starts. An unmerged path outside the locked script stops. | `/sg-tdd` on markers or stray paths is out of bounds. |
+| A ready verdict does not name `/sigma-merge` when the pull request head is `agent/`. | `/sigma-merge` refuses an `agent/` head. |
+| `hitl` waits for which lines to fix. `afk` sends every "What does not" sentence back once. A second miss stays stopped. When the brief names a factory base, that miss leaves the factory branch unchanged. | A second miss that merges ships a page the picture already rejected. |
+| A same head SHA from an API read-back is not `pass`. Start a fresh `/sg-review`. | The factory can merge a page the screenshot still misses. |
 
 ## Verification
 
-- [ ] A `type:ticket` built from the sentences in its body. A missing requirements line did not stop it and did not name `/sigma-plan`.
-- [ ] A `spec` or `type:epic` did not build. The fence was `/sigma-to-tickets` when it named screen outcomes, or `/sigma-plan` when it did not. The run did not wait for overwrite.
-- [ ] A title stopped only when it still used a word an older line used and the current line uses a different word. The reply named the title, the old word, and the word the line uses, and said the title should use the line's word. A title word the sentence does not repeat did not stop the run.
-- [ ] `git -C <worktree> branch --show-current` prints `agent/<N>-<slug>`. `<worktree>` is a reused `.worktrees/` path for that branch, or `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>` when created. Create ran only after `git check-ignore -q` on the new path exited 0. A created worktree wrote one-key `worktrees.json`. A reused worktree left that file unchanged. The user's checkout branch is the one recorded in Step 1. This chat edited no script.
-- [ ] One worker returned the head SHA, one report line per id, and one open pull request URL.
-- [ ] A second worker returned the review. This chat printed What holds, What does not, Ticket intent, and Note as four paragraphs, with a blank line between them, and did not judge the diff.
-- [ ] A browser-write report line printed the warning above the decision. A `comment failed` line said the ticket was not marked. The run did not wait.
-- [ ] A ready verdict printed `<promise>IMPLEMENTATION COMPLETE</promise>`, the pull request URL, and `Next:` as three paragraphs. The pass ended with one fenced code block that contains only `/sigma-merge` and the pull request number `/sg-pr` returned. That number is not the issue number. `Next:` is outside the fence.
-- [ ] A `hitl` miss waited for which lines to fix. The last paragraph was `Which lines should I fix?`. The run did not use a question card and did not offer A, B, or C. `fix` sent every "What does not" sentence back on that same branch and worktree once. A quoted reply sent only those sentences. `stop` stopped and did not name `/sigma-merge`. Any other reply left the build waiting.
-- [ ] An `afk` first miss sent every "What does not" sentence back once on that same branch and worktree and did not ask which lines to fix. The second miss printed the four paragraphs, did not name `/sigma-merge`, and left the factory branch unchanged. The script had already published the workbook. An afk fix that returned the same head SHA because an API read-back passed did not set Result to `pass` and started a fresh `/sg-review`. When the brief said the commit exists, the run continued at Step 7 and did not start `/sg-tdd`. When the brief named a factory base, that base was passed to `/sg-review`. A merge conflict in the locked script was finished before `/sg-tdd` started. An unmerged path outside that script stopped the run and `/sg-tdd` did not start.
-- [ ] The return to the caller had Title, What holds, What does not, Ticket intent, Branch, Worktree, Pull request, and Result. Each field was its own paragraph. A blank line separated the paragraphs. Result was `pass` when intent was met, `miss` while a `hitl` run waited, and `stopped` on a second miss or on `stop`.
-- [ ] A user flag of the same acceptance after a passed review named `/sg-review` and `/sigma-implement` in the first sentence. The next build brief included the user's sentence and what the last picture showed. The run did not reopen the issue and did not ask the user to pick between the old line and the new one. A later picture that matched the sentence printed the Step 7 pass.
+- [ ] A ready verdict did not name `/sigma-merge` when the head was `agent/`.
+- [ ] A second `afk` miss left the factory branch unchanged and did not name `/sigma-merge`.
+- [ ] An `afk` fix that returned the same head SHA from an API read-back did not set Result to `pass` and started a fresh `/sg-review`.
+- [ ] A merge conflict in the locked script was finished before `/sg-tdd` started. An unmerged path outside that script stopped the run.
