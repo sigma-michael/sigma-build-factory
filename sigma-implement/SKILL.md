@@ -209,6 +209,8 @@ A later flag of the same acceptance, after this pass, is Step 9. A later picture
 
 A browser-write id whose screenshot shows the acceptance is not a missing line. The browser-write warning is already printed. It does not change the verdict. A standalone pass still names `/sigma-merge`. A `pr: none` pass does not.
 
+When the picture already shows the acceptance and the unmet line says this ticket does not change that control, ticket intent is met. Do not ask which lines to fix. Do not withhold `/sigma-merge`. Print the pass. A standalone pass still fences `/sigma-merge`. A `pr: none` pass still does not.
+
 When mode is `hitl` and ticket intent is not met, keep the four paragraphs above. Print the return block below with Result `miss`. Each field is its own paragraph. The last paragraph after that block is `Which lines should I fix?`.
 
 Then wait for the reply in this chat. Do not use a question card. Do not offer A, B, or C. Do not print the wait rule. Do not print these replies. Do not name `/sigma-merge`.
@@ -269,12 +271,13 @@ Done when the reply starts with that sentence and the worker brief contains the 
 | The worker commits only in the ticket worktree. This chat does not edit scripts except conflict markers in the locked script, and does not judge the diff. Do not merge into main. | A commit on the user's branch mixes tickets. A verdict here is not from the build context. |
 | Finish a locked-script conflict before `/sg-tdd` starts. An unmerged path outside the locked script stops. | `/sg-tdd` on markers or stray paths is out of bounds. |
 | A standalone pass names `/sigma-merge` and the pull request number. A `pr: none` pass does not. | A factory pass that names merge skips the batch. A standalone pass with no fence leaves the pull request unmerged. |
-| `hitl` waits for which lines to fix. `afk` sends every "What does not" sentence back once. A second miss stays stopped. When the brief names a factory base, that miss leaves the factory branch unchanged. | A second miss that merges ships a page the picture already rejected. |
+| `hitl` waits for which lines to fix, except when the picture shows the acceptance and the unmet line says the ticket does not change that control. That case prints the pass. `afk` sends every other "What does not" sentence back once. A second miss stays stopped. When the brief names a factory base, that miss leaves the factory branch unchanged. | A second miss that merges ships a page the picture already rejected. Asking which lines to fix for a control the ticket left alone withholds `/sigma-merge`. |
 | A same head SHA from an API read-back is not `pass`. Start a fresh `/sg-review`. | The factory can merge a page the screenshot still misses. |
 
 ## Verification
 
 - [ ] A standalone pass ended with a fence that contains only `/sigma-merge` and the pull request number. A `pr: none` pass did not print that fence.
+- [ ] When the picture showed the acceptance and the unmet line said the ticket does not change that control, the pass printed and did not ask which lines to fix.
 - [ ] A second `afk` miss left the factory branch unchanged and did not name `/sigma-merge`.
 - [ ] An `afk` fix that returned the same head SHA from an API read-back did not set Result to `pass` and started a fresh `/sg-review`.
 - [ ] A merge conflict in the locked script was finished before `/sg-tdd` started. An unmerged path outside that script stopped the run.
