@@ -58,7 +58,7 @@ gh pr view <n> --json number,state,url,headRefName,baseRefName
 
 When `gh pr view` fails, stop and report that the number is not a pull request. Do not look up an issue and do not merge a different pull request.
 
-When `headRefName` starts with `agent/`, stop. Say that branch merges into the factory branch, not into main. Do not run `gh pr merge` for that number.
+When `headRefName` starts with `agent/`, merge it. That pull request is standalone. Do not invent a factory branch for it.
 
 When `headRefName` starts with `factory/`, merge it. The base is main. This is the batch the user accepted.
 
@@ -124,7 +124,7 @@ Done: the reply lists merged, removed, and retained.
 
 | Rule | Why / violation looks like |
 |---|---|
-| A pull request whose head is `agent/` does not merge into main. Stop that number. | One ticket lands on main before the batch is accepted. |
+| Merge the named pull request into its base. A standalone `agent/` head is that pull request. A `factory/` head is the batch. Do not invent a factory branch for a standalone pull request. | Refusing every `agent/` head leaves a standalone ticket unmerged. Inventing a factory branch splits a pull request that is already one ticket. |
 | Merge only pull request numbers named in this invocation or in the reply in this chat. | `gh pr list` is not permission. |
 | Fast-forward the main checkout with `--ff-only`. When the only dirty path is `docs/requirements/REQUIREMENTS.md`, copy it aside, fast-forward, then put it back uncommitted. Any other dirty path stops. | Other dirty paths need a human; stashing hides work. |
 | Remove a `.worktrees/` path only when porcelain is empty. Delete a leftover branch with `git branch -d` only. | `--force` drops uncommitted work. |
@@ -132,6 +132,6 @@ Done: the reply lists merged, removed, and retained.
 
 ## Verification
 
-- [ ] An `agent/` head did not merge into main; that number stopped.
+- [ ] A named standalone `agent/` head was merged into its base. A named `factory/` head was merged into its base. This command did not invent a factory branch.
 - [ ] When the only dirty path was `docs/requirements/REQUIREMENTS.md`, it was copied aside for the fast-forward and put back uncommitted.
 - [ ] Any other dirty path on the main checkout stopped the fast-forward.

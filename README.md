@@ -64,7 +64,7 @@ Each command is one sentence here. The step lives in that skill.
 | `/sigma-to-tickets` | Files one ticket per visible result in the same turn. | `/sigma-pick-tickets` |
 | `/sigma-pick-tickets` | Prints a numbered list of titles. | `/sigma-implement` or `/sigma-build-factory` |
 | `/sigma-build-factory` | Builds that set on one factory branch and waits. | `/sigma-merge` |
-| `/sigma-implement` | Builds one ticket. An `agent/` pass does not print `/sigma-merge`. | the factory branch, or a miss waits |
+| `/sigma-implement` | Builds one ticket and opens its pull request. A standalone pass fences `/sigma-merge`. A factory pass does not. | `/sigma-merge`, or the factory branch |
 | `/sigma-merge` | Merges a `factory/` pull request. An `agent/` head stops. | the lane ends |
 | `/sigma-feedback` | Files the note. A factory or implement chat returns it to the worker. A standalone chat fences `/sigma-plan` or `/sigma-pick-tickets`. | that fence, or the worker |
 | `/sigma-unslop` | Writes one review and stops. | the command on each accepted finding |

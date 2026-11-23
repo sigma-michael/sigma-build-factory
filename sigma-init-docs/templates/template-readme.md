@@ -26,7 +26,7 @@ Four entrances are parallel.
 `/sigma-implement` opens or creates `.worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>/` on branch `agent/<N>-<slug>`. It reuses a `git worktree list` row already on that branch under `.worktrees/`. A new branch comes from `origin/<default>`, not the user's current branch. It writes `.worktrees/loop_<YYYY-MM-DD>-<slug>/worktrees.json` only when it creates the worktree. A fix stays on that same branch and worktree.
 
 1. The review screenshots the live page. A script pass line is not evidence.
-2. An `agent/` pass does not print `/sigma-merge`. That branch merges into a factory branch.
+2. A standalone pass fences `/sigma-merge`. A factory pass does not. That factory branch is the tree.
 3. A factory pass merges into the factory branch. A second miss leaves that branch unchanged. Yes, accept, or happy prints `/sigma-merge`.
 4. The user's sentence replaces the old requirements line. No question about which line wins. A line the user reads starts with that sentence, then the sentence we will write. An issue number stays in the command the user will type.
 5. A closed ticket the user says was not delivered is reopened, not duplicated.

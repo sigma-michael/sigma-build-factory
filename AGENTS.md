@@ -24,7 +24,7 @@ Each command stops and names the next command. The step lives in the skill. This
 4. `/sigma-unslop-docs` rewrites one spec from the code.
 5. `/sigma-retro` files one skill-pack issue after you pick a row.
 
-`/sigma-implement` builds one ticket on `agent/<N>-<slug>`. An `agent/` pass does not print `/sigma-merge`. `/sg-create-ticket` is the only skill that runs `gh`. A closed ticket the user says was not delivered is reopened, not duplicated.
+`/sigma-implement` builds one ticket on `agent/<N>-<slug>`. A standalone pass fences `/sigma-merge`. A factory pass does not. `/sg-create-ticket` is the only skill that runs `gh`. A closed ticket the user says was not delivered is reopened, not duplicated.
 
 ## Work repo write-scope
 
