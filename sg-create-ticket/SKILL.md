@@ -9,7 +9,9 @@ description: >
   /sigma-feedback or /sigma-to-tickets may hand action reopen for a closed
   ticket. That action runs gh issue reopen on that number, then writes the
   acceptance sentence the caller passed. Any other caller stops. When the
-  title already exists, reuse that issue. Do not file a second issue.
+  title already exists, reuse that issue. When /sigma-feedback passes an
+  open ticket number for the same screen, edit that body and do not
+  create. Do not file a second issue.
   /sg-tdd may ask for one comment when a rows-route 404 sends the write to
   the browser. That comment does not file and does not replace the body.
   /sigma-unslop-tickets may list tickets, and after a yes may close, edit a
@@ -33,7 +35,9 @@ allowed-tools: [Bash, Read]
      create, gh issue edit, gh issue comment for caller sg-tdd, gh issue
      close or --add-blocked-by for a confirmed caller sigma-unslop-tickets,
      and gh issue reopen then a body edit for caller sigma-feedback or
-     sigma-to-tickets. Any other caller with action reopen stops.
+     sigma-to-tickets. An open ticket number from caller sigma-feedback
+     is a body edit and does not create. Any other caller with action
+     reopen stops.
      This skill does not implement, review, or merge. -->
 
 # /sg-create-ticket
@@ -73,7 +77,7 @@ The user's yes is a reply in this session. These replies count as yes, and they 
 - `/sigma-to-tickets` after the user said yes to grain and blockers
 - `/sigma-to-spec` or `/sigma-to-tickets` after the user said yes to the assumption in `/sigma-plan`, for the named ids only. That yes does not create a spec or a ticket.
 
-File a body `/sigma-to-spec` or `/sigma-to-tickets` confirmed in this session, or a ticket or epic `/sigma-feedback` handed with `action: create`. A draft from this chat has no filing yes. A handoff with `caller: sigma-feedback` and `action: list-specs` or `action: view` returns the list or the issue and does not file. `action: create` with `kind: spec` from that caller stops. A feedback ticket or epic may have no parent. `action: reopen` from `caller: sigma-feedback` or `caller: sigma-to-tickets` reopens that issue and writes the acceptance sentence the caller passed. Any other caller with `action: reopen` stops. A handoff with `caller: sigma-unslop-tickets` or `caller: sigma-pick-tickets` and `action: create` stops. A cleanup close or update is not a filing yes for a new spec or ticket.
+File a body `/sigma-to-spec` or `/sigma-to-tickets` confirmed in this session, or a ticket or epic `/sigma-feedback` handed with `action: create`. `action: update` from `caller: sigma-feedback` with an open ticket number edits that body and does not create. Any other update from that caller stops. A draft from this chat has no filing yes. A handoff with `caller: sigma-feedback` and `action: list-specs` or `action: view` returns the list or the issue and does not file. `action: create` with `kind: spec` from that caller stops. A feedback ticket or epic may have no parent. `action: reopen` from `caller: sigma-feedback` or `caller: sigma-to-tickets` reopens that issue and writes the acceptance sentence the caller passed. Any other caller with `action: reopen` stops. A handoff with `caller: sigma-unslop-tickets` or `caller: sigma-pick-tickets` and `action: create` stops. A cleanup close or update is not a filing yes for a new spec or ticket.
 
 ## Issue contract
 
@@ -140,7 +144,7 @@ A `gh` failure returns `comment failed` for each remaining id. Do not run `gh is
 
 Done when the caller has `commented`, `already marked`, or `comment failed` for each handed id. Do not continue to Step 3.
 
-`close` or `update` with `caller: sigma-unslop-tickets` runs only after `/sigma-unslop-tickets` confirmed that item in this session. Any other caller with `action: close` or `action: update` stops, including `caller: sigma-pick-tickets`. `action: create` from either caller stops. Do not create a spec or a ticket.
+`close` or `update` with `caller: sigma-unslop-tickets` runs only after `/sigma-unslop-tickets` confirmed that item in this session. `action: update` with `caller: sigma-feedback` and an open ticket number edits that body and does not create. Write the new acceptance sentence with `gh issue edit <N> --repo "$REPO" --body-file "$f"`. Do not change parent. Do not file a second issue. A missing number returns `update failed`. Any other `action: update` from that caller stops. Done when the return is `updated` or `update failed`. Do not continue to Step 3. A caller other than `sigma-unslop-tickets` and that feedback update stops on `action: close` or `action: update`, including `caller: sigma-pick-tickets`. `action: create` from `sigma-unslop-tickets` or `sigma-pick-tickets` stops. Do not create a spec or a ticket.
 
 A close runs on that number only. Do not close the parent spec. A missing number returns `close failed`.
 
@@ -192,7 +196,7 @@ Done when the caller has the list or the issue, or the write path continues at S
 
 A handoff from the yes cases in Input is ready to file.
 
-`caller: sigma-feedback` with `list-specs` or `view` returns that JSON. Do not file. `action: create` with `kind: ticket` or `kind: epic` from that caller files that body. `kind: spec` or `action: update` from that caller stops. `action: reopen` returns in Step 2.
+`caller: sigma-feedback` with `list-specs` or `view` returns that JSON. Do not file. `action: create` with `kind: ticket` or `kind: epic` from that caller files that body. `action: update` from that caller for an open ticket number returns in Step 2. `kind: spec` or any other `action: update` from that caller stops. `action: reopen` returns in Step 2.
 
 Stop when `/sigma-to-spec` or `/sigma-to-tickets` did not confirm the body in this session. The filing yes is that confirm.
 
@@ -264,7 +268,7 @@ When the caller is another skill, stop there. That skill names the next command.
 | This skill is the only one that runs `gh issue create`, `gh issue edit`, `gh issue comment`, `gh issue close`, or `gh issue reopen`. List and view for the other skills run here too. A `caller: sg-tdd` comment does not create and does not replace the body. A `caller: sigma-unslop-tickets` close or update does not create a spec or a ticket. A `caller: sigma-pick-tickets` list does not write. | A second write path drifts title, label, and parent. A body edit on a browser write would replace the acceptance lines. A cleanup create would file a ticket with no spec confirm. A reopen from another skill skips the acceptance sentence the caller passes. |
 | Ensure the five labels, then create or edit. | A missing label fails the next issue in the batch. |
 | A confirmed update edits that issue. An exact title match does not create a duplicate. | A second `SPEC:` or `TICKET:` splits one feature. |
-| File a body `/sigma-to-spec` or `/sigma-to-tickets` confirmed in this session, or a ticket or epic `/sigma-feedback` handed with `action: create`. That body does not get a second question. `caller: sigma-feedback` with `list-specs` or `view` returns that JSON and does not file. `kind: spec` or `action: update` from that caller stops. `caller: sg-tdd` with `action: comment` is not a filing yes. `caller: sigma-unslop-tickets` may list tickets, and may close, edit, or link only an item that skill confirmed in this session. `caller: sigma-unslop-docs` may update one spec body and may not file a ticket. `caller: sigma-pick-tickets` may list and may not write. | Asking again stalls the handoff. A draft from this chat has no filing yes. A feedback list is not a create. A browser-write comment is not a new issue. A cleanup yes is not a new ticket. |
+| File a body `/sigma-to-spec` or `/sigma-to-tickets` confirmed in this session, or a ticket or epic `/sigma-feedback` handed with `action: create`. That body does not get a second question. `caller: sigma-feedback` with `list-specs` or `view` returns that JSON and does not file. `kind: spec` from that caller stops. `action: update` from that caller edits the open ticket number from Step 2 and does not create. Any other update from that caller stops. `caller: sg-tdd` with `action: comment` is not a filing yes. `caller: sigma-unslop-tickets` may list tickets, and may close, edit, or link only an item that skill confirmed in this session. `caller: sigma-unslop-docs` may update one spec body and may not file a ticket. `caller: sigma-pick-tickets` may list and may not write. | Asking again stalls the handoff. A draft from this chat has no filing yes. A feedback list is not a create. A browser-write comment is not a new issue. A cleanup yes is not a new ticket. An exact title check files a second issue for a follow-up on the same screen. |
 | `action: reopen` runs only for `caller: sigma-feedback` or `caller: sigma-to-tickets`. Run `gh issue reopen` on that number, then write the acceptance sentence the caller passed. When the title already exists, reuse that issue. Do not file a second issue. Any other caller stops. | A second issue leaves the closed ticket in place while the new sentence sits on a copy. A reopen from another caller skips the acceptance sentence those two skills pass. |
 | After create, edit a ticket so Branch is `agent/<N>-<slug>`. The mode label matches the Mode line. | A leftover `{N}`, or `afk` with `agent:hitl`, sends the builder to the wrong branch or the wrong mode. |
 | Set parent on create. A ticket parents to an EPIC or the SPEC. No parent stops that item, except `caller: sigma-feedback`. A feedback ticket or epic may have no parent. | A ticket with no spec line has nothing for `/sigma-implement` to match. A feedback note is the acceptance, so it does not wait for a spec. |
@@ -276,6 +280,7 @@ When the caller is another skill, stop there. That skill names the next command.
 - [ ] `gh repo view` returned the work repo, and the repo name does not end with `sigma-build-factory`.
 - [ ] CONVENTIONS.md was read before any create or edit.
 - [ ] `list-specs`, `list-tickets`, and `view` returned JSON and did not create. A `caller: sigma-feedback` list or view did not file.
+- [ ] `action: update` from `caller: sigma-feedback` with an open ticket number ran `gh issue edit` on that body and did not create a second issue. Any other update from that caller stopped.
 - [ ] `action: reopen` from `caller: sigma-feedback` or `caller: sigma-to-tickets` ran `gh issue reopen` on that number, then wrote the acceptance sentence the caller passed. When the title already existed, that issue was reused and a second issue was not filed. Any other caller stopped and did not reopen.
 - [ ] A `caller: sigma-unslop-tickets` close closed only that number, an update edited only that body, or `--add-blocked-by` linked only the named blocker. `action: create` from that caller did not file. A `caller: sigma-pick-tickets` handoff returned the list and did not write. The parent spec stayed open.
 - [ ] A `caller: sg-tdd` comment posted one comment, or returned `already marked` when the id and `API write failed` were already there. The issue body is unchanged. A `gh` failure returned `comment failed` and did not edit the body.

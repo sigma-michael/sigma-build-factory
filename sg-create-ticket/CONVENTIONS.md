@@ -102,7 +102,7 @@ Context cites the spec number. `Topic: <the user's words>` sits next to these se
 
 ## Idempotency
 
-**Convention.** Identity is the exact title, or the issue number on a confirmed update. A confirmed update runs `gh issue edit` on that number. A create that finds one exact title reuses it and does not write a second issue. Two exact titles stop that item.
+**Convention.** Identity is the exact title, or the issue number on a confirmed update. A confirmed update runs `gh issue edit` on that number. A create that finds one exact title reuses it and does not write a second issue. Two exact titles stop that item. An open ticket number from `/sigma-feedback` for the same screen edits that body and does not create.
 
 **Reason.** One feature has one SPEC. One slice has one TICKET.
 
