@@ -74,13 +74,15 @@ Compare the picture with the acceptance sentence. Mark the id met only when the 
 
 An empty preview caused by a control the browser did not commit is not evidence the acceptance failed. When the destination list already shows the row the ticket names, mark the id met. Do not report that append as failed.
 
+When the picture shows the acceptance the ticket asks for, and the unmet line is a control the ticket says not to change, mark that id met. Cite what the picture shows. Do not mark ticket intent not met for that control. What does not stays none for that line. Return the verdict to `/sigma-implement`.
+
 When the page cannot be opened, mark the id missing. Say the page was not seen. Do not use the script pass line instead.
 
 The script path may sit outside the spec globs. That path is a note. It does not mark the id missing.
 
 The write can be absent from the diff when the browser holds the rows, because POST /v2/workbooks/{workbookId}/elements/{elementId}/rows is not a public route. Record no breakage for a 404 on that rows route. The route is not public. A ticket comment that says `API write failed` is not breakage. The id is met only when the screenshot shows the acceptance.
 
-Mark the id missing when the picture does not show the acceptance, or the page was not seen, and the empty picture is not an uncommitted control whose destination list already shows the row. The id stays missing until a later screenshot shows it.
+Mark the id missing when the picture does not show the acceptance, or the page was not seen, and the empty picture is not an uncommitted control whose destination list already shows the row, and the missing control is not one the ticket says not to change. The id stays missing until a later screenshot shows it.
 
 Then check the same diff:
 
@@ -161,6 +163,7 @@ Write each sentence so a person can read it. Name the drawer, the header, or the
 | When the handoff names `base: factory/<YYYY-MM-DD>-<slug>`, diff against that base, not `main`. | A main base treats factory requirements as this ticket's change. |
 | Mark acceptance from a live screenshot. A script pass line is not evidence. | Pass hid a control the picture still showed. |
 | An empty preview from a control the browser did not commit is not a failed append when the destination list already shows the row. | Uncommitted preview is not proof the row is missing. |
+| When the picture shows the acceptance, a control the ticket says not to change stays met. | A hidden control the ticket left alone is not a miss. |
 | Screenshot and git reads only. No PUT, POST, checkout, commit, push, or any edit of the work repo or workbook. | A PUT changes what you are judging. |
 
 ## Verification
@@ -168,4 +171,5 @@ Write each sentence so a person can read it. Name the drawer, the header, or the
 - [ ] This chat wrote under `scripts/` or committed the agent branch: the run stopped without judging the diff.
 - [ ] A named factory base was the diff base; `docs/requirements/REQUIREMENTS.md` already on that base was not filed as breakage.
 - [ ] A met id cited a screenshot, not a script pass line.
+- [ ] A control the ticket says not to change stayed met when the picture showed the acceptance. Ticket intent was not marked unmet for that control.
 - [ ] No file edit, commit, push, or pull request in this chat.
