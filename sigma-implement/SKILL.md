@@ -53,7 +53,7 @@ A `type:ticket` builds from the sentences in its body. A missing requirements li
 - **Use when:** `/sigma-build-factory` starts this skill with `mode: afk`.
 - **Best after:** `/sigma-to-tickets` has filed a `type:ticket`.
 - **On label `spec` or `type:epic`:** Step 2 sends one flag that the work is too big for one build, then stops. Do not build it. Do not wait for overwrite.
-- **Do NOT use when:** the user wants to merge a `factory/` pull request. Print one fenced code block that contains only `/sigma-merge` and that number, then stop. Do not merge. When the head is `agent/`, do not print `/sigma-merge`. Say that branch merges into the factory branch.
+- **Do NOT use when:** the user wants a merge. Print one fenced code block that contains only `/sigma-merge` and that number, then stop. Do not merge. A standalone pass names that number. A factory pass does not.
 
 ## Input
 
@@ -167,7 +167,7 @@ Start a fresh worker. That worker follows `/sg-review`. It did not write the scr
 
 Print the locked path above the decision. When the issue named it, the line is `Script: <path>`. When this step chose it, the line is `Script: <path> chosen`. Do not ask. Do not wait.
 
-When the worker report has a browser-write line, print one warning per id above the decision. Do not ask a question. Do not wait. The review started above still runs. A ready verdict does not name `/sigma-merge` when the pull request head is `agent/`.
+When the worker report has a browser-write line, print one warning per id above the decision. Do not ask a question. Do not wait. The review started above still runs. A standalone ready verdict names `/sigma-merge`. A `pr: none` pass does not.
 
 ```text
 Browser write: <id>. POST /v2/workbooks/{workbookId}/elements/{elementId}/rows returned 404. The ticket comment records the failed route.
@@ -187,7 +187,7 @@ Note: <sentence>
 
 When ticket intent is met, print each return field at the end of this step after those four paragraphs. Each field is its own paragraph. Result is `pass`. A blank line separates the paragraphs. Do not ask a question on a pass. Do not start Step 8.
 
-Then print the promise, the pull request URL, and `Next:` as their own paragraphs. A blank line separates them. When the brief names no factory base, stop after the pull request URL. Do not print `Next:`. Do not print `/sigma-merge`.
+Then print the promise, the pull request URL, and `Next:` as their own paragraphs. A blank line separates them. When the brief names no factory base, the next fence contains only `/sigma-merge` and the pull request number. When the brief names `pr: none`, do not print that fence.
 
 The promise paragraph is `<promise>IMPLEMENTATION COMPLETE</promise>`.
 
@@ -197,11 +197,17 @@ The next paragraph is `Next:`.
 
 When the brief names `pr: none`, a pass prints the four paragraphs and the return fields. Result is `pass`. Pull request is `none`. Do not print `/sigma-merge`. Do not print a fence. The factory merges the agent branch.
 
-When the brief names no factory base, the pull request head is `agent/<N>-<slug>`. Print the promise and the pull request URL, then stop. Do not print `/sigma-merge`. Do not print a fence. `/sigma-merge` refuses an `agent/` head. Say the agent branch merges into a factory branch, not into main.
+When the brief names no factory base, the pull request is standalone. Print the promise, the pull request URL, and `Next:` as paragraphs. End with one fenced code block. The fence contains only the command. Do not put `Next:` inside the fence. Do not say this branch belongs on a factory branch.
+
+```
+/sigma-merge <pull-request-number>
+```
+
+`<pull-request-number>` is the number `/sg-pr` returned. It is not the issue number. Do not merge.
 
 A later flag of the same acceptance, after this pass, is Step 9. A later picture that matches the sentence still prints this pass.
 
-A browser-write id whose screenshot shows the acceptance is not a missing line. The browser-write warning is already printed. It does not change the verdict. An `agent/` head still does not print `/sigma-merge`.
+A browser-write id whose screenshot shows the acceptance is not a missing line. The browser-write warning is already printed. It does not change the verdict. A standalone pass still names `/sigma-merge`. A `pr: none` pass does not.
 
 When mode is `hitl` and ticket intent is not met, keep the four paragraphs above. Print the return block below with Result `miss`. Each field is its own paragraph. The last paragraph after that block is `Which lines should I fix?`.
 
@@ -236,7 +242,7 @@ Pull request: <url or none>
 
 Result: pass | miss | stopped
 
-Done when a met intent with no factory base has printed the promise and the pull request URL, has not printed `/sigma-merge`, and the return says `pass`, a `pr: none` pass has printed the four paragraphs and the return fields and has not printed a fence, a `hitl` miss is waiting for which lines to fix, the last paragraph is `Which lines should I fix?`, and the return says `miss` (`fix` means every "What does not" line, `stop` stops), an `afk` first miss has started Step 8, or a second miss or `stop` has stopped and the return says `stopped`.
+Done when a met intent with no factory base has printed the promise, the pull request URL, and `Next:` as paragraphs, ends with a fence that contains only `/sigma-merge` and the pull request number, and the return says `pass`, a `pr: none` pass has printed the four paragraphs and the return fields and has not printed a fence, a `hitl` miss is waiting for which lines to fix, the last paragraph is `Which lines should I fix?`, and the return says `miss` (`fix` means every "What does not" line, `stop` stops), an `afk` first miss has started Step 8, or a second miss or `stop` has stopped and the return says `stopped`.
 
 ### Step 8 - Fixes after review
 
@@ -262,13 +268,13 @@ Done when the reply starts with that sentence and the worker brief contains the 
 | Stop before the worktree or script choice when the title or slug still carries a replaced word the current line no longer uses. | That word becomes the branch and script name. |
 | The worker commits only in the ticket worktree. This chat does not edit scripts except conflict markers in the locked script, and does not judge the diff. Do not merge into main. | A commit on the user's branch mixes tickets. A verdict here is not from the build context. |
 | Finish a locked-script conflict before `/sg-tdd` starts. An unmerged path outside the locked script stops. | `/sg-tdd` on markers or stray paths is out of bounds. |
-| A ready verdict does not name `/sigma-merge` when the pull request head is `agent/`. | `/sigma-merge` refuses an `agent/` head. |
+| A standalone pass names `/sigma-merge` and the pull request number. A `pr: none` pass does not. | A factory pass that names merge skips the batch. A standalone pass with no fence leaves the pull request unmerged. |
 | `hitl` waits for which lines to fix. `afk` sends every "What does not" sentence back once. A second miss stays stopped. When the brief names a factory base, that miss leaves the factory branch unchanged. | A second miss that merges ships a page the picture already rejected. |
 | A same head SHA from an API read-back is not `pass`. Start a fresh `/sg-review`. | The factory can merge a page the screenshot still misses. |
 
 ## Verification
 
-- [ ] A ready verdict did not name `/sigma-merge` when the head was `agent/`.
+- [ ] A standalone pass ended with a fence that contains only `/sigma-merge` and the pull request number. A `pr: none` pass did not print that fence.
 - [ ] A second `afk` miss left the factory branch unchanged and did not name `/sigma-merge`.
 - [ ] An `afk` fix that returned the same head SHA from an API read-back did not set Result to `pass` and started a fresh `/sg-review`.
 - [ ] A merge conflict in the locked script was finished before `/sg-tdd` started. An unmerged path outside that script stopped the run.
