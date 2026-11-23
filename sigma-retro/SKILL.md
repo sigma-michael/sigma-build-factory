@@ -86,15 +86,10 @@ Done when one issue exists and no skill file changed.
 
 | Rule | Why / violation looks like |
 |---|---|
-| Run only when the user invokes `/sigma-retro`. Read one session. | A retro started from a build mixes skill edits into the workbook. |
-| A candidate cites a moment, a home, and a destination path in `sigma-build-factory`. Product notes go to `/sigma-feedback`. | A candidate with no moment edits a skill the run did not trip. A product note filed here never reaches the workers. |
-| Print the table and write nothing until the user picks one row. | Filing the whole list edits the pack before the user chooses. |
-| File one issue on `sigma-michael/sigma-build-factory`, then stop. Do not edit a skill. Do not call `/sigma-implement`, `/sg-create-ticket`, or `/sigma-build-factory`. | Those commands act on the workbook. This pack is the destination. |
-| Merge does not wait for this skill. | A retro gate blocks a factory pull request the user already accepted. |
+| Read one session and print the table. File one issue on this pack after the user picks one row. | Filing the whole list edits the pack before the user chooses. A product note belongs on `/sigma-feedback`. |
+| Stop after that issue. Leave the skill files unchanged. Merge does not wait. | A retro gate blocks a factory pull request the user already accepted. |
 
 ## Verification
 
-- [ ] The user invoked `/sigma-retro`. The moments came from one session.
-- [ ] The reply is one table. Columns are Moment, Home, and Destination. Each cell is one sentence. No skill file changed before the pick.
-- [ ] One issue was filed on `sigma-michael/sigma-build-factory` for the chosen row. No second issue was filed. No workbook issue was filed.
-- [ ] This run did not edit a skill file and did not call `/sigma-implement`, `/sg-create-ticket`, or `/sigma-build-factory`.
+- [ ] One issue was filed on `sigma-michael/sigma-build-factory` for the chosen row. No skill file changed.
+- [ ] This run did not call `/sigma-implement` or `/sigma-build-factory`.

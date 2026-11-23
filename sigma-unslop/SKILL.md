@@ -127,21 +127,10 @@ When the user says overwrite, repeat that same command in a fenced code block th
 
 | Rule | Why / violation looks like |
 |---|---|
-| Resolve the git root, then read the requirements file and `scripts/` before any candidate. Leave those sources unedited. | A review written from memory names the wrong scripts. An edit here changes the requirements or the scripts during the review. |
-| Write one markdown file, `docs/reviews/<YYYY-MM-DD>-<topic>.md`. Create `docs/reviews/` when needed. | A second review file, a `docs/reviews/README.md`, or an HTML file in the same run splits the record. If the path exists, stop and show it. |
-| Record the path, the change, and the scripts in bounds on every candidate. | The next command needs those scripts. A candidate with no path has nothing to carry forward. |
-| In the same reply, name the review path, quote each `fix` candidate as its sentence, print a fenced code block that contains only `/sigma-plan` for each `product` candidate, and ask which of these fix sentences to accept. Wait in this chat. Leave product ids out of the accept set. | A card hides the text. Accepting ids before the user answers sends work they did not accept. |
-| Record the accepted `fix` ids under `## Approved`. For each accepted id, a fenced code block contains only one command and the next sentence says why. One command per block. Requirements that do not say the behavior yet: the fence contains only `/sigma-plan`. The requirements document is what later tickets match. A clear bug and the spec has no acceptance line: the fence contains only `/sigma-to-spec`. The ticket copies that line. A clear bug and a spec line already states it: the fence contains only `/sigma-to-tickets <spec-number>`. The ticket carries the existing line. Pass the spec number. Leave the review path out of that command. Do not follow that command. Do not run `gh`. Do not invoke `/sg-create-ticket`. | Filing here, or passing the review path as the source, skips the line the ticket must match. A refusal with no command leaves no next step. |
-| Mark a requirements edit or a product-scope change as `product`. Print `/sigma-plan` in a fenced code block that contains only that command. The requirements document is what later tickets match. Leave that id out of `## Approved`. | A product change belongs in the requirements document. Later tickets match that document. |
-| When the user says overwrite, repeat the same command in a fenced code block that contains only the command, and repeat the same why. Say the build happens in `/sigma-implement` after you say overwrite there. Do not follow that command. Do not build. Do not file. | Overwrite in this chat does not create the ticket. The build runs after overwrite is said in `/sigma-implement`. |
+| Read the requirements file and `scripts/`. Write one review file and leave those sources unchanged. | An edit here changes the product during the review. |
+| For each accepted finding, print one fenced command and why. Do not follow it. | Filing here skips the line the ticket must match. |
 
 ## Verification
 
-- [ ] Git root resolved, and `docs/requirements/REQUIREMENTS.md` and `scripts/` were read and left unchanged.
-- [ ] The run created only `docs/reviews/<YYYY-MM-DD>-<topic>.md`, or stopped because that path already existed.
-- [ ] Each candidate has what is wrong, where, what change would help, which scripts are in bounds, and a `fix` or `product` mark.
-- [ ] The same reply quoted each `fix` sentence, printed a fenced code block that contains only `/sigma-plan` for each `product` candidate, and the last line asked which fix sentences to accept. The user answered in this chat. The `## Approved` block holds only the `fix` ids the user named.
-- [ ] This run did not invoke `/sg-create-ticket`, did not run `gh`, and did not file a ticket.
-- [ ] Each `product` candidate prints a fenced code block that contains only `/sigma-plan`. The requirements document is what later tickets match. That id is absent from `## Approved`.
-- [ ] Each accepted finding has one command in a fenced code block that contains only that command. The next sentence is the why. Requirements that do not say the behavior yet use `/sigma-plan`. A clear bug with no acceptance line uses `/sigma-to-spec`. A clear bug whose spec line already states it uses `/sigma-to-tickets` with that spec number. The review path is absent from that command. This run did not follow that command.
-- [ ] When the user said overwrite, the reply repeats that command in a fenced code block that contains only the command, and repeats that why, and says the build happens in `/sigma-implement` after you say overwrite there. This run did not follow that command, did not build, and did not file.
+- [ ] `docs/requirements/REQUIREMENTS.md` and `scripts/` were read and left unchanged.
+- [ ] Each accepted finding has one fenced command. This run did not follow it and did not file a ticket.

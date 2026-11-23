@@ -150,22 +150,19 @@ Every command the user runs next is a fenced markdown code block. The fence cont
 
 | Rule | Why / violation looks like |
 |---|---|
-| Load the SPEC through `/sg-create-ticket` and continue only for label `spec`. A clear bug with no matching acceptance line stops at `/sigma-to-spec`. | A ticket with no spec line has nothing for `/sigma-implement` to match. |
-| A long spec is many tickets. One ticket is one visible result. Do not file the whole spec as one ticket because the results share a page or a modal. File an epic only when the results cannot be named. When the tickets are named, do not file an epic. | One ticket for a whole modal hides the other results. An epic line after a ticket list tells the user the split did not finish. |
-| Copy acceptance lines by id. Do not rewrite them. | A rewritten line lets the ticket pass a check the spec does not state. |
-| Write `Topic: <the user's words>` on every ticket that note files or updates. When the title still uses a word the winning sentence replaced, rewrite the title and the Branch slug. The old git branch stays. | A body without that line hides the words `/sigma-pick-tickets` matches. A title that keeps the old word sends the factory a stale branch and a stale script name. |
-| A closed ticket with that acceptance id is reopened through `/sg-create-ticket` `caller: sigma-to-tickets`, `action: reopen`, and the new acceptance sentence. Do not copy it into a new issue. Carry still updates open tickets. Closed matches use reopen. | A new issue copies a closed acceptance. A carry that reopens an open ticket skips the update. |
-| A clear spec is printed and filed in the same turn. Do not ask the user to confirm the cut. A `caller: sigma-plan` carry still edits only the named lines on open tickets and creates none. | A confirm asks the user to choose a grain they do not know. A carry that re-splits the spec files tickets the assumption did not name. |
-| File a clear spec through `/sg-create-ticket`. Do not run `gh`. A spec with no acceptance line does not file. | `gh issue create` here skips the gateway. A spec with no line has nothing to copy. |
-| After filing, name `/sigma-pick-tickets`. Do not invoke it. Do not recommend `/sigma-unslop-tickets`. Do not recommend `/sigma-implement` from this skill. | Naming cleanup here makes it the required hop. Naming a build here skips pickup, and naming it for an epic sends the builder at an issue it flags. |
+| One ticket is one visible result. A long spec is many tickets, not one ticket for a whole page or modal. | One ticket for a whole flow hides results review cannot judge separately. |
+| Copy acceptance lines by id. Do not rewrite them. | A rewritten line lets a ticket pass a check the spec does not state. |
+| Write `Topic: <the user's words>` on every ticket this skill files or updates. | Pickup cannot match tickets that hide the user's words. |
+| A closed ticket with that acceptance id is reopened through `/sg-create-ticket` `action: reopen`, not filed again as a new issue. | A second issue duplicates work the user said was not delivered. |
+| Print a clear cut and file in the same turn. Do not ask the user to confirm the split. | The user cannot choose grain; asking them stalls filing. |
+| On `caller: sigma-plan` with `carry: yes`, update only the named lines on open tickets. Do not create tickets or re-split the spec. | A carry that files new tickets undoes the assumption scope. |
+| File through `/sg-create-ticket` only. Do not run `gh`. After filing, name `/sigma-pick-tickets`; do not invoke it. | `gh` skips the gateway. Invoking pickup here skips the user's next step. |
 
 ## Verification
 
-- [ ] The SPEC was loaded through `/sg-create-ticket`. Label `spec` and title `SPEC: <name>` were confirmed. A bug with no matching line stopped at `/sigma-to-spec`.
-- [ ] Every acceptance id is on one ticket or inside one epic, and on no second slice.
-- [ ] Each ticket acceptance line matches the spec line for that id. A reopen passed the new acceptance sentence.
-- [ ] Every ticket that the note files or updates contains `Topic: <the user's words>`.
-- [ ] When the spec number was missing, the titles and acceptance sentences were printed in this chat, and the question was the last line. The run did not ask for a spec number.
-- [ ] A clear spec was printed and filed in the same turn. The cut groups sentences that are one outcome. The run did not ask the user to confirm grain or blockers. A carry from `/sigma-plan` updated open tickets on the named lines and created none. A closed ticket with that acceptance id was reopened through `/sg-create-ticket` `action: reopen` and the new acceptance sentence. It was not copied into a new issue.
-- [ ] Epics are parents. Filing went through `/sg-create-ticket`. This skill did not run `gh`.
-- [ ] The reply lists every filed title. A ticket-only run does not mention an epic. The fence holds only `/sigma-pick-tickets` and this run does not invoke it. The reply does not recommend `/sigma-unslop-tickets`.
+- [ ] Each acceptance id sits on one slice only. Ticket acceptance text matches the spec for that id.
+- [ ] Every filed or updated ticket has `Topic: <the user's words>`.
+- [ ] A clear spec was printed and filed in the same turn without asking the user to confirm the cut.
+- [ ] A closed ticket with a matching acceptance id was reopened, not duplicated as a new issue.
+- [ ] A `/sigma-plan` carry updated open tickets on the named lines only and created no new tickets.
+- [ ] Filing used `/sg-create-ticket` only. The reply names `/sigma-pick-tickets` in a fence and does not invoke it.

@@ -124,19 +124,14 @@ Done: the reply lists merged, removed, and retained.
 
 | Rule | Why / violation looks like |
 |---|---|
-| A head named `agent/` does not merge into main. Say it merges into the factory branch and stop that number. A head named `factory/` merges into its base. | An agent pull request merged here lands one ticket on main before the user accepts the batch. |
-| Merge only numbers named in this invocation or in the reply in this chat. When the invocation names none, print each candidate as its title and its URL, then a fenced code block that contains only `/sigma-merge <number>`. One command per block. Then ask which of these to merge. When the answer names none, stop. A ticket comment that says `API write failed` does not remove a named number from the merge set. | A number from `gh pr list` is not permission. The user must name the numbers in the reply. Skipping a named number because the write used the browser blocks a merge the user already asked for. |
-| Save `gh pr view` JSON, then run `gh pr merge <n> --delete-branch` with the repository default method. `SQUASH` is `--squash`, `REBASE` is `--rebase`, and `MERGE` is `--merge`. Pass a different method only when this invocation names one. Do not pass `--admin` unless this invocation names it. | A missing method flag stops a non-interactive merge. Asking the user to pick `--squash`, `--rebase`, or `--merge` leaves the pull request open. `--admin` merges past a failure the user did not accept. |
-| `git fetch --prune`, then `git merge --ff-only` on the main checkout. | A merge with no `--ff-only` adds a merge commit on the base. Force-push rewrites the base. |
-| `git worktree remove` a `.worktrees/` path only when `git status --porcelain` is empty. When it is dirty, stop and report. | `--force` drops uncommitted work. A path outside `.worktrees/` is the main checkout. |
-| Delete a leftover local branch with `git branch -d`. | `git branch -D` deletes a branch that is not merged. |
-| Print the cleanup record and stop. | A script edit or a verdict starts `/sigma-implement` or `/sg-review` from the closer. |
+| A pull request whose head is `agent/` does not merge into main. Stop that number. | One ticket lands on main before the batch is accepted. |
+| Merge only pull request numbers named in this invocation or in the reply in this chat. | `gh pr list` is not permission. |
+| Fast-forward the main checkout with `--ff-only`. When the only dirty path is `docs/requirements/REQUIREMENTS.md`, copy it aside, fast-forward, then put it back uncommitted. Any other dirty path stops. | Other dirty paths need a human; stashing hides work. |
+| Remove a `.worktrees/` path only when porcelain is empty. Delete a leftover branch with `git branch -d` only. | `--force` drops uncommitted work. |
+| Report cleanup and stop. Do not build or review. | The next lane is not this command. |
 
 ## Verification
 
-- [ ] The merge set is the numbers named in this invocation, or the numbers the user named in the reply in this chat. `gh pr list` did not grant permission. When the answer names none, the command stopped. An `API write failed` comment did not remove a named number.
-- [ ] Each named pull request had `gh pr view` first. `gh pr merge` passed the repository default method, or the one method the user named. A failed default query stopped before the merge. A merge error stopped the sequence, with no `--admin` added after the failure.
-- [ ] `git fetch --prune` ran from the main checkout. A dirty tree whose only path is `docs/requirements/REQUIREMENTS.md` was copied aside, the base was fast-forwarded, and that file was put back uncommitted. Any other dirty path stopped the fast-forward. Each merged base matches `origin/<baseRefName>`, or the reply says `--ff-only` refused.
-- [ ] Each clean matching path under `.worktrees/` is gone from `git worktree list`. A dirty path is still present, and the reply lists its porcelain lines. No remove used `--force`.
-- [ ] A leftover local `agent/` branch was removed with `git branch -d`, or the reply says `-d` refused. No `git branch -D` and no force-push.
-- [ ] The reply lists merged, removed, and retained, and says the lane ends at `/sigma-merge`.
+- [ ] An `agent/` head did not merge into main; that number stopped.
+- [ ] When the only dirty path was `docs/requirements/REQUIREMENTS.md`, it was copied aside for the fast-forward and put back uncommitted.
+- [ ] Any other dirty path on the main checkout stopped the fast-forward.
