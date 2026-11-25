@@ -124,7 +124,7 @@ Ticket is the ticket title. Do not prefix it with `TICKET:`.
 
 Done is one sentence of what was done. Do not list row counts or email addresses.
 
-In the workbook is Yes only when the browser review saw the fix on the reloaded page. Otherwise No.
+In the workbook is Yes only when the browser review saw the fix after a full refresh of the latest published page. Otherwise No.
 
 Intent is Met or Not met. A pass is Met. A miss, a stop, a stale title, or a ticket that did not run is Not met.
 
