@@ -9,7 +9,7 @@ description: >
   stop the run. Return the head SHA and one report line per id. Do not
   open a pull request. The same worker then follows /sg-pr.
 user-invocable: false
-model-invoked-skills: [sg-create-ticket]
+model-invoked-skills: [sg-create-ticket, sg-workbooks, sg-data-models, sg-api]
 allowed-tools: [Bash, Read, Write, Edit, Glob, Grep]
 ---
 
@@ -79,7 +79,7 @@ An already-green id is done with no file edit and no commit. The report line is 
 
 When the ticket says the check is `none`, make the script change that id describes. Do not add a harness. The commit body states `check: none` for that id. When the script already does what that id describes, leave it.
 
-A script calls the Sigma API. Add no application framework, no test runner the repo does not have, and no file outside the locked list.
+A script calls the Sigma API. Follow `sg-workbooks` for a workbook contents call and `sg-data-models` for a data-model call. Do not invent the request shape. When a token is required, follow `sg-api` first. Add no application framework, no test runner the repo does not have, and no file outside the locked list.
 
 Done when every handed id has a failing check then a passing check, an already-green check, a browser write then a read-back, or `check: none`. An overwrite with no id is done when the script change from the issue body is made.
 

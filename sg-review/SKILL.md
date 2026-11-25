@@ -68,7 +68,7 @@ Done: base, branch, head SHA, and the diff are recorded, and the worktree is unc
 
 For each acceptance id, write one status: met, missing, or contradicted.
 
-Open the workbook page the ticket names in the browser. Use the Cursor browser or Chrome DevTools. Take a screenshot of that page. Do not PUT, POST, checkout, commit, push, or edit the work repo or the workbook.
+Open the workbook page the ticket names in the browser. Use the Cursor browser or Chrome DevTools. Reload that page and wait until the latest published version is the page on screen. If a dialog appears before that page is ready, choose the action that loads the latest version, then reload again. Do not judge the page behind the dialog. Take a screenshot of that page. Do not PUT, POST, checkout, commit, push, or edit the work repo or the workbook.
 
 Compare the picture with the acceptance sentence. Mark the id met only when the picture shows that sentence. Cite the screenshot and what it shows: the page, the control, and the value. A script line that says pass is not evidence. A JSON read-back can support the cite. It cannot override a picture that shows the opposite.
 
@@ -164,12 +164,12 @@ Write each sentence so a person can read it. Name the drawer, the header, or the
 | Mark acceptance from a live screenshot. A script pass line is not evidence. | Pass hid a control the picture still showed. |
 | An empty preview from a control the browser did not commit is not a failed append when the destination list already shows the row. | Uncommitted preview is not proof the row is missing. |
 | When the picture shows the acceptance, a control the ticket says not to change stays met. | A hidden control the ticket left alone is not a miss. |
-| Screenshot and git reads only. No PUT, POST, checkout, commit, push, or any edit of the work repo or workbook. | A PUT changes what you are judging. |
+| Screenshot and git reads only. Reload to the latest published workbook before the picture. A dialog is cleared by the action that loads that version. No PUT, POST, checkout, commit, push, or any edit of the work repo or workbook. | A stale page or a page behind a dialog is not the fix. A PUT changes what you are judging. |
 
 ## Verification
 
 - [ ] This chat wrote under `scripts/` or committed the agent branch: the run stopped without judging the diff.
 - [ ] A named factory base was the diff base; `docs/requirements/REQUIREMENTS.md` already on that base was not filed as breakage.
-- [ ] A met id cited a screenshot, not a script pass line.
+- [ ] A met id cited a screenshot of the reloaded page, not a script pass line. A dialog was cleared before that picture.
 - [ ] A control the ticket says not to change stayed met when the picture showed the acceptance. Ticket intent was not marked unmet for that control.
 - [ ] No file edit, commit, push, or pull request in this chat.

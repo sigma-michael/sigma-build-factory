@@ -37,7 +37,7 @@ allowed-tools: [Bash, Read, Glob, Grep]
 
 `/sigma-build-factory` runs the ticket numbers `/sigma-pick-tickets` printed. It creates `factory/<YYYY-MM-DD>-<slug>` from `origin/<default>`. A numbered requirements line is committed only when its id is an acceptance id of a ticket in this run. One worker follows `/sigma-implement` for each ticket, with that factory branch as the base. A pass merges that `agent/` branch into the factory branch. One pull request tracks the factory branch into main. The chat waits once per round. A note that names a new screen result is filed as a ticket and handed to the workers. A complaint that the published page changed and names the screen result is handed to `/sigma-implement` in this turn. A complaint that names no screen result is filed and the reply waits. An epic is only a new area with no screen outcome. It is filed with `Next skill: /sigma-plan` and is not handed to the workers. Several screen changes are several tickets. The words yes, accept, or happy accept the batch and print `/sigma-merge` for that one pull request. This skill does not merge into main.
 
-The worker brief says `mode: afk` and `pr: none`. Workers do not ask. The reply is one table. One row per ticket. Columns are Title, Does, Outcome, and Status. Each cell is one short sentence. Status is Met or Not met. Do not print What holds, What does not, Ticket intent, or the worktree. A command the user runs is a fenced code block that contains only the command. Do not put `Next:` inside the fence. A `type:ticket` builds from the sentences in its body. A missing requirements line does not stop it. A stale title stops that ticket before its worker starts. Other tickets whose titles are not stale and whose blockers are closed still start. Do not close a blocker, do not edit or file an issue.
+The worker brief says `mode: afk` and `pr: none`. Workers do not ask. The reply is one table. One row per ticket. Columns are Ticket, Done, In the workbook, and Intent. Done is one sentence. In the workbook is Yes or No. Intent is Met or Not met. Do not print What holds, What does not, or the worktree. A command the user runs is a fenced code block that contains only the command. Do not put `Next:` inside the fence. A `type:ticket` builds from the sentences in its body. A missing requirements line does not stop it. A stale title stops that ticket before its worker starts. Other tickets whose titles are not stale and whose blockers are closed still start. Do not close a blocker, do not edit or file an issue.
 
 ## When to Use
 
@@ -118,17 +118,17 @@ Follow `/sg-pr` once for the factory branch. The head is `factory/<YYYY-MM-DD>-<
 
 The reply is one table. One row per ticket. Do not use bullet points. Do not print a paragraph of review notes.
 
-Columns are Title, Does, Outcome, and Status.
+Columns are Ticket, Done, In the workbook, and Intent.
 
-Title is the ticket title. Do not prefix it with `TICKET:`.
+Ticket is the ticket title. Do not prefix it with `TICKET:`.
 
-Does is one sentence in plain language: what this ticket asks a person to do.
+Done is one sentence of what was done. Do not list row counts or email addresses.
 
-Outcome is one sentence: what the page shows now. A ticket that did not run says why in that one sentence.
+In the workbook is Yes only when the browser review saw the fix on the reloaded page. Otherwise No.
 
-Status is `Met` or `Not met`. A pass is Met. A miss, a stop, a stale title, a missing id, or a ticket that did not run is Not met.
+Intent is Met or Not met. A pass is Met. A miss, a stop, a stale title, or a ticket that did not run is Not met.
 
-Do not print What holds, What does not, Ticket intent, Worktree, or Result.
+Do not print What holds, What does not, Worktree, or Result.
 
 Then one sentence: a note that names a new screen result is filed and built. A complaint that the published page changed and names the screen result is handed to `/sigma-implement` in this turn. A complaint that names no screen result is filed and the reply waits. The words yes, accept, or happy accept the batch.
 
@@ -150,16 +150,13 @@ A waiting ticket stays unbuilt until its blocker is closed. The next round can i
 
 Done when the factory pull request is open, the table is printed, and this chat is waiting. An accept prints the fence and stops. A complaint that names the screen result was handed to `/sigma-implement` in this turn. A complaint that names no screen result was filed, the reply named the ticket, and the reply waited. A note that names a new screen result was filed as a ticket, handed to the workers, and the same pull request was updated. An epic was not handed to the workers.
 
-Each worker return still ends with this block. The factory reads it. It does not paste the block as one paragraph.
+Each worker return is one table row. The factory copies that row. It does not paste review paragraphs.
 
 ```text
-Title: <ticket title>
-What holds: <sentences>
-What does not: <sentences or none>
-Ticket intent: <sentence>
-Branch: agent/<N>-<slug>
-Worktree: .worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>
-Pull request: <url or none>
+Ticket: <ticket title>
+Done: <one sentence>
+In the workbook: Yes or No
+Intent: Met or Not met
 Result: pass | miss | stopped
 ```
 

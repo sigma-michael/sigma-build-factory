@@ -17,7 +17,7 @@ description: >
 argument-hint: "<issue-number>"
 user-invocable: true
 disable-model-invocation: true
-model-invoked-skills: [sg-tdd, sg-pr, sg-review]
+model-invoked-skills: [sg-tdd, sg-pr, sg-review, sg-workbooks, sg-data-models, sg-api]
 allowed-tools: [Bash, Read, Glob, Grep]
 ---
 
@@ -175,17 +175,15 @@ Browser write: <id>. POST /v2/workbooks/{workbookId}/elements/{elementId}/rows r
 
 When that report line is `<id>: browser write, comment failed`, the warning says the ticket was not marked.
 
-Print "What holds", "What does not", "Ticket intent", and "Note" as four paragraphs, in that order. A blank line separates the paragraphs. Use the review sentences. Do not join the four fields into one paragraph. Do not add "Silence does not start a fix" or "Silence does not build".
+The reply is one table. One row. Do not print What holds, What does not, Ticket intent, Note, row counts, or email addresses.
 
-What holds: <sentences>
+| Ticket | Done | In the workbook | Intent |
+|---|---|---|---|
+| <ticket title> | <one sentence of what was done> | Yes or No | Met or Not met |
 
-What does not: <sentences or none>
+Done is one sentence. In the workbook is Yes only when the browser review saw the fix on the reloaded page. Otherwise No. Intent is Met or Not met.
 
-Ticket intent: <sentence>
-
-Note: <sentence>
-
-When ticket intent is met, print each return field at the end of this step after those four paragraphs. Each field is its own paragraph. Result is `pass`. A blank line separates the paragraphs. Do not ask a question on a pass. Do not start Step 8.
+When ticket intent is met, Result is `pass`. Do not ask a question on a pass. Do not start Step 8.
 
 Then print the promise, the pull request URL, and `Next:` as their own paragraphs. A blank line separates them. When the brief names no factory base, the next fence contains only `/sigma-merge` and the pull request number. When the brief names `pr: none`, do not print that fence.
 
@@ -195,7 +193,7 @@ The pull request paragraph is `Pull request: <url>`.
 
 The next paragraph is `Next:`.
 
-When the brief names `pr: none`, a pass prints the four paragraphs and the return fields. Result is `pass`. Pull request is `none`. Do not print `/sigma-merge`. Do not print a fence. The factory merges the agent branch.
+When the brief names `pr: none`, a pass prints the table. Result is `pass`. Pull request is `none`. Do not print `/sigma-merge`. Do not print a fence. The factory merges the agent branch.
 
 When the brief names no factory base, the pull request is standalone. Print the promise, the pull request URL, and `Next:` as paragraphs. End with one fenced code block. The fence contains only the command. Do not put `Next:` inside the fence. Do not say this branch belongs on a factory branch.
 
@@ -211,7 +209,7 @@ A browser-write id whose screenshot shows the acceptance is not a missing line. 
 
 When the picture already shows the acceptance and the unmet line says this ticket does not change that control, ticket intent is met. Do not ask which lines to fix. Do not withhold `/sigma-merge`. Print the pass. A standalone pass still fences `/sigma-merge`. A `pr: none` pass still does not.
 
-When mode is `hitl` and ticket intent is not met, keep the four paragraphs above. Print the return block below with Result `miss`. Each field is its own paragraph. The last paragraph after that block is `Which lines should I fix?`.
+When mode is `hitl` and ticket intent is not met, keep the table. The last line is `Which lines should I fix?`.
 
 Then wait for the reply in this chat. Do not use a question card. Do not offer A, B, or C. Do not print the wait rule. Do not print these replies. Do not name `/sigma-merge`.
 
@@ -224,27 +222,17 @@ When mode is `afk` and ticket intent is not met on the first review, do not ask 
 
 When an afk fix returns the same head SHA because an API read-back passed, that return is not a pass. Do not set Result to `pass`. Do not merge the agent branch into the factory branch. Start a fresh `/sg-review`. The pictured miss is met only when that screenshot shows the acceptance. A picture that still misses follows the second-miss stop below.
 
-When ticket intent is not met on the second review, print the four paragraphs, then the return block below with Result `stopped`. Do not print `<promise>IMPLEMENTATION COMPLETE</promise>`. Do not name `/sigma-merge`. Do not ask "Which lines should I fix?". Do not start Step 8. Do not merge this agent branch into the factory branch. The script already published the workbook. Leave the factory branch unchanged. Do not merge into main.
+When ticket intent is not met on the second review, print the table with Intent `Not met`. Do not print `<promise>IMPLEMENTATION COMPLETE</promise>`. Do not name `/sigma-merge`. Do not ask "Which lines should I fix?". Do not start Step 8. Do not merge this agent branch into the factory branch. The script already published the workbook. Leave the factory branch unchanged. Do not merge into main.
 
-Use the real title, the review sentences, the branch, and the pull request URL. Worktree is the path Step 4 reused or created. Use `none` when What does not has no sentences or there is no pull request. `Result` is `pass` when a fresh screenshot shows the acceptance, `miss` when a `hitl` run is waiting, and `stopped` on a second miss or on `stop`. A same head SHA from an API read-back is not `pass`. A `hitl` reply that starts Step 8 prints these fields after the next decision. Print each field as its own paragraph. A blank line separates the paragraphs. Do not join the fields into one line. Do not drop a field.
+The factory reads this row. Do not print it as paragraphs.
 
-Title: <ticket title>
-
-What holds: <sentences>
-
-What does not: <sentences or none>
-
-Ticket intent: <sentence>
-
-Branch: agent/<N>-<slug>
-
-Worktree: .worktrees/loop_<YYYY-MM-DD>-<slug>/issue-<N>
-
-Pull request: <url or none>
-
+Ticket: <ticket title>
+Done: <one sentence>
+In the workbook: Yes or No
+Intent: Met or Not met
 Result: pass | miss | stopped
 
-Done when a met intent with no factory base has printed the promise, the pull request URL, and `Next:` as paragraphs, ends with a fence that contains only `/sigma-merge` and the pull request number, and the return says `pass`, a `pr: none` pass has printed the four paragraphs and the return fields and has not printed a fence, a `hitl` miss is waiting for which lines to fix, the last paragraph is `Which lines should I fix?`, and the return says `miss` (`fix` means every "What does not" line, `stop` stops), an `afk` first miss has started Step 8, or a second miss or `stop` has stopped and the return says `stopped`.
+Done when a met intent with no factory base has printed the table, the promise, the pull request URL, and `Next:` as paragraphs, ends with a fence that contains only `/sigma-merge` and the pull request number, and the return says `pass`, a `pr: none` pass has printed the table and has not printed a fence, a `hitl` miss has printed the table and the last line is `Which lines should I fix?`, and the return says `miss` (`fix` means every other unmet line, `stop` stops), an `afk` first miss has started Step 8, or a second miss or `stop` has stopped and the return says `stopped`.
 
 ### Step 8 - Fixes after review
 
