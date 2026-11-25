@@ -34,4 +34,4 @@ If nothing fits, ask. Do not invent a path. Do not create a loose file at `docs/
 
 ## Code
 
-`scripts/` is the only code home. Each file is an API call named in the ticket.
+`scripts/` is the only code home. Each file is an API call named in the ticket. A workbook contents script follows `sg-workbooks`. A data-model script follows `sg-data-models`. When a token is required, follow `sg-api` first.

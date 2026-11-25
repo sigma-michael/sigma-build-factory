@@ -8,7 +8,9 @@ Write the action, the stop, and the next command in the skill file. Do not add a
 
 Write `README.md`, `AGENTS.md`, and each skill's `SKILL.md` or templates. Do not add a doc outside those paths. Ask when a file fits none of them.
 
-Skill folders: `sigma-init-docs`, `sigma-feedback`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sg-create-ticket`, `sigma-unslop-tickets`, `sigma-unslop-docs`, `sigma-retro`, `sigma-pick-tickets`, `sigma-build-factory`, `sigma-implement`, `sg-tdd`, `sg-pr`, `sg-review`, `sigma-merge`, `sigma-unslop`. Ask before you add a skill folder. Commands the user types use the `sigma-` prefix. Skills another command starts use the `sg-` prefix.
+Skill folders: `sigma-init-docs`, `sigma-feedback`, `sigma-plan`, `sigma-to-spec`, `sigma-to-tickets`, `sg-create-ticket`, `sigma-unslop-tickets`, `sigma-unslop-docs`, `sigma-retro`, `sigma-pick-tickets`, `sigma-build-factory`, `sigma-implement`, `sg-tdd`, `sg-pr`, `sg-review`, `sigma-merge`, `sigma-unslop`, `sg-workbooks`, `sg-data-models`, `sg-api`. Ask before you add a skill folder. Commands the user types use the `sigma-` prefix. Skills another command starts use the `sg-` prefix.
+
+A workbook contents script follows `sg-workbooks`. A data-model script follows `sg-data-models`. When a token is required, follow `sg-api` first. Do not invent the request shape.
 
 ## Lane
 
