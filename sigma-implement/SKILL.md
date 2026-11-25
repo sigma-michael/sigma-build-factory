@@ -175,13 +175,16 @@ Browser write: <id>. POST /v2/workbooks/{workbookId}/elements/{elementId}/rows r
 
 When that report line is `<id>: browser write, comment failed`, the warning says the ticket was not marked.
 
-The reply is one table. One row. Do not print What holds, What does not, Ticket intent, Note, row counts, or email addresses.
+The reply is one table. Each field is its own row. Do not put Ticket, Done, In the workbook, and Intent in one row. Do not print What holds, What does not, Ticket intent, Note, row counts, or email addresses.
 
-| Ticket | Done | In the workbook | Intent |
-|---|---|---|---|
-| <ticket title> | <one sentence of what was done> | Yes or No | Met or Not met |
+| Field | Value |
+|---|---|
+| Ticket | <ticket title> |
+| Done | <one sentence of what was done> |
+| In the workbook | Yes or No |
+| Intent | Met or Not met |
 
-Done is one sentence. In the workbook is Yes only when the browser review saw the fix on the reloaded page. Otherwise No. Intent is Met or Not met.
+Done is one sentence. In the workbook is Yes only when the browser review saw the fix after a full refresh of the latest published page. Otherwise No. Intent is Met or Not met.
 
 When ticket intent is met, Result is `pass`. Do not ask a question on a pass. Do not start Step 8.
 

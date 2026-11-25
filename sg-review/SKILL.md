@@ -1,8 +1,9 @@
 ---
 name: sg-review
 description: >
-  /sg-review <issue-number> screenshots the live workbook page and compares
-  it with the ticket. A script line that says pass is not evidence. An
+  /sg-review <issue-number> full-refreshes the workbook, confirms the
+  latest published page, then screenshots that page and compares it with
+  the ticket. A script line that says pass is not evidence. An
   empty preview from a control the browser did not commit is not a
   failed append when the destination list already shows the row. When the
   handoff names a factory base, diff the agent branch against that base.
@@ -21,7 +22,7 @@ allowed-tools: [Bash, Read, Glob, Grep]
 
 `/sg-review` returns whether TICKET `<issue-number>` is ready. `/sigma-implement` starts this skill in a fresh worker.
 
-Ready means every acceptance id matches a screenshot of the live page, and the diff has no breakage. A script line that says pass is not evidence. The report says what the picture shows, what it does not, and whether the ticket intent is met. A script outside the spec globs is a note. The return has no next command. The sentences are present tense. They name what the picture shows.
+Ready means every acceptance id matches a screenshot taken after a full refresh of the latest published page, and the diff has no breakage. A script line that says pass is not evidence. The report says what the picture shows, what it does not, and whether the ticket intent is met. A script outside the spec globs is a note. The return has no next command. The sentences are present tense. They name what the picture shows.
 
 ## When to Use
 
@@ -68,9 +69,15 @@ Done: base, branch, head SHA, and the diff are recorded, and the worktree is unc
 
 For each acceptance id, write one status: met, missing, or contradicted.
 
-Open the workbook page the ticket names in the browser. Use the Cursor browser or Chrome DevTools. Reload that page and wait until the latest published version is the page on screen. If a dialog appears before that page is ready, choose the action that loads the latest version, then reload again. Do not judge the page behind the dialog. Take a screenshot of that page. Do not PUT, POST, checkout, commit, push, or edit the work repo or the workbook.
+Open the workbook page the ticket names in the browser. Use the Cursor browser or Chrome DevTools. If that page is already open, do not review the view on screen.
 
-Compare the picture with the acceptance sentence. Mark the id met only when the picture shows that sentence. Cite the screenshot and what it shows: the page, the control, and the value. A script line that says pass is not evidence. A JSON read-back can support the cite. It cannot override a picture that shows the opposite.
+Full refresh that page. Load it again from the server and wait until the load finishes. A refresh that keeps the current view is not a full refresh.
+
+If a dialog appears, choose the action that loads the latest published version. Then full refresh again. Do not review the page behind the dialog.
+
+The screenshot waits until the page on screen is the latest published version and the page offers no newer version. Then take the screenshot. Do not PUT, POST, checkout, commit, push, or edit the work repo or the workbook.
+
+Then compare that picture with the acceptance sentence. Then mark the id. A picture taken before the full refresh does not count. Mark the id met only when this picture shows that sentence. Cite the screenshot and what it shows: the page, the control, and the value. A script line that says pass is not evidence. A JSON read-back can support the cite. It cannot override a picture that shows the opposite.
 
 An empty preview caused by a control the browser did not commit is not evidence the acceptance failed. When the destination list already shows the row the ticket names, mark the id met. Do not report that append as failed.
 
@@ -82,7 +89,7 @@ The script path may sit outside the spec globs. That path is a note. It does not
 
 The write can be absent from the diff when the browser holds the rows, because POST /v2/workbooks/{workbookId}/elements/{elementId}/rows is not a public route. Record no breakage for a 404 on that rows route. The route is not public. A ticket comment that says `API write failed` is not breakage. The id is met only when the screenshot shows the acceptance.
 
-Mark the id missing when the picture does not show the acceptance, or the page was not seen, and the empty picture is not an uncommitted control whose destination list already shows the row, and the missing control is not one the ticket says not to change. The id stays missing until a later screenshot shows it.
+Mark the id missing when the picture after the full refresh does not show the acceptance, or the page was not seen, and the empty picture is not an uncommitted control whose destination list already shows the row, and the missing control is not one the ticket says not to change. The id stays missing until a later screenshot, after another full refresh, shows it.
 
 Then check the same diff:
 
@@ -150,7 +157,7 @@ Note
 none. Or <path> sits outside <spec globs>. The workbook still shows <id>.
 ```
 
-Ticket intent is met when every acceptance id matches the screenshot. A note does not change that line. A script pass line does not change that line. Verdict ready matches ticket intent met and What does not says none.
+Ticket intent is met when every acceptance id matches the screenshot taken after the full refresh. A note does not change that line. A script pass line does not change that line. A picture from before the full refresh does not change that line. Verdict ready matches ticket intent met and What does not says none.
 
 Write each sentence so a person can read it. Name the drawer, the header, or the row, and the value. Leave out "silence", "does not build", and "does not start a fix".
 
@@ -164,12 +171,12 @@ Write each sentence so a person can read it. Name the drawer, the header, or the
 | Mark acceptance from a live screenshot. A script pass line is not evidence. | Pass hid a control the picture still showed. |
 | An empty preview from a control the browser did not commit is not a failed append when the destination list already shows the row. | Uncommitted preview is not proof the row is missing. |
 | When the picture shows the acceptance, a control the ticket says not to change stays met. | A hidden control the ticket left alone is not a miss. |
-| Screenshot and git reads only. Reload to the latest published workbook before the picture. A dialog is cleared by the action that loads that version. No PUT, POST, checkout, commit, push, or any edit of the work repo or workbook. | A stale page or a page behind a dialog is not the fix. A PUT changes what you are judging. |
+| Full refresh the workbook, confirm the latest published version is on screen, then review that picture, then decide. A picture from before the refresh does not count. No PUT, POST, checkout, commit, push, or any edit of the work repo or workbook. | A stale tab marked the ticket unmet while the latest page already showed the acceptance. A PUT changes what you are judging. |
 
 ## Verification
 
 - [ ] This chat wrote under `scripts/` or committed the agent branch: the run stopped without judging the diff.
 - [ ] A named factory base was the diff base; `docs/requirements/REQUIREMENTS.md` already on that base was not filed as breakage.
-- [ ] A met id cited a screenshot of the reloaded page, not a script pass line. A dialog was cleared before that picture.
+- [ ] The screenshot followed a full refresh. The latest published version was on screen. The verdict came after that picture. A dialog was cleared before the picture.
 - [ ] A control the ticket says not to change stayed met when the picture showed the acceptance. Ticket intent was not marked unmet for that control.
 - [ ] No file edit, commit, push, or pull request in this chat.
