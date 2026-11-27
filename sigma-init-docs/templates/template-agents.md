@@ -14,7 +14,7 @@ A next command is a fenced code block with only the command inside.
 
 Five entrances are parallel. Feedback and document repair do not call each other. `/sigma-retro` is optional. Merge does not wait for it.
 
-1. `/sigma-feedback` files the note and returns it to an open worker, or fences `/sigma-plan` or `/sigma-pick-tickets`.
+1. `/sigma-feedback` files a note outside a build, returns a sentence about a built ticket to that worker, or warns when the sentence is outside this run.
 2. The user types `/sigma-unslop-tickets` to repair open tickets. A yes writes through `/sg-create-ticket`. The reply names `/sigma-pick-tickets`.
 3. The user types `/sigma-unslop`. That command writes one review and stops.
 4. The user types `/sigma-unslop-docs`. That command rewrites one spec from the code and the passing tests. A closed ticket with no code is left out.
