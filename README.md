@@ -37,7 +37,7 @@ The steps in each `SKILL.md` are the contract. Extra frontmatter such as `disabl
 
 ## When to run which command
 
-Run `/sigma-init-docs`, then `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, `/sg-create-ticket`, GitHub, `/sigma-pick-tickets`, `/sigma-build-factory`, and `/sigma-merge`. Start at `/sigma-init-docs` once, on a new work repo. `/sigma-feedback` files a note as a ticket. `/sigma-unslop-docs` rewrites the spec from the code. Those two lanes do not call each other. `/sigma-retro` is optional. It reviews one factory or implement session and does not block `/sigma-merge`.
+Run `/sigma-init-docs`, then `/sigma-plan`, `/sigma-to-spec`, `/sigma-to-tickets`, `/sg-create-ticket`, GitHub, `/sigma-pick-tickets`, `/sigma-build-factory`, and `/sigma-merge`. Start at `/sigma-init-docs` once, on a new work repo. `/sigma-feedback` files a note outside a build, returns a built ticket to its worker, or warns when the sentence is outside this run. `/sigma-unslop-docs` rewrites the spec from the code. Those two lanes do not call each other. `/sigma-retro` is optional. It reviews one factory or implement session and does not block `/sigma-merge`.
 
 ```mermaid
 flowchart TD
@@ -66,7 +66,7 @@ Each command is one sentence here. The step lives in that skill.
 | `/sigma-build-factory` | Builds that set on one factory branch and waits. | `/sigma-merge` |
 | `/sigma-implement` | Builds one ticket and opens its pull request. A standalone pass fences `/sigma-merge`. A factory pass does not. | `/sigma-merge`, or the factory branch |
 | `/sigma-merge` | Merges a `factory/` pull request. An `agent/` head stops. | the lane ends |
-| `/sigma-feedback` | Files the note. A factory or implement chat returns it to the worker. A standalone chat fences `/sigma-plan` or `/sigma-pick-tickets`. | that fence, or the worker |
+| `/sigma-feedback` | Files a note outside a build through `/sg-create-ticket`. In a factory or implement chat, a sentence about a built ticket returns to that worker. A sentence outside this run is a warning. | that fence, the worker, or the warning |
 | `/sigma-unslop` | Writes one review and stops. | the command on each accepted finding |
 | `/sigma-unslop-tickets` | A code worker marks completed or not in the code, then asks once. | `/sigma-pick-tickets` |
 | `/sigma-unslop-docs` | Rewrites one spec from the code. | stop |

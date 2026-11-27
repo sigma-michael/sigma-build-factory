@@ -59,7 +59,7 @@ Read [CONVENTIONS.md](CONVENTIONS.md) before a create or an edit. That file hold
 ## When to Use
 
 - **Use when:** the user invokes `/sg-create-ticket`, or `/sigma-to-spec`, `/sigma-to-tickets`, or `/sigma-feedback` hands a body in this session.
-- **List or view:** `/sigma-to-spec`, `/sigma-feedback`, or `/sigma-plan` asks for `list-specs`. `/sigma-to-tickets` or `/sigma-feedback` asks for `view`. `/sigma-plan` may also ask for `list-tickets` and `view`. Run the read and return. Do not create.
+- **List or view:** `/sigma-to-spec`, `/sigma-feedback`, or `/sigma-plan` asks for `list-specs`. `/sigma-to-tickets` or `/sigma-feedback` asks for `view`. `/sigma-feedback` asks for `list-tickets` and uses the open rows. `/sigma-plan` may also ask for `list-tickets` and `view`. Run the read and return. Do not create.
 - **Comment:** `/sg-tdd` hands `action: comment` after a rows-route 404. Post one comment, or skip an id already marked. Do not create. Do not edit the body.
 - **Reopen:** `/sigma-feedback` or `/sigma-to-tickets` hands `action: reopen` for a closed ticket. Run `gh issue reopen` on that number, then write the acceptance sentence the caller passed. When the title already exists, reuse that issue. Do not file a second issue. Any other caller stops.
 - **Ticket cleanup:** `/sigma-unslop-tickets` asks for `list-tickets`. That list is every `type:ticket` and every `type:epic`. After the user says yes to the repair list, it hands `action: close` or `action: update`. Close, edit, or add `blockedBy` on that ticket. Do not create.
@@ -77,7 +77,7 @@ The user's yes is a reply in this session. These replies count as yes, and they 
 - `/sigma-to-tickets` after the user said yes to grain and blockers
 - `/sigma-to-spec` or `/sigma-to-tickets` after the user said yes to the assumption in `/sigma-plan`, for the named ids only. That yes does not create a spec or a ticket.
 
-File a body `/sigma-to-spec` or `/sigma-to-tickets` confirmed in this session, or a ticket or epic `/sigma-feedback` handed with `action: create`. `action: update` from `caller: sigma-feedback` with an open ticket number edits that body and does not create. Any other update from that caller stops. A draft from this chat has no filing yes. A handoff with `caller: sigma-feedback` and `action: list-specs` or `action: view` returns the list or the issue and does not file. `action: create` with `kind: spec` from that caller stops. A feedback ticket or epic may have no parent. `action: reopen` from `caller: sigma-feedback` or `caller: sigma-to-tickets` reopens that issue and writes the acceptance sentence the caller passed. Any other caller with `action: reopen` stops. A handoff with `caller: sigma-unslop-tickets` or `caller: sigma-pick-tickets` and `action: create` stops. A cleanup close or update is not a filing yes for a new spec or ticket.
+File a body `/sigma-to-spec` or `/sigma-to-tickets` confirmed in this session, or a ticket or epic `/sigma-feedback` handed with `action: create`. `action: update` from `caller: sigma-feedback` with an open ticket number edits that body and does not create. Any other update from that caller stops. A draft from this chat has no filing yes. A handoff with `caller: sigma-feedback` and `action: list-specs`, `action: list-tickets`, or `action: view` returns the list or the issue and does not file. `action: create` with `kind: spec` from that caller stops. A feedback ticket or epic may have no parent. `action: reopen` from `caller: sigma-feedback` or `caller: sigma-to-tickets` reopens that issue and writes the acceptance sentence the caller passed. Any other caller with `action: reopen` stops. A handoff with `caller: sigma-unslop-tickets` or `caller: sigma-pick-tickets` and `action: create` stops. A cleanup close or update is not a filing yes for a new spec or ticket.
 
 ## Issue contract
 
@@ -108,7 +108,7 @@ gh issue list --repo "$REPO" --label spec --state all --limit 50 \
 
 `view` runs `gh issue view <N> --repo "$REPO" --json number,title,labels,state,url,body`.
 
-`list-tickets` with `caller: sigma-unslop-tickets`, `caller: sigma-pick-tickets`, `caller: sigma-plan`, or `caller: sigma-to-tickets` runs:
+`list-tickets` with `caller: sigma-unslop-tickets`, `caller: sigma-pick-tickets`, `caller: sigma-plan`, `caller: sigma-to-tickets`, or `caller: sigma-feedback` runs:
 
 ```bash
 gh issue list --repo "$REPO" --state all --limit 200 \
@@ -196,7 +196,7 @@ Done when the caller has the list or the issue, or the write path continues at S
 
 A handoff from the yes cases in Input is ready to file.
 
-`caller: sigma-feedback` with `list-specs` or `view` returns that JSON. Do not file. `action: create` with `kind: ticket` or `kind: epic` from that caller files that body. `action: update` from that caller for an open ticket number returns in Step 2. `kind: spec` or any other `action: update` from that caller stops. `action: reopen` returns in Step 2.
+`caller: sigma-feedback` with `list-specs`, `list-tickets`, or `view` returns that JSON. Do not file. `action: create` with `kind: ticket` or `kind: epic` from that caller files that body. `action: update` from that caller for an open ticket number returns in Step 2. `kind: spec` or any other `action: update` from that caller stops. `action: reopen` returns in Step 2.
 
 Stop when `/sigma-to-spec` or `/sigma-to-tickets` did not confirm the body in this session. The filing yes is that confirm.
 

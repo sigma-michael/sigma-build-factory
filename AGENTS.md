@@ -18,9 +18,9 @@ Each command stops and names the next command. The step lives in the skill. This
 
 `/sigma-init-docs` → `/sigma-plan` → `/sigma-to-spec` → `/sigma-to-tickets` → `/sg-create-ticket` → GitHub → `/sigma-pick-tickets` → `/sigma-build-factory` → `/sigma-merge`
 
-`/sigma-feedback` files a note. A factory or implement chat returns it to the worker. A standalone chat fences `/sigma-plan` or `/sigma-pick-tickets`. `/sigma-unslop-docs` rewrites one spec from the code. Those lanes do not call each other. `/sigma-retro` is optional. Merge does not wait for it.
+`/sigma-feedback` files a note outside a build through `/sg-create-ticket`. In a factory or implement chat, a sentence about a ticket this run built returns to that worker. A sentence outside this run is a warning. `/sigma-unslop-docs` rewrites one spec from the code. Those lanes do not call each other. `/sigma-retro` is optional. Merge does not wait for it.
 
-1. `/sigma-feedback` files the note and returns it to an open worker, or fences the next command.
+1. `/sigma-feedback` files a note outside a build, returns a sentence about a built ticket to that worker, or warns when the sentence is outside this run.
 2. `/sigma-unslop-tickets` repairs open tickets. Next is `/sigma-pick-tickets`.
 3. `/sigma-unslop` writes one review and stops.
 4. `/sigma-unslop-docs` rewrites one spec from the code.

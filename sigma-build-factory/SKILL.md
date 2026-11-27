@@ -4,11 +4,10 @@ description: >
   /sigma-build-factory <numbers> builds that set on one factory branch.
   Each ticket gets an agent branch from that factory branch. A pass
   merges the agent branch into the factory branch. One pull request
-  tracks the factory branch into main. The chat then waits. A note that
-  names a new screen result goes back to the matching workers. A
-  complaint that names the screen result is handed to the workers in
-  this turn. A complaint that names no screen result is filed and the
-  reply waits. The words yes, accept, or
+  tracks the factory branch into main. The chat then waits. A note
+  follows /sigma-feedback. A sentence about a ticket in this run
+  returns to that worker. A sentence outside this run is a warning
+  and stays off the workers. The words yes, accept, or
   happy accept the batch. Only that accept prints /sigma-merge for the
   factory pull request. Do not merge main inside this skill. An
   type:ticket builds from the sentences in its body. A missing
@@ -21,7 +20,7 @@ description: >
 argument-hint: "<ticket numbers from /sigma-pick-tickets>"
 user-invocable: true
 disable-model-invocation: true
-model-invoked-skills: [sigma-implement, sg-pr]
+model-invoked-skills: [sigma-implement, sigma-feedback, sg-pr]
 allowed-tools: [Bash, Read, Glob, Grep]
 ---
 
@@ -35,7 +34,7 @@ allowed-tools: [Bash, Read, Glob, Grep]
 
 ## Overview
 
-`/sigma-build-factory` runs the ticket numbers `/sigma-pick-tickets` printed. It creates `factory/<YYYY-MM-DD>-<slug>` from `origin/<default>`. A numbered requirements line is committed only when its id is an acceptance id of a ticket in this run. One worker follows `/sigma-implement` for each ticket, with that factory branch as the base. A pass merges that `agent/` branch into the factory branch. One pull request tracks the factory branch into main. The chat waits once per round. A note that names a new screen result is filed as a ticket and handed to the workers. A complaint that the published page changed and names the screen result is handed to `/sigma-implement` in this turn. A complaint that names no screen result is filed and the reply waits. An epic is only a new area with no screen outcome. It is filed with `Next skill: /sigma-plan` and is not handed to the workers. Several screen changes are several tickets. The words yes, accept, or happy accept the batch and print `/sigma-merge` for that one pull request. This skill does not merge into main.
+`/sigma-build-factory` runs the ticket numbers `/sigma-pick-tickets` printed. It creates `factory/<YYYY-MM-DD>-<slug>` from `origin/<default>`. A numbered requirements line is committed only when its id is an acceptance id of a ticket in this run. One worker follows `/sigma-implement` for each ticket, with that factory branch as the base. A pass merges that `agent/` branch into the factory branch. One pull request tracks the factory branch into main. The chat waits once per round. A product note follows `/sigma-feedback`. A sentence about a ticket in this run returns to that worker through `/sigma-implement`. A sentence outside this run is a warning from that skill and stays off the workers. An epic is only a new area with no screen outcome. It is filed with `Next skill: /sigma-plan` and is not handed to the workers. Several screen changes are several tickets. The words yes, accept, or happy accept the batch and print `/sigma-merge` for that one pull request. This skill does not merge into main.
 
 The worker brief says `mode: afk` and `pr: none`. Workers do not ask. The reply is one table. One row per ticket. Columns are Ticket, Done, In the workbook, and Intent. Done is one sentence. In the workbook is Yes or No. Intent is Met or Not met. Do not print What holds, What does not, or the worktree. A command the user runs is a fenced code block that contains only the command. Do not put `Next:` inside the fence. A `type:ticket` builds from the sentences in its body. A missing requirements line does not stop it. A stale title stops that ticket before its worker starts. Other tickets whose titles are not stale and whose blockers are closed still start. Do not close a blocker, do not edit or file an issue.
 
@@ -92,7 +91,7 @@ Each stopped or waiting ticket gets one next line. Use the first case that match
 3. The open blocker is also in this set. The line says: the factory builds that blocker in this wave.
 4. The open blocker is outside this set. The line says: run `/sigma-implement` for that number, or add that number to the factory set.
 
-A Campaign ticket and an Organisation ticket are two workers. One worker receives one number.
+Two screens are two workers. One worker receives one ticket.
 
 Done when the factory branch exists, a numbered line is on it only when its id is an acceptance id of a ticket in this run and that line differed, and wave 1 is every remaining ticket with no open blocker and no stale title. Each stopped or waiting ticket has one next line. The user's checkout is unchanged.
 
@@ -130,7 +129,7 @@ Intent is Met or Not met. A pass is Met. A miss, a stop, a stale title, or a tic
 
 Do not print What holds, What does not, Worktree, or Result.
 
-Then one sentence: a note that names a new screen result is filed and built. A complaint that the published page changed and names the screen result is handed to `/sigma-implement` in this turn. A complaint that names no screen result is filed and the reply waits. The words yes, accept, or happy accept the batch.
+Then one sentence: a note follows `/sigma-feedback`. A sentence about a ticket in this run returns to that worker. A sentence outside this run is a warning and stays off the workers. The words yes, accept, or happy accept the batch.
 
 When at least one ticket passed, the last thing before the wait is one fenced code block. The fence contains only the command. Use the factory pull request number.
 
@@ -140,7 +139,7 @@ When at least one ticket passed, the last thing before the wait is one fenced co
 
 Do not put `Next:` inside the fence. Do not merge. Then wait in this chat. Do not use a question card. Do not offer A, B, or C.
 
-A product sentence is filed through `/sigma-feedback` in this turn. When the note complains that the published page changed and names the screen result, hand that ticket to `/sigma-implement` in this turn with `mode: afk`, `pr: none`, and the factory base. A complaint that names no screen result is filed, the reply names the ticket, and the reply waits. Do not wait for a second message when the result is named. A note that names a new screen result is a ticket and is handed to the workers. An epic is only a new area with no screen outcome, and it is not handed to the workers. Hand that new screen result to `/sigma-implement` with that sentence, `mode: afk`, `pr: none`, and `base: factory/<YYYY-MM-DD>-<slug>`. Merge each resulting pass back into the factory branch. Update the same pull request. Print the table again. Wait again.
+A product sentence follows `/sigma-feedback` in this turn. That skill files through `/sg-create-ticket` and returns a sentence about a ticket in this run through `/sigma-implement` with `mode: afk`, `pr: none`, and `base: factory/<YYYY-MM-DD>-<slug>`. A sentence outside this run is the warning from that skill. Do not hand that warning to a worker. When a returned run passes, merge that agent branch into the factory branch. Update the same pull request. Print the table again. Wait again.
 
 The words yes, accept, or happy accept the batch. Print the same fence again and stop. Do not start a worker. Do not merge. The user runs that fence. `/sigma-merge` merges the factory pull request into main.
 
@@ -148,7 +147,7 @@ Do not print "Which lines should I fix?". A worker still does not ask.
 
 A waiting ticket stays unbuilt until its blocker is closed. The next round can include it. Do not close a blocker, do not edit or file an issue, and do not merge into main.
 
-Done when the factory pull request is open, the table is printed, and this chat is waiting. An accept prints the fence and stops. A complaint that names the screen result was handed to `/sigma-implement` in this turn. A complaint that names no screen result was filed, the reply named the ticket, and the reply waited. A note that names a new screen result was filed as a ticket, handed to the workers, and the same pull request was updated. An epic was not handed to the workers.
+Done when the factory pull request is open, the table is printed, and this chat is waiting. An accept prints the fence and stops. A sentence about a ticket in this run was returned through `/sigma-implement`. A sentence outside this run was a warning and was not handed to a worker. An epic was not handed to the workers.
 
 Each worker return is one table row. The factory copies that row. It does not paste review paragraphs.
 
@@ -172,7 +171,7 @@ Copy the sentences from that return. `/sigma-implement` creates the agent branch
 | A ticket whose script writes a workbook runs only after the previous workbook ticket returns. | Parallel writes race the workbook. |
 | A second miss does not merge the agent branch into the factory branch. | Ships a page the picture already rejected. |
 | A factory revert names the workbook and the published version to restore. Do not call the workbook API. | Git revert alone leaves the wrong live page. |
-| Product feedback in this chat goes back to the worker in this turn. | A wait stalls the other tickets. |
+| Product feedback about a ticket in this run follows `/sigma-feedback` and returns through `/sigma-implement`. A sentence outside this run is a warning and stays off the workers. | A wait stalls the other tickets. An outside sentence in this run builds work the user did not pick. |
 | yes, accept, or happy print only the `/sigma-merge` fence. This skill does not merge into main. | Skips the user's accept. |
 
 ## Verification
@@ -181,4 +180,4 @@ Copy the sentences from that return. `/sigma-implement` creates the agent branch
 - [ ] A second miss did not merge into the factory branch and left it unchanged.
 - [ ] A factory revert named the workbook and the published version to restore.
 - [ ] Only requirements lines for tickets in this run were committed on the factory branch.
-- [ ] Feedback in this chat was handed back to the worker in the same turn.
+- [ ] Feedback about a ticket in this run was returned through `/sigma-implement`. A sentence outside this run was a warning and was not handed to a worker.
