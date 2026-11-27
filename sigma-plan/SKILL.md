@@ -65,7 +65,7 @@ Ask `/sg-create-ticket` for `list-specs` and `list-tickets` with `caller: sigma-
 
 Pick the first question from the file:
 
-- Outcome empty: ask for the outcome. This question comes before any other question. State one recommended answer. After the answer, continue this interview.
+- Outcome empty, including the scaffold line `/sigma-plan replaces this line`: ask what this repo is building. This question comes before any other question. State one recommended answer. After the answer, continue this interview.
 - Outcome filled, solution content present, a clash exists: the sentence the user states replaces the old sentence for that behavior. Leave every other line as written. A clash the user does not speak about stays an Open question. Do not ask which of the two old lines stands. Then continue the topic, a stale copy, or the current thread.
 - Outcome filled, solution content present, no clash, and a stale copy exists: go to Step 6. Do not ask the five sections again.
 - Outcome filled, solution content present, `$ARGUMENTS` names a topic, no clash, and no stale copy: recommend keeping the filled sections and planning that topic.
@@ -73,7 +73,7 @@ Pick the first question from the file:
 - Outcome filled, solution content present, `$ARGUMENTS` empty, Open questions empty, and no clash: recommend confirming the filled sections as they stand. A yes means the user is done. Go to Step 4.
 - Outcome filled, no solution content: go to Step 3.
 
-When a section body is ambiguous, quote it and ask whether it stands. The outcome question still comes first when Outcome is empty.
+When a section body is ambiguous, quote it and ask whether it stands. The question of what this repo is building still comes first when Outcome is empty.
 
 Done when the file is read and the first question is chosen, or a missing file has ended the run.
 
